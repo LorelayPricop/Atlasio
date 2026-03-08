@@ -101,13 +101,11 @@ builder.Services.AddSwaggerGen(c =>
                       "- Clean Architecture / Hexagonal Architecture\n" +
                       "- CQRS con MediatR\n" +
                       "- Repository Pattern y Unit of Work\n" +
-                      "- Entity Framework Core InMemory\n\n" +
-                      "**Nota importante:** Los tipos de destino ahora se manejan mediante catálogo (DestinationTypeId) " +
-                      "en lugar de enum. Usa el endpoint `/api/v1/catalog/destination-types` para obtener los IDs disponibles.",
+                      "- Entity Framework Core InMemory\n\n",
         Contact = new()
         {
-            Name = "Atlasio Development Team",
-            Email = "dev@atlasio.com"
+            Name = "Lorelay Pricop Florescu",
+            Email = "lorelaypricop@gmail.com"
         }
     });
 

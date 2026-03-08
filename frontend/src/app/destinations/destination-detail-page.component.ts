@@ -4,9 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DestinationDto, ApiClient } from '../services/api-client';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
-import { getCountryNameByCity } from '../shared/enums/city.enum';
-import { getCountryNameByCode } from '../shared/enums/country.enum';
-import { getDestinationTypeLabel } from '../shared/enums/destination-type.enum';
+import { CatalogService } from '../services/catalog.service';
 
 @Component({
   selector: 'app-destination-detail-page',
@@ -17,6 +15,7 @@ import { getDestinationTypeLabel } from '../shared/enums/destination-type.enum';
 })
 export class DestinationDetailPageComponent implements OnInit {
   private readonly apiService = inject(ApiClient);
+  private readonly catalogService = inject(CatalogService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -53,17 +52,14 @@ export class DestinationDetailPageComponent implements OnInit {
     });
   }
 
-  getTypeLabel(type: string | number): string {
-    return getDestinationTypeLabel(type);
-  }
-
-  getCountryName(countryCode?: string, cityName?: string): string {
-    const inferredFromCity = getCountryNameByCity(cityName);
-    if (inferredFromCity) {
-      return inferredFromCity;
-    }
-
-    return getCountryNameByCode(countryCode) || countryCode || 'Not specified';
+  /**
+   * Obtiene el nombre completo del país desde el catálogo o devuelve el código
+   */
+  getCountryName(countryCode?: string): string {
+    if (!countryCode) return 'Not specified';
+    // El nombre se cargaría en tiempo real, por ahora devolver el código
+    // TODO: implementar caché de CountryDto en detalle si es necesario
+    return countryCode;
   }
 
   getStatusClass(status?: string): string {
