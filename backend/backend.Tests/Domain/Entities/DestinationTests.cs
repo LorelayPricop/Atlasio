@@ -20,11 +20,14 @@ namespace backend.Tests.Domain.Entities
         [InlineData(DestinationType.Relax)]
         public void Destination_ShouldAcceptAllDestinationTypes(DestinationType type)
         {
-            // Arrange
-            var destination = new Destination();
-
-            // Act
-            destination.Type = type;
+            // Arrange & Act
+            var destination = new Destination
+            {
+                Name = "Test Destination",
+                Description = "Test Description",
+                CountryCode = "MEX",
+                Type = type
+            };
 
             // Assert
             destination.Type.Should().Be(type);

@@ -21,7 +21,14 @@ namespace backend.Application.Adapters
                 Description = entity.Description,
                 CountryCode = entity.CountryCode,
                 Type = entity.Type,
-                LastModif = entity.LastModif
+                LastModif = entity.LastModif,
+                ImageUrl = entity.ImageUrl,
+                TotalBookings = entity.TotalBookings,
+                AverageRating = entity.AverageRating,
+                ReviewCount = entity.ReviewCount,
+                Status = entity.Status,
+                CreatedBy = entity.CreatedBy,
+                CreatedDate = entity.CreatedDate
             };
         }
 
@@ -36,7 +43,9 @@ namespace backend.Application.Adapters
                 Description = dto.Description,
                 CountryCode = dto.CountryCode,
                 Type = dto.Type,
-                LastModif = DateTime.UtcNow
+                LastModif = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
+                Status = "Active"
             };
         }
 

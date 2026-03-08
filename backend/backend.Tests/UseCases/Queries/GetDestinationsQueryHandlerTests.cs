@@ -34,8 +34,12 @@ namespace backend.Tests.Application.Queries
             var destinationDtos = destinations.Select(d => new DestinationDto 
             { 
                 ID = d.ID, 
-                Name = d.Name, 
-                Type = d.Type 
+                Name = d.Name,
+                Description = d.Description,
+                CountryCode = d.CountryCode,
+                Type = d.Type,
+                LastModif = d.LastModif,
+                CreatedDate = d.LastModif
             }).ToList();
 
             var pagedResult = new PagedResult<Destination>

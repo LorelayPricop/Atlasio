@@ -45,7 +45,8 @@ namespace backend.Tests.Controllers
                     Description = d.Description,
                     CountryCode = d.CountryCode,
                     Type = d.Type,
-                    LastModif = d.LastModif
+                    LastModif = d.LastModif,
+                    CreatedDate = d.LastModif
                 }).ToList(),
                 TotalCount = 3,
                 Page = 1,
@@ -89,7 +90,8 @@ namespace backend.Tests.Controllers
                 Description = "Hermosa playa en el Caribe mexicano",
                 CountryCode = "MEX",
                 Type = DestinationType.Beach,
-                LastModif = DateTime.UtcNow
+                LastModif = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow
             };
 
             _mockMediator.Setup(m => m.Send(It.IsAny<GetDestinationByIdQuery>(), It.IsAny<CancellationToken>()))
@@ -135,7 +137,8 @@ namespace backend.Tests.Controllers
                 Description = createDto.Description,
                 CountryCode = createDto.CountryCode,
                 Type = createDto.Type,
-                LastModif = DateTime.UtcNow
+                LastModif = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow
             };
 
             _mockMediator.Setup(m => m.Send(It.IsAny<CreateDestinationCommand>(), It.IsAny<CancellationToken>()))
@@ -180,7 +183,8 @@ namespace backend.Tests.Controllers
                 Description = updateDto.Description,
                 CountryCode = updateDto.CountryCode,
                 Type = updateDto.Type,
-                LastModif = DateTime.UtcNow
+                LastModif = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow
             };
 
             _mockMediator.Setup(m => m.Send(It.IsAny<UpdateDestinationCommand>(), It.IsAny<CancellationToken>()))

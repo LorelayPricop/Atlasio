@@ -21,7 +21,9 @@ namespace backend.Tests.Helpers
                 Description = "Hermosa playa en el Caribe mexicano",
                 CountryCode = "MEX",
                 Type = DestinationType.Beach,
-                LastModif = DateTime.UtcNow.AddDays(-1)
+                LastModif = DateTime.UtcNow.AddDays(-1),
+                CreatedDate = DateTime.UtcNow.AddDays(-7),
+                Status = "Active"
             };
         }
 
@@ -30,8 +32,8 @@ namespace backend.Tests.Helpers
         /// </summary>
         public static List<Destination> CreateTestDestinations()
         {
-            return new List<Destination>
-            {
+            return
+            [
                 new Destination
                 {
                     ID = 1,
@@ -39,7 +41,9 @@ namespace backend.Tests.Helpers
                     Description = "Hermosa playa en el Caribe mexicano",
                     CountryCode = "MEX",
                     Type = DestinationType.Beach,
-                    LastModif = DateTime.UtcNow.AddDays(-3)
+                    LastModif = DateTime.UtcNow.AddDays(-3),
+                    CreatedDate = DateTime.UtcNow.AddDays(-10),
+                    Status = "Active"
                 },
                 new Destination
                 {
@@ -48,7 +52,9 @@ namespace backend.Tests.Helpers
                     Description = "La ciudad de la luz y el amor",
                     CountryCode = "FRA",
                     Type = DestinationType.City,
-                    LastModif = DateTime.UtcNow.AddDays(-2)
+                    LastModif = DateTime.UtcNow.AddDays(-2),
+                    CreatedDate = DateTime.UtcNow.AddDays(-8),
+                    Status = "Active"
                 },
                 new Destination
                 {
@@ -57,9 +63,11 @@ namespace backend.Tests.Helpers
                     Description = "Metrópolis moderna con tradición milenaria",
                     CountryCode = "JPN",
                     Type = DestinationType.Cultural,
-                    LastModif = DateTime.UtcNow.AddDays(-1)
+                    LastModif = DateTime.UtcNow.AddDays(-1),
+                    CreatedDate = DateTime.UtcNow.AddDays(-5),
+                    Status = "Active"
                 }
-            };
+            ];
         }
 
         /// <summary>
@@ -102,7 +110,8 @@ namespace backend.Tests.Helpers
                 Description = "Hermosa playa en el Caribe mexicano",
                 CountryCode = "MEX",
                 Type = DestinationType.Beach,
-                LastModif = DateTime.UtcNow.AddDays(-1)
+                LastModif = DateTime.UtcNow.AddDays(-1),
+                CreatedDate = DateTime.UtcNow.AddDays(-7)
             };
         }
 
