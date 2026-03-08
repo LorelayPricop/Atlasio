@@ -1,301 +1,465 @@
-# Atlasio Backend - API REST
+# Atlasio Backend API - .NET 10
 
-API REST desarrollada con **.NET 10 (LTS)** para la gestión de destinos turísticos, implementando **Arquitectura Hexagonal** con patrones CQRS, Repository y Unit of Work.
+API REST para gestión de destinos turísticos construida con **.NET 10** siguiendo **Clean Architecture** y patrones CQRS.
 
-## Inicio Rápido
+---
+
+## Tabla de Contenidos
+
+- [Quick Start](#-quick-start)
+- [Arquitectura](#-arquitectura)
+- [Endpoints](#-endpoints)
+- [Modelo de Datos](#-modelo-de-datos)
+- [Configuración](#-configuración)
+- [Testing](#-testing)
+
+---
+
+## Quick Start
 
 ### Prerrequisitos
-- **.NET 10 SDK** (LTS - soporte hasta noviembre 2028)
-- Visual Studio 2022 o VS Code
+- **.NET 10 SDK** ([Descargar](https://dotnet.microsoft.com/download/dotnet/10.0))
+- Visual Studio 2022 / VS Code / Rider
 
-### Ejecutar la Aplicación
+### Ejecutar
+
 ```bash
-cd backend/backend
+# Restaurar paquetes
 dotnet restore
+
+# Compilar
+dotnet build
+
+# Ejecutar
 dotnet run
+
+# Ejecutar con watch (hot reload)
+dotnet watch run
 ```
 
 ### Acceso
-- **API**: `http://localhost:5259/api/v1/destinations`
-- **Swagger**: `http://localhost:5259/swagger`
 
-## Arquitectura Hexagonal
+- **API Base**: `https://localhost:5001/api/v1`
+- **Swagger UI**: `https://localhost:5001/swagger`
+- **Health Check**: `https://localhost:5001/health`
+
+---
+
+## Arquitectura
+
+### Clean Architecture (Hexagonal)
+
+```
+┌──────────────────────────────────────────┐
+│         PRESENTATION LAYER               │
+│  (Controllers, Middleware, API Versioning)│
+└──────────────────────────────────────────┘
+                    ↓
+┌──────────────────────────────────────────┐
+│        APPLICATION LAYER                  │
+│  (Commands, Queries, DTOs, Handlers)     │
+└──────────────────────────────────────────┘
+                    ↓
+┌──────────────────────────────────────────┐
+│          DOMAIN LAYER                     │
+│    (Entities, Interfaces, Business Rules)│
+└──────────────────────────────────────────┘
+                    ↑
+┌──────────────────────────────────────────┐
+│       INFRASTRUCTURE LAYER                │
+│  (EF Core, Repositories, External Services)│
+└──────────────────────────────────────────┘
+```
 
 ### Estructura del Proyecto
 
 ```
 backend/
-├── Domain/               # DOMINIO - Lógica de negocio pura
-│   ├── Entities/         # Entidades del dominio
-│   ├── Enums/           # Enumeraciones
-│   └── Interfaces/      # Interfaces del dominio (Ports)
-├── Application/          # APLICACIÓN - Casos de uso y reglas
-│   ├── Commands/        # CQRS - Comandos para escritura
-│   ├── Queries/         # CQRS - Queries para lectura
-│   ├── DTOs/            # Objetos de transferencia
-│   └── Adapters/        # Adaptadores manuales para mapeo
-├── Infrastructure/       # INFRAESTRUCTURA - Persistencia
-│   ├── Data/            # Contexto Entity Framework
-│   ├── Repositories/    # Repository Pattern (Adapters)
-│   ├── Services/        # Servicios de infraestructura
-│   └── UnitOfWork/      # Unit of Work Pattern
-└── Presentation/         # PRESENTACIÓN - API y middleware
-    ├── Controllers/     # Controladores de la API
-    └── Middleware/     # Middleware personalizado
+├── Domain/                      # Núcleo del negocio (sin dependencias)
+│   ├── Entities/                # Entidades del dominio
+│   │   ├── Destination.cs       # Destino turístico
+│   │   ├── Country.cs           # Catálogo: Países
+│   │   ├── DestinationType.cs   # Catálogo: Tipos de destino
+│   │   ├── City.cs              # Catálogo: Ciudades
+│   │   ├── DestinationImage.cs  # Imágenes (1:N)
+│   │   ├── Review.cs            # Reseñas (1:N)
+│   │   ├── Booking.cs           # Reservas (1:N)
+│   │   └── DestinationStats.cs  # Estadísticas (1:1)
+│   └── Interfaces/              # Contratos (Ports)
+│       ├── IRepository.cs       # Repositorio genérico
+│       ├── IDestinationRepository.cs
+│       ├── IRepositoryManager.cs
+│       ├── IFilterCriteria.cs
+│       └── IDestinationAdapter.cs
+│
+├── Application/                 # Casos de uso (lógica de aplicación)
+│   ├── Commands/                # CQRS - Escritura
+│   │   ├── CreateDestinationCommand.cs
+│   │   ├── UpdateDestinationCommand.cs
+│   │   └── DeleteDestinationCommand.cs
+│   ├── Queries/                 # CQRS - Lectura
+│   │   ├── GetDestinationsQuery.cs
+│   │   ├── GetDestinationByIdQuery.cs
+│   │   └── GetDestinationTypesQuery.cs
+│   ├── DTOs/                    # Data Transfer Objects
+│   │   ├── DestinationDto.cs
+│   │   ├── CatalogDtos.cs
+│   │   └── PagedResultDto.cs
+│   └── Adapters/                # Mapeo manual (sin AutoMapper)
+│       ├── DestinationMapper.cs
+│       ├── DestinationAdapter.cs
+│       └── DestinationFilterAdapter.cs
+│
+├── Infrastructure/              # Implementaciones técnicas
+│   ├── Data/                    # Entity Framework Core
+│   │   ├── ApplicationDbContext.cs
+│   │   └── Configurations/      # Fluent API configurations
+│   │       ├── DestinationConfiguration.cs
+│   │       ├── CountryConfiguration.cs
+│   │       ├── DestinationTypeConfiguration.cs
+│   │       ├── CityConfiguration.cs
+│   │       └── RelatedEntitiesConfiguration.cs
+│   ├── Repositories/            # Implementación de repositorios
+│   │   ├── Repository.cs        # Genérico
+│   │   └── DestinationRepository.cs
+│   ├── UnitOfWork/
+│   │   └── RepositoryManager.cs
+│   └── Services/
+│       └── DataSeedService.cs   # Seed de datos inicial
+│
+└── Presentation/                # API REST
+    ├── Controllers/
+    │   ├── DestinationsController.cs  # CRUD de destinos
+    │   └── CatalogController.cs       # Endpoints de catálogos
+    └── Middleware/
+        └── GlobalExceptionMiddleware.cs
 ```
 
-### Flujo de Dependencias
+### Patrones Implementados
 
+| Patrón | Propósito | Ubicación |
+|--------|-----------|-----------|
+| **CQRS** | Separar lecturas de escrituras | Application/Commands, Application/Queries |
+| **Mediator** | Desacoplar handlers de controllers | MediatR |
+| **Repository** | Abstracción de acceso a datos | Infrastructure/Repositories |
+| **Unit of Work** | Gestionar transacciones | Infrastructure/UnitOfWork |
+| **Adapter** | Conversión entre capas | Application/Adapters |
+| **Dependency Injection** | Inversión de control | ASP.NET Core DI |
+
+---
+
+## 📡 Endpoints
+
+### Destinos (`DestinationsController`)
+
+| Método | Ruta | Descripción | Body/Params |
+|--------|------|-------------|-------------|
+| `GET` | `/api/v1/destinations` | Lista paginada con filtros | `?searchTerm`, `?countryCode`, `?destinationTypeId`, `?page`, `?pageSize` |
+| `GET` | `/api/v1/destinations/{id}` | Obtener por ID | - |
+| `POST` | `/api/v1/destinations` | Crear destino | `CreateDestinationDto` |
+| `PUT` | `/api/v1/destinations/{id}` | Actualizar destino | `UpdateDestinationDto` |
+| `DELETE` | `/api/v1/destinations/{id}` | Eliminar destino | - |
+| `GET` | `/api/v1/destinations/countries` | Códigos de países únicos | - |
+| `GET` | `/api/v1/destinations/types` | Tipos de destino | - |
+
+### Catálogos (`CatalogController`) 
+
+| Método | Ruta | Descripción | Params |
+|--------|------|-------------|--------|
+| `GET` | `/api/v1/catalog/countries` | Catálogo completo de países | `?onlyActive` |
+| `GET` | `/api/v1/catalog/countries/{code}` | País específico | - |
+| `GET` | `/api/v1/catalog/destination-types` | Catálogo de tipos | `?onlyActive` |
+| `GET` | `/api/v1/catalog/destination-types/{id}` | Tipo específico | - |
+| `GET` | `/api/v1/catalog/cities` | Catálogo de ciudades | `?countryCode`, `?onlyActive` |
+
+### Ejemplos de Request
+
+#### Crear Destino
+```json
+POST /api/v1/destinations
+Content-Type: application/json
+
+{
+  "name": "Barcelona",
+  "description": "Ciudad cosmopolita con arquitectura única",
+  "longDescription": "Barcelona es famosa por la arquitectura de Gaudí...",
+  "countryCode": "ESP",
+  "destinationTypeId": 4,
+  "imageUrl": "https://example.com/barcelona.jpg"
+}
 ```
-Presentation → Application → Domain
-     ↓              ↓
-Infrastructure → Application → Domain
+
+#### Filtrar Destinos
+```bash
+GET /api/v1/destinations?searchTerm=playa&countryCode=MEX&page=1&pageSize=10
 ```
 
-**Regla**: Las dependencias siempre apuntan hacia el centro (Domain).
+#### Obtener Tipos de Destino
+```bash
+GET /api/v1/catalog/destination-types
 
-### Decisiones Arquitectónicas
+# Respuesta:
+[
+  {
+    "id": 1,
+    "code": "BEACH",
+    "name": "Beach",
+    "icon": "beach_access",
+    "displayOrder": 1,
+    "isActive": true
+  },
+  ...
+]
+```
 
-#### Arquitectura Optimizada
-
-La estructura actual sigue **Clean Architecture** con **CQRS** usando **MediatR**:
-
-- **DTOs centralizados** en `Application/DTOs` para reutilización entre Commands, Queries y Controllers
-- **Interfaces en Domain** para mantener la inversión de dependencias
-- **Handlers como servicios** en lugar de servicios tradicionales
-- **Controladores limpios** que solo delegan a MediatR
-
-### Beneficios
-
-- **Testabilidad**: Domain y Application fáciles de testear
-- **Independencia**: El dominio no depende de frameworks
-- **Flexibilidad**: Fácil cambio de implementaciones
-- **Mantenibilidad**: Separación clara de responsabilidades
-- **Escalabilidad**: Cada capa evoluciona independientemente
+---
 
 ## Modelo de Datos
+
+### Diagrama de Relaciones
+
+```
+┌─────────────┐        ┌──────────────────┐
+│  Country    │◄──────┤   Destination    │
+│  (Catálogo) │        │   (Principal)    │
+└─────────────┘        └──────────────────┘
+                              │ 1
+                              │
+         ┌────────────────────┼────────────────────┐
+         │                    │                    │
+         ▼ N                  ▼ N                  ▼ N
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│ DestinationImage │  │     Review       │  │     Booking      │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+
+         ┌────────────────────┼────────────────────┐
+         │                    │                    │
+         ▼ 1                  ▼ 1                  ▼ 1
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│ DestinationType  │  │ DestinationStats │  │      City        │
+│   (Catálogo)     │  │   (Agregado)     │  │   (Catálogo)     │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+```
 
 ### Entidad Principal: `Destination`
 
 ```csharp
 public class Destination
 {
-    public int ID { get; set; }                    // Identificador único
-    public string Name { get; set; }               // Nombre del destino
-    public string Description { get; set; }        // Descripción detallada
-    public string CountryCode { get; set; }        // Código ISO del país (3 chars)
-    public DestinationType Type { get; set; }      // Tipo de destino
-    public DateTime LastModif { get; set; }        // Última modificación
+    public int ID { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string? LongDescription { get; set; }
+    public string CountryCode { get; set; }         // FK
+    public int DestinationTypeId { get; set; }      // FK
+    public string Status { get; set; }
+    public DateTime LastModif { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public string? CreatedBy { get; set; }
+    
+    // Campos obsoletos (migrar a entidades relacionadas)
+    [Obsolete] public string? ImageUrl { get; set; }
+    [Obsolete] public int TotalBookings { get; set; }
+    [Obsolete] public decimal AverageRating { get; set; }
+    [Obsolete] public int ReviewCount { get; set; }
+    
+    // Relaciones
+    public Country? Country { get; set; }
+    public DestinationType? Type { get; set; }
+    public ICollection<DestinationImage> Images { get; set; }
+    public ICollection<Review> Reviews { get; set; }
+    public ICollection<Booking> Bookings { get; set; }
+    public DestinationStats? Stats { get; set; }
 }
 ```
 
-### Tipos de Destino
+### Catálogos
 
+#### Country (Países)
 ```csharp
-public enum DestinationType
+public class Country
 {
-    Beach,      // Destinos de playa y costa
-    Mountain,   // Destinos de montaña
-    City,       // Destinos urbanos
-    Cultural,   // Patrimonio cultural e histórico
-    Adventure,  // Actividades de aventura
-    Relax       // Destinos de relajación
+    public string Code { get; set; }    // PK (3 chars: ESP, MEX, USA)
+    public string Name { get; set; }
+    public string? Region { get; set; }
+    public bool IsActive { get; set; } = true;
 }
 ```
 
-## API Endpoints
-
-### Operaciones CRUD
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `GET` | `/api/v1/destinations` | Lista paginada con filtros |
-| `GET` | `/api/v1/destinations/{id}` | Obtener destino por ID |
-| `POST` | `/api/v1/destinations` | Crear nuevo destino |
-| `PUT` | `/api/v1/destinations/{id}` | Actualizar destino |
-| `DELETE` | `/api/v1/destinations/{id}` | Eliminar destino |
-
-### Endpoints de Soporte
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `GET` | `/api/v1/destinations/countries` | Lista de códigos de países |
-| `GET` | `/api/v1/destinations/types` | Lista de tipos de destino |
-
-### Filtros Disponibles
-
-```http
-# Búsqueda por texto
-GET /api/v1/destinations?searchTerm=playa
-
-# Filtro por país
-GET /api/v1/destinations?countryCode=MEX
-
-# Filtro por tipo
-GET /api/v1/destinations?type=Beach
-
-# Combinación de filtros
-GET /api/v1/destinations?searchTerm=playa&countryCode=MEX&type=Beach&page=1&pageSize=10
+#### DestinationType (Tipos de Destino)
+```csharp
+public class DestinationType
+{
+    public int Id { get; set; }         // PK
+    public string Code { get; set; }    // BEACH, MOUNTAIN, CITY...
+    public string Name { get; set; }
+    public string? Icon { get; set; }   // Material icon name
+    public int DisplayOrder { get; set; }
+    public bool IsActive { get; set; } = true;
+}
 ```
 
-### Versionado de API
+#### City (Ciudades)
+```csharp
+public class City
+{
+    public int Id { get; set; }
+    public string CountryCode { get; set; }  // FK
+    public string Name { get; set; }
+    public bool IsActive { get; set; } = true;
+}
+```
 
-La API soporta múltiples métodos de versionado:
-
-1. **URL Path**: `/api/v1/destinations` (recomendado)
-2. **Query String**: `?version=1.0`
-3. **Header**: `api-version: 1.0`
-
-## Tecnologías
-
-### Core
-- **.NET 10 (LTS)**: Framework de desarrollo con soporte a largo plazo hasta noviembre 2028
-- **ASP.NET Core 10**: Framework web para APIs REST
-- **Entity Framework Core 10**: ORM para acceso a datos
-- **Base de Datos en Memoria**: Mock database para demostración
-
-### Patrones y Librerías
-- **MediatR 14.1**: Implementación de CQRS y patrón Mediator con DI integrado
-- **Adaptadores manuales**: Mapeo explícito entre entidades y DTOs
-- **Repository Pattern**: Abstracción del acceso a datos
-- **Unit of Work**: Coordinación de transacciones
-
-### Documentación y Logging
-- **Swagger/OpenAPI 10**: Documentación automática de la API
-- **Serilog 10**: Logging estructurado con múltiples sinks
-
-## Datos de Ejemplo
-
-El sistema incluye **10 destinos turísticos reales**:
-
-- **Playa del Carmen** (MEX) - Beach
-- **Santorini** (GRC) - Cultural  
-- **Kyoto** (JPN) - Cultural
-- **Machu Picchu** (PER) - Adventure
-- **París** (FRA) - City
-- **Nueva York** (USA) - City
-- **Barcelona** (ESP) - Cultural
-- **Río de Janeiro** (BRA) - City
-- **Alpes Suizos** (CHE) - Mountain
-- **Bali** (IDN) - Relax
-
-## Testing
-
-Para información detallada sobre testing, cobertura y ejecución de tests, consulta el [README del proyecto de tests](../backend.Tests/README.md).
+---
 
 ## Configuración
 
-### Paquetes NuGet Principales
+### appsettings.json
 
-**Core ASP.NET:**
-- Microsoft.AspNetCore.OpenApi (10.0.3)
-- Swashbuckle.AspNetCore (10.1.4)
-- Swashbuckle.AspNetCore.SwaggerGen (10.1.4)
+```json
+{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "logs/atlasio-.log",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 7
+        }
+      }
+    ]
+  },
+  "AllowedHosts": "*"
+}
+```
 
-**Entity Framework:**
-- Microsoft.EntityFrameworkCore.InMemory (10.0.3)
+### CORS
 
-**CQRS and Mediator:**
-- MediatR (14.1.0) - *Con DI integrado*
+Configurado para aceptar requests desde:
+- `http://localhost:4200` (Angular)
 
-**Logging:**
-- Serilog.AspNetCore (10.0.0)
-- Serilog.Sinks.Console (6.1.1)
-- Serilog.Sinks.File (7.0.0)
-- Serilog.Enrichers.Environment (3.0.1)
-- Serilog.Enrichers.Process (3.0.0)
-- Serilog.Enrichers.Thread (4.0.0)
-- Serilog.Settings.Configuration (10.0.0)
+Para agregar más orígenes, modificar en `Program.cs`:
 
-**API Versioning:**
-- Asp.Versioning.Mvc (8.1.1)
-- Asp.Versioning.Mvc.ApiExplorer (8.1.1)
+```csharp
+policy.WithOrigins("http://localhost:4200", "https://mi-dominio.com")
+```
 
-### Configuración de Servicios
+### Base de Datos
 
-- **CORS**: Configurado para Angular (puerto 4200)
-- **Entity Framework**: Base de datos en memoria con índices optimizados
-- **Adaptadores manuales**: Mapeo explícito entre entidades y DTOs
-- **MediatR**: Configuración integrada con DI nativo de .NET 10
-- **API Versioning**: Configuración moderna con Asp.Versioning 8.x
-- **Swagger**: Documentación automática de la API con OpenAPI 10
-- **Middleware**: Manejo global de excepciones
+**InMemory Database** (desarrollo):
+```csharp
+services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseInMemoryDatabase("AtlasioDb"));
+```
 
-## Características de Rendimiento
+**Migrar a SQL Server** (producción):
+```csharp
+services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+```
 
-### Optimizaciones Implementadas
+---
 
-- **Índices de base de datos** en campos de filtrado frecuente
-- **Paginación eficiente** para grandes volúmenes de datos
-- **Consultas optimizadas** con Entity Framework Core 10
-- **Manejo asíncrono** de todas las operaciones
-- **Middleware optimizado** para manejo de errores
-- **Logging estructurado** para monitoreo
+## Testing
 
-### Mejoras de .NET 10 (LTS)
+Ejecutar tests del backend:
 
-- **Rendimiento mejorado**: Mayor velocidad de ejecución y menor consumo de memoria
-- **Nuevas características de C# 13**: Sintaxis mejorada y mejor expresividad
-- **Soporte a largo plazo**: Actualizaciones de seguridad garantizadas hasta noviembre 2028
-- **Mejor integración con contenedores**: Optimizaciones para Docker y Kubernetes
-- **AOT (Ahead-of-Time) compilation**: Opción de compilación nativa para mejor rendimiento
+```bash
+cd ../backend.Tests
+dotnet test
 
-### Capacidad de Escalabilidad
+# Con cobertura
+dotnet test /p:CollectCoverage=true
 
-- **Diseñado para 200k+ registros** como especifica la prueba técnica
-- **Filtrado eficiente** por múltiples criterios
-- **Paginación configurable** para diferentes tamaños de página
-- **Arquitectura preparada** para migración a base de datos real
-- **Manejo de errores robusto** para alta disponibilidad
+# Verbose
+dotnet test --logger "console;verbosity=detailed"
+```
 
-## Troubleshooting
+Ver [backend.Tests/README.md](../backend.Tests/README.md) para más detalles.
 
-### Error: "Unable to bind to https://localhost:5259"
-- Verificar que el puerto 5259 no esté en uso
-- Cambiar el puerto en `launchSettings.json` si es necesario
+---
 
-### Error: "Database context disposed"
-- Verificar que el contexto esté configurado correctamente en `Program.cs`
-- Asegurar que se use `AddDbContext` con el scope correcto
+## Paquetes NuGet
 
-### Error: "Mapeo de entidades fallido"
-- Verificar que todos los adaptadores estén implementados correctamente
-- Ejecutar `config.AssertConfigurationIsValid()` en desarrollo
+| Paquete | Versión | Propósito |
+|---------|---------|-----------|
+| `Microsoft.AspNetCore.OpenApi` | 10.0.3 | OpenAPI/Swagger |
+| `Swashbuckle.AspNetCore` | 10.1.4 | Swagger UI |
+| `Swashbuckle.AspNetCore.Annotations` | 10.1.4 | Anotaciones Swagger |
+| `Microsoft.EntityFrameworkCore.InMemory` | 10.0.3 | Base de datos en memoria |
+| `Serilog.AspNetCore` | 10.0.0 | Logging estructurado |
+| `MediatR` | 14.1.0 | CQRS/Mediator |
+| `Asp.Versioning.Mvc` | 8.1.1 | Versionado de API |
 
-## Historial de Versiones
+---
 
-### v2.0.0 - Actualización a .NET 10 (Marzo 2026)
-**Cambios principales:**
-- ✅ Actualización de .NET 9 → .NET 10 (LTS)
-- ✅ Migración a paquetes modernos de API Versioning
-  - `Microsoft.AspNetCore.Mvc.Versioning` → `Asp.Versioning.Mvc` 8.1.1
-  - `Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer` → `Asp.Versioning.Mvc.ApiExplorer` 8.1.1
-- ✅ Actualización de MediatR a versión 14.1 con DI integrado
-- ✅ Eliminación de paquetes deprecados
-- ✅ Actualización de Entity Framework Core a 10.0.3
-- ✅ Actualización de Swagger/OpenAPI a 10.0.3
-- ✅ Actualización de Serilog a 10.0.0
-- ✅ 81 tests unitarios e integración pasando (100%)
+## Extensibilidad
 
-**Beneficios:**
-- Soporte a largo plazo hasta noviembre 2028
-- Mejor rendimiento y menor consumo de memoria
-- Paquetes modernos con soporte activo
-- Sin paquetes deprecados
+### Agregar una Nueva Entidad
 
-### v1.0.0 - Versión Inicial (Original)
-- Implementación inicial con .NET 9
-- Arquitectura Hexagonal con CQRS
-- 10 destinos turísticos de ejemplo
-- Swagger/OpenAPI documentación
+1. **Crear entidad** en `Domain/Entities/`
+2. **Agregar configuración** en `Infrastructure/Data/Configurations/`
+3. **Registrar DbSet** en `ApplicationDbContext.cs`
+4. **Crear DTOs** en `Application/DTOs/`
+5. **Crear Commands/Queries** en `Application/`
+6. **Crear Repository** (si es necesario) en `Infrastructure/Repositories/`
+7. **Crear Controller** en `Presentation/Controllers/`
 
-## Autor
+### Agregar un Nuevo Endpoint
 
-**Lorelay Pricop Florescu**  
-Graduada en Tecnologías Interactivas y Project Manager con experiencia en .NET, Python, Angular, Azure DevOps, IA y metodologías ágiles.
+1. Crear **Query/Command** en `Application/`
+2. Crear **Handler** correspondiente
+3. Agregar **endpoint** en Controller
+4. Documentar con **XML comments**
+5. Actualizar **Swagger** examples
 
-[LinkedIn](https://www.linkedin.com/in/lorelaypricop)  
-Contacto: lorelaypricop@gmail.com
+---
 
-# Notas
-> Algunas ideas relacionadas con validación, estilo y estructura se revisaron con el apoyo de herramientas de inteligencia artificial (IA), utilizadas para acelerar la documentación y validar casos límite.
+## Notas de Desarrollo
+
+### Cambios Recientes (v1.0)
+
+✅ **Migración de Enum a Entidad**
+- `DestinationType` es ahora una entidad de catálogo
+- Usar `DestinationTypeId` (int) en lugar de enum
+- Ver endpoint `/api/v1/catalog/destination-types` para IDs
+
+✅ **Nuevos Endpoints de Catálogo**
+- `/api/v1/catalog/*` para países, tipos y ciudades
+- Soporte para filtro `onlyActive`
+
+✅ **Swagger Mejorado**
+- Documentación XML completa
+- Ejemplos de request/response
+- Descripciones detalladas
+
+### Próximas Mejoras
+
+- [ ] Autenticación JWT
+- [ ] Rate limiting
+- [ ] Cache con Redis
+- [ ] Upload de imágenes
+- [ ] Notificaciones
+- [ ] Métricas y observabilidad
+
+---
+
+## Recursos
+
+- [Documentación .NET 10](https://docs.microsoft.com/dotnet/)
+- [Clean Architecture Guide](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [CQRS Pattern](https://martinfowler.com/bliki/CQRS.html)
+- [Swagger OpenAPI](https://swagger.io/specification/)
+
+---
+
+**Desarrollado con ❤️ usando .NET 10 y Clean Architecture**

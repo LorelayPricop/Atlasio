@@ -5,7 +5,6 @@ using FluentAssertions;
 using backend.Presentation.Controllers;
 using backend.Application.DTOs;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
 using backend.Application.Commands;
 using backend.Application.Queries;
 using MediatR;
@@ -44,9 +43,9 @@ namespace backend.Tests.Controllers
                     Name = d.Name,
                     Description = d.Description,
                     CountryCode = d.CountryCode,
-                    Type = d.Type,
+                    DestinationTypeId = d.DestinationTypeId,
                     LastModif = d.LastModif,
-                    CreatedDate = d.LastModif
+                    CreatedDate = d.CreatedDate
                 }).ToList(),
                 TotalCount = 3,
                 Page = 1,
@@ -89,7 +88,7 @@ namespace backend.Tests.Controllers
                 Name = "Cancún",
                 Description = "Hermosa playa en el Caribe mexicano",
                 CountryCode = "MEX",
-                Type = DestinationType.Beach,
+                DestinationTypeId = TestDataHelper.BeachTypeId,
                 LastModif = DateTime.UtcNow,
                 CreatedDate = DateTime.UtcNow
             };
@@ -136,7 +135,7 @@ namespace backend.Tests.Controllers
                 Name = createDto.Name,
                 Description = createDto.Description,
                 CountryCode = createDto.CountryCode,
-                Type = createDto.Type,
+                DestinationTypeId = createDto.DestinationTypeId,
                 LastModif = DateTime.UtcNow,
                 CreatedDate = DateTime.UtcNow
             };
@@ -182,7 +181,7 @@ namespace backend.Tests.Controllers
                 Name = updateDto.Name,
                 Description = updateDto.Description,
                 CountryCode = updateDto.CountryCode,
-                Type = updateDto.Type,
+                DestinationTypeId = updateDto.DestinationTypeId,
                 LastModif = DateTime.UtcNow,
                 CreatedDate = DateTime.UtcNow
             };
@@ -287,7 +286,15 @@ namespace backend.Tests.Controllers
         public async Task GetDestinationTypes_ReturnsOkResult()
         {
             // Arrange
-            var expectedTypes = new List<string> { "Beach", "Mountain", "City", "Cultural", "Adventure", "Relax" };
+            var expectedTypes = new List<DestinationTypeDto> 
+            { 
+                new() { Id = 1, Code = "BEACH", Name = "Beach", DisplayOrder = 1, IsActive = true },
+                new() { Id = 2, Code = "MOUNTAIN", Name = "Mountain", DisplayOrder = 2, IsActive = true },
+                new() { Id = 3, Code = "CITY", Name = "City", DisplayOrder = 3, IsActive = true },
+                new() { Id = 4, Code = "CULTURAL", Name = "Cultural", DisplayOrder = 4, IsActive = true },
+                new() { Id = 5, Code = "ADVENTURE", Name = "Adventure", DisplayOrder = 5, IsActive = true },
+                new() { Id = 6, Code = "RELAX", Name = "Relax", DisplayOrder = 6, IsActive = true }
+            };
             _mockMediator.Setup(m => m.Send(It.IsAny<GetDestinationTypesQuery>(), It.IsAny<CancellationToken>()))
                        .ReturnsAsync(expectedTypes);
 
@@ -297,14 +304,15 @@ namespace backend.Tests.Controllers
             // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
             var okResult = result.Result as OkObjectResult;
-            var types = okResult!.Value as List<string>;
+            var types = okResult!.Value as List<DestinationTypeDto>;
             types.Should().NotBeNull();
-            types.Should().Contain("Beach");
-            types.Should().Contain("Mountain");
-            types.Should().Contain("City");
-            types.Should().Contain("Cultural");
-            types.Should().Contain("Adventure");
-            types.Should().Contain("Relax");
+            types.Should().HaveCount(6);
+            types.Should().Contain(t => t.Code == "BEACH");
+            types.Should().Contain(t => t.Code == "MOUNTAIN");
+            types.Should().Contain(t => t.Code == "CITY");
+            types.Should().Contain(t => t.Code == "CULTURAL");
+            types.Should().Contain(t => t.Code == "ADVENTURE");
+            types.Should().Contain(t => t.Code == "RELAX");
         }
 
         [Fact]

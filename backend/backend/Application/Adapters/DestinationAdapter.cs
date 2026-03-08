@@ -19,7 +19,8 @@ namespace backend.Application.Adapters
                 Description = entity.Description,
                 LongDescription = entity.LongDescription,
                 CountryCode = entity.CountryCode,
-                Type = entity.Type,
+                DestinationTypeId = entity.DestinationTypeId,
+                TypeName = entity.Type?.Name,
                 LastModif = entity.LastModif,
                 ImageUrl = entity.ImageUrl,
                 TotalBookings = entity.TotalBookings,
@@ -42,7 +43,7 @@ namespace backend.Application.Adapters
                     LongDescription = createDto.LongDescription,
                     ImageUrl = createDto.ImageUrl,
                     CountryCode = createDto.CountryCode,
-                    Type = createDto.Type,
+                    DestinationTypeId = createDto.DestinationTypeId,
                     LastModif = DateTime.UtcNow,
                     CreatedDate = DateTime.UtcNow,
                     Status = "Active"
@@ -58,7 +59,7 @@ namespace backend.Application.Adapters
                     LongDescription = updateDto.LongDescription,
                     ImageUrl = updateDto.ImageUrl,
                     CountryCode = updateDto.CountryCode,
-                    Type = updateDto.Type,
+                    DestinationTypeId = updateDto.DestinationTypeId,
                     LastModif = DateTime.UtcNow
                 };
             }
@@ -75,7 +76,7 @@ namespace backend.Application.Adapters
                 existingEntity.LongDescription = updateDto.LongDescription;
                 existingEntity.ImageUrl = updateDto.ImageUrl;
                 existingEntity.CountryCode = updateDto.CountryCode;
-                existingEntity.Type = updateDto.Type;
+                existingEntity.DestinationTypeId = updateDto.DestinationTypeId;
                 existingEntity.LastModif = DateTime.UtcNow;
                 return;
             }

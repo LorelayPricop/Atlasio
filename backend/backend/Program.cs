@@ -86,15 +86,44 @@ builder.Services.AddScoped<DataSeedService>();                          // Servi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "Atlasio API", Version = "v1.0" });
+    c.SwaggerDoc("v1", new() 
+    { 
+        Title = "Atlasio API - Destinos Turísticos", 
+        Version = "v1.0",
+        Description = "API RESTful para gestión de destinos turísticos con arquitectura hexagonal y CQRS.\n\n" +
+                      "**Características principales:**\n" +
+                      "- CRUD completo de destinos turísticos\n" +
+                      "- Catálogos de países, tipos de destino y ciudades\n" +
+                      "- Filtros avanzados y paginación\n" +
+                      "- Base de datos InMemory para desarrollo\n" +
+                      "- Validación de datos con DataAnnotations\n\n" +
+                      "**Arquitectura:**\n" +
+                      "- Clean Architecture / Hexagonal Architecture\n" +
+                      "- CQRS con MediatR\n" +
+                      "- Repository Pattern y Unit of Work\n" +
+                      "- Entity Framework Core InMemory\n\n" +
+                      "**Nota importante:** Los tipos de destino ahora se manejan mediante catálogo (DestinationTypeId) " +
+                      "en lugar de enum. Usa el endpoint `/api/v1/catalog/destination-types` para obtener los IDs disponibles.",
+        Contact = new()
+        {
+            Name = "Atlasio Development Team",
+            Email = "dev@atlasio.com"
+        }
+    });
 
     // Incluir comentarios XML para documentación
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
     {
-        c.IncludeXmlComments(xmlPath);
+        c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
     }
+
+    // Ordenar endpoints por nombre de controlador
+    c.OrderActionsBy(apiDesc => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.RelativePath}");
+
+    // Configurar ejemplos de respuesta
+    c.EnableAnnotations();
 });
 
 // ============================================================================

@@ -5,7 +5,8 @@ using backend.Infrastructure.Data;
 using backend.Domain.Interfaces;
 using backend.Infrastructure.UnitOfWork;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
+using backend.Tests.Helpers;
+
 
 namespace backend.Tests.Infrastructure.UnitOfWork
 {
@@ -44,8 +45,10 @@ namespace backend.Tests.Infrastructure.UnitOfWork
                 Name = "Test Destination",
                 Description = "Test Description",
                 CountryCode = "TST",
-                Type = DestinationType.Beach,
-                LastModif = DateTime.UtcNow
+                DestinationTypeId = TestDataHelper.BeachTypeId,
+                LastModif = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
+                Status = "Active"
             };
 
             _context.Destinations.Add(destination);

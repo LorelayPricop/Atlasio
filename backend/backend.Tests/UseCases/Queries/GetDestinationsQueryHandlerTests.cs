@@ -37,9 +37,9 @@ namespace backend.Tests.Application.Queries
                 Name = d.Name,
                 Description = d.Description,
                 CountryCode = d.CountryCode,
-                Type = d.Type,
+                DestinationTypeId = d.DestinationTypeId,
                 LastModif = d.LastModif,
-                CreatedDate = d.LastModif
+                CreatedDate = d.CreatedDate
             }).ToList();
 
             var pagedResult = new PagedResult<Destination>

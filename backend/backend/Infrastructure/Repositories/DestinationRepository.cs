@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Infrastructure.Data;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
 using backend.Domain.Interfaces;
 
 namespace backend.Infrastructure.Repositories
@@ -18,7 +17,10 @@ namespace backend.Infrastructure.Repositories
 
         public async Task<IPagedResult<Destination>> GetDestinationsWithFiltersAsync(IFilterCriteria filter)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet
+                .Include(d => d.Type)
+                .Include(d => d.Country)
+                .AsQueryable();
 
             // Aplicar filtro de búsqueda por texto (case-insensitive)
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
@@ -36,10 +38,10 @@ namespace backend.Infrastructure.Repositories
                 query = query.Where(d => d.CountryCode == filter.CountryCode);
             }
 
-            // Aplicar filtro por tipo de destino
-            if (filter.Type.HasValue)
+            // Aplicar filtro por tipo de destino (ahora por ID)
+            if (filter.DestinationTypeId.HasValue)
             {
-                query = query.Where(d => d.Type == filter.Type.Value);
+                query = query.Where(d => d.DestinationTypeId == filter.DestinationTypeId.Value);
             }
 
             // Obtener el total de registros antes de aplicar paginación
@@ -67,14 +69,6 @@ namespace backend.Infrastructure.Repositories
                 .Select(d => d.CountryCode)
                 .Distinct()
                 .OrderBy(c => c)
-                .ToListAsync();
-        }
-
-        public async Task<List<Destination>> GetDestinationsByTypeAsync(DestinationType type)
-        {
-            return await _dbSet
-                .Where(d => d.Type == type)
-                .OrderBy(d => d.Name)
                 .ToListAsync();
         }
 

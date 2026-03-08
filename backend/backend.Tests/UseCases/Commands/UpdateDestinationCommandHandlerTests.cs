@@ -44,7 +44,7 @@ namespace backend.Tests.Application.Commands
             result!.Name.Should().Be(updateDto.Name);
             result.Description.Should().Be(updateDto.Description);
             result.CountryCode.Should().Be(updateDto.CountryCode);
-            result.Type.Should().Be(updateDto.Type);
+            result.DestinationTypeId.Should().Be(updateDto.DestinationTypeId);
             _mockRepositoryManager.Verify(r => r.Destinations.Update(existingDestination), Times.Once);
             _mockRepositoryManager.Verify(r => r.SaveChangesAsync(), Times.Once);
         }

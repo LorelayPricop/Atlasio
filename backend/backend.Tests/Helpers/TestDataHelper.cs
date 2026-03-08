@@ -1,5 +1,4 @@
 using backend.Domain.Entities;
-using backend.Domain.Enums;
 using backend.Application.DTOs;
 
 namespace backend.Tests.Helpers
@@ -9,6 +8,14 @@ namespace backend.Tests.Helpers
     /// </summary>
     public static class TestDataHelper
     {
+        // IDs de tipos de destino para tests (deben coincidir con el seed)
+        public const int BeachTypeId = 1;
+        public const int MountainTypeId = 2;
+        public const int CityTypeId = 3;
+        public const int CulturalTypeId = 4;
+        public const int AdventureTypeId = 5;
+        public const int RelaxTypeId = 6;
+
         /// <summary>
         /// Crea un destino de prueba individual
         /// </summary>
@@ -20,7 +27,7 @@ namespace backend.Tests.Helpers
                 Name = "Cancún",
                 Description = "Hermosa playa en el Caribe mexicano",
                 CountryCode = "MEX",
-                Type = DestinationType.Beach,
+                DestinationTypeId = BeachTypeId,
                 LastModif = DateTime.UtcNow.AddDays(-1),
                 CreatedDate = DateTime.UtcNow.AddDays(-7),
                 Status = "Active"
@@ -40,7 +47,7 @@ namespace backend.Tests.Helpers
                     Name = "Cancún",
                     Description = "Hermosa playa en el Caribe mexicano",
                     CountryCode = "MEX",
-                    Type = DestinationType.Beach,
+                    DestinationTypeId = BeachTypeId,
                     LastModif = DateTime.UtcNow.AddDays(-3),
                     CreatedDate = DateTime.UtcNow.AddDays(-10),
                     Status = "Active"
@@ -51,7 +58,7 @@ namespace backend.Tests.Helpers
                     Name = "París",
                     Description = "La ciudad de la luz y el amor",
                     CountryCode = "FRA",
-                    Type = DestinationType.City,
+                    DestinationTypeId = CityTypeId,
                     LastModif = DateTime.UtcNow.AddDays(-2),
                     CreatedDate = DateTime.UtcNow.AddDays(-8),
                     Status = "Active"
@@ -62,7 +69,7 @@ namespace backend.Tests.Helpers
                     Name = "Tokio",
                     Description = "Metrópolis moderna con tradición milenaria",
                     CountryCode = "JPN",
-                    Type = DestinationType.Cultural,
+                    DestinationTypeId = CulturalTypeId,
                     LastModif = DateTime.UtcNow.AddDays(-1),
                     CreatedDate = DateTime.UtcNow.AddDays(-5),
                     Status = "Active"
@@ -81,7 +88,7 @@ namespace backend.Tests.Helpers
                 Description = "Ciudad cosmopolita con arquitectura única",
                 LongDescription = "Barcelona es una ciudad vibrante con la arquitectura de Gaudí, playas mediterráneas y una rica cultura catalana.",
                 CountryCode = "ESP",
-                Type = DestinationType.Cultural
+                DestinationTypeId = CulturalTypeId
             };
         }
 
@@ -96,7 +103,7 @@ namespace backend.Tests.Helpers
                 Description = "Descripción actualizada de Barcelona",
                 LongDescription = "Descripción larga actualizada con información completa sobre Barcelona.",
                 CountryCode = "ESP",
-                Type = DestinationType.City
+                DestinationTypeId = CityTypeId
             };
         }
 
@@ -111,7 +118,8 @@ namespace backend.Tests.Helpers
                 Name = "Cancún",
                 Description = "Hermosa playa en el Caribe mexicano",
                 CountryCode = "MEX",
-                Type = DestinationType.Beach,
+                DestinationTypeId = BeachTypeId,
+                TypeName = "Beach",
                 LastModif = DateTime.UtcNow.AddDays(-1),
                 CreatedDate = DateTime.UtcNow.AddDays(-7)
             };
@@ -126,7 +134,7 @@ namespace backend.Tests.Helpers
             {
                 SearchTerm = "test",
                 CountryCode = "MEX",
-                Type = DestinationType.Beach,
+                DestinationTypeId = BeachTypeId,
                 Page = 1,
                 PageSize = 10
             };

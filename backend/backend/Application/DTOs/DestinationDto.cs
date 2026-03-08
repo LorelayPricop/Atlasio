@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using backend.Domain.Enums;
 
 namespace backend.Application.DTOs
 {
@@ -19,8 +18,10 @@ namespace backend.Application.DTOs
         public string? LongDescription { get; init; }
         /// <summary>Código ISO del país (3 caracteres)</summary>
         public required string CountryCode { get; init; }
-        /// <summary>Tipo de destino turístico</summary>
-        public required DestinationType Type { get; init; }
+        /// <summary>ID del tipo de destino turístico</summary>
+        public required int DestinationTypeId { get; init; }
+        /// <summary>Nombre del tipo de destino (para mostrar en UI)</summary>
+        public string? TypeName { get; init; }
         /// <summary>Fecha de última modificación</summary>
         public required DateTime LastModif { get; init; }
         /// <summary>URL de la imagen principal del destino</summary>
@@ -67,9 +68,9 @@ namespace backend.Application.DTOs
         [StringLength(3, MinimumLength = 3, ErrorMessage = "Country code must be exactly 3 characters")]
         public required string CountryCode { get; init; }
 
-        /// <summary>Tipo de destino turístico</summary>
+        /// <summary>ID del tipo de destino turístico</summary>
         [Required(ErrorMessage = "Destination type is required")]
-        public required DestinationType Type { get; init; }
+        public required int DestinationTypeId { get; init; }
     }
 
     /// <summary>
@@ -100,9 +101,9 @@ namespace backend.Application.DTOs
         [StringLength(3, MinimumLength = 3, ErrorMessage = "Country code must be exactly 3 characters")]
         public required string CountryCode { get; init; }
 
-        /// <summary>Tipo de destino turístico</summary>
+        /// <summary>ID del tipo de destino turístico</summary>
         [Required(ErrorMessage = "Destination type is required")]
-        public required DestinationType Type { get; init; }
+        public required int DestinationTypeId { get; init; }
     }
 
     /// <summary>
@@ -115,8 +116,8 @@ namespace backend.Application.DTOs
         public string? SearchTerm { get; set; }
         /// <summary>Filtro por código de país específico</summary>
         public string? CountryCode { get; set; }
-        /// <summary>Filtro por tipo de destino específico</summary>
-        public DestinationType? Type { get; set; }
+        /// <summary>Filtro por ID de tipo de destino específico</summary>
+        public int? DestinationTypeId { get; set; }
         /// <summary>Número de página actual (comienza en 1)</summary>
         public int Page { get; set; } = 1;
         /// <summary>Número de elementos por página (máximo 100 recomendado)</summary>

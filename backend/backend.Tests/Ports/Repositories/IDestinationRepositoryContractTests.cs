@@ -4,7 +4,6 @@ using FluentAssertions;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
 using backend.Domain.Interfaces;
 using backend.Tests.Helpers;
 
@@ -112,17 +111,23 @@ namespace backend.Tests.Ports.Repositories
 
             using var context = new ApplicationDbContext(options);
             var repository = CreateRepository(context);
-            
+
             var destinations = TestDataHelper.CreateTestDestinations();
             context.Destinations.AddRange(destinations);
             await context.SaveChangesAsync();
 
-            // Act
-            var result = await repository.GetDestinationsByTypeAsync(DestinationType.Beach);
+            // Act - Usar GetDestinationsWithFiltersAsync en lugar del método obsoleto
+            var filter = new TestFilterCriteria 
+            { 
+                DestinationTypeId = TestDataHelper.BeachTypeId,
+                Page = 1,
+                PageSize = 100
+            };
+            var result = await repository.GetDestinationsWithFiltersAsync(filter);
 
             // Assert
             result.Should().NotBeNull();
-            result.Should().OnlyContain(d => d.Type == DestinationType.Beach);
+            result.Items.Should().OnlyContain(d => d.DestinationTypeId == TestDataHelper.BeachTypeId);
         }
 
         [Fact]
@@ -167,7 +172,7 @@ namespace backend.Tests.Ports.Repositories
     {
         public string? SearchTerm { get; set; }
         public string? CountryCode { get; set; }
-        public DestinationType? Type { get; set; }
+        public int? DestinationTypeId { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
     }

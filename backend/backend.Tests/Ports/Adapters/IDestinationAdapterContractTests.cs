@@ -2,7 +2,6 @@ using Xunit;
 using FluentAssertions;
 using backend.Application.DTOs;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
 using backend.Domain.Interfaces;
 using backend.Tests.Helpers;
 
@@ -35,7 +34,7 @@ namespace backend.Tests.Ports.Adapters
             dto.Name.Should().Be(entity.Name);
             dto.Description.Should().Be(entity.Description);
             dto.CountryCode.Should().Be(entity.CountryCode);
-            dto.Type.Should().Be(entity.Type);
+            dto.DestinationTypeId.Should().Be(entity.DestinationTypeId);
             dto.LastModif.Should().Be(entity.LastModif);
         }
 
@@ -54,7 +53,7 @@ namespace backend.Tests.Ports.Adapters
             result.Name.Should().Be(createDto.Name);
             result.Description.Should().Be(createDto.Description);
             result.CountryCode.Should().Be(createDto.CountryCode);
-            result.Type.Should().Be(createDto.Type);
+            result.DestinationTypeId.Should().Be(createDto.DestinationTypeId);
             result.LastModif.Should().BeCloseTo(DateTime.UtcNow, TestConstants.DateTimeTolerance);
         }
 
@@ -73,7 +72,7 @@ namespace backend.Tests.Ports.Adapters
             result.Name.Should().Be(updateDto.Name);
             result.Description.Should().Be(updateDto.Description);
             result.CountryCode.Should().Be(updateDto.CountryCode);
-            result.Type.Should().Be(updateDto.Type);
+            result.DestinationTypeId.Should().Be(updateDto.DestinationTypeId);
             result.LastModif.Should().BeCloseTo(DateTime.UtcNow, TestConstants.DateTimeTolerance);
         }
 
@@ -106,7 +105,7 @@ namespace backend.Tests.Ports.Adapters
             existingEntity.Name.Should().Be(updateDto.Name);
             existingEntity.Description.Should().Be(updateDto.Description);
             existingEntity.CountryCode.Should().Be(updateDto.CountryCode);
-            existingEntity.Type.Should().Be(updateDto.Type);
+            existingEntity.DestinationTypeId.Should().Be(updateDto.DestinationTypeId);
             existingEntity.LastModif.Should().BeAfter(originalLastModif);
         }
 

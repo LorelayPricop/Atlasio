@@ -7,7 +7,8 @@ using FluentAssertions;
 using backend.Infrastructure.Data;
 using backend.Application.DTOs;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
+using backend.Tests.Helpers;
+
 
 namespace backend.Tests.Integration
 {
@@ -41,7 +42,7 @@ namespace backend.Tests.Integration
             });
 
             _client = _factory.CreateClient();
-            
+
             // Obtener el contexto de la base de datos
             var scope = _factory.Services.CreateScope();
             _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -99,7 +100,7 @@ namespace backend.Tests.Integration
                 Name = "Nuevo Destino",
                 Description = "Descripción del nuevo destino",
                 CountryCode = "ESP",
-                Type = DestinationType.Cultural
+                DestinationTypeId = TestDataHelper.CulturalTypeId
             };
 
             // Act
@@ -112,7 +113,7 @@ namespace backend.Tests.Integration
             result!.Name.Should().Be(createDto.Name);
             result.Description.Should().Be(createDto.Description);
             result.CountryCode.Should().Be(createDto.CountryCode);
-            result.Type.Should().Be(createDto.Type);
+            result.DestinationTypeId.Should().Be(createDto.DestinationTypeId);
             result.ID.Should().BeGreaterThan(0);
         }
 
@@ -125,7 +126,7 @@ namespace backend.Tests.Integration
                 Name = "", // Nombre vacío
                 Description = "Descripción válida",
                 CountryCode = "ESP",
-                Type = DestinationType.Cultural
+                DestinationTypeId = TestDataHelper.CulturalTypeId
             };
 
             // Act
@@ -145,7 +146,7 @@ namespace backend.Tests.Integration
                 Name = "Nombre Actualizado",
                 Description = "Descripción actualizada",
                 CountryCode = "USA",
-                Type = DestinationType.Adventure
+                DestinationTypeId = TestDataHelper.AdventureTypeId
             };
 
             // Act
@@ -158,7 +159,7 @@ namespace backend.Tests.Integration
             result!.Name.Should().Be(updateDto.Name);
             result.Description.Should().Be(updateDto.Description);
             result.CountryCode.Should().Be(updateDto.CountryCode);
-            result.Type.Should().Be(updateDto.Type);
+            result.DestinationTypeId.Should().Be(updateDto.DestinationTypeId);
         }
 
         [Fact]
@@ -170,7 +171,7 @@ namespace backend.Tests.Integration
                 Name = "Nombre Actualizado",
                 Description = "Descripción actualizada",
                 CountryCode = "USA",
-                Type = DestinationType.Adventure
+                DestinationTypeId = TestDataHelper.AdventureTypeId
             };
 
             // Act
@@ -191,7 +192,7 @@ namespace backend.Tests.Integration
 
             // Assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
-            
+
             // Verificar que se eliminó de la base de datos haciendo una nueva consulta HTTP
             var getResponse = await _client.GetAsync($"/api/v1/destinations/{destination.ID}");
             getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
@@ -233,14 +234,14 @@ namespace backend.Tests.Integration
 
             // Assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-            var types = await response.Content.ReadFromJsonAsync<List<string>>();
+            var types = await response.Content.ReadFromJsonAsync<List<DestinationTypeDto>>();
             types.Should().NotBeNull();
-            types.Should().Contain("Beach");
-            types.Should().Contain("Mountain");
-            types.Should().Contain("City");
-            types.Should().Contain("Cultural");
-            types.Should().Contain("Adventure");
-            types.Should().Contain("Relax");
+            types.Should().Contain(t => t.Code == "BEACH");
+            types.Should().Contain(t => t.Code == "MOUNTAIN");
+            types.Should().Contain(t => t.Code == "CITY");
+            types.Should().Contain(t => t.Code == "CULTURAL");
+            types.Should().Contain(t => t.Code == "ADVENTURE");
+            types.Should().Contain(t => t.Code == "RELAX");
         }
 
         [Fact]
@@ -283,13 +284,13 @@ namespace backend.Tests.Integration
             await SeedTestDataAsync();
 
             // Act
-            var response = await _client.GetAsync("/api/v1/destinations?type=City");
+            var response = await _client.GetAsync($"/api/v1/destinations?destinationTypeId={TestDataHelper.CityTypeId}");
 
             // Assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
             var result = await response.Content.ReadFromJsonAsync<PagedResultDto<DestinationDto>>();
             result.Should().NotBeNull();
-            result!.Items.Should().AllSatisfy(d => d.Type.Should().Be(DestinationType.City));
+            result!.Items.Should().AllSatisfy(d => d.DestinationTypeId.Should().Be(TestDataHelper.CityTypeId));
         }
 
         [Fact]
@@ -314,29 +315,35 @@ namespace backend.Tests.Integration
         {
             var destinations = new List<Destination>
             {
-                new Destination
+                new()
                 {
                     Name = "Cancún",
                     Description = "Hermosa playa en el Caribe mexicano",
                     CountryCode = "MEX",
-                    Type = DestinationType.Beach,
-                    LastModif = DateTime.UtcNow
+                    DestinationTypeId = TestDataHelper.BeachTypeId,
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow,
+                    Status = "Active"
                 },
-                new Destination
+                new()
                 {
                     Name = "París",
                     Description = "La ciudad de la luz y el amor",
                     CountryCode = "FRA",
-                    Type = DestinationType.City,
-                    LastModif = DateTime.UtcNow
+                    DestinationTypeId = TestDataHelper.CityTypeId,
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow,
+                    Status = "Active"
                 },
-                new Destination
+                new()
                 {
                     Name = "Tokio",
                     Description = "Metrópolis moderna con tradición milenaria",
                     CountryCode = "JPN",
-                    Type = DestinationType.Cultural,
-                    LastModif = DateTime.UtcNow
+                    DestinationTypeId = TestDataHelper.CulturalTypeId,
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow,
+                    Status = "Active"
                 }
             };
 
@@ -351,8 +358,10 @@ namespace backend.Tests.Integration
                 Name = "Test Destination",
                 Description = "Test Description",
                 CountryCode = "TST",
-                Type = DestinationType.Beach,
-                LastModif = DateTime.UtcNow
+                DestinationTypeId = TestDataHelper.BeachTypeId,
+                LastModif = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
+                Status = "Active"
             };
 
             _context.Destinations.Add(destination);
