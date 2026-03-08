@@ -301,18 +301,22 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Obtiene clase CSS según el código del tipo de destino
+   * Obtiene los colores del tipo de destino desde el catálogo backend
    */
-  getTypeClass(typeCode?: string): string {
-    if (!typeCode) return 'type-default';
-    const code = typeCode.toLowerCase();
-    
-    if (code.includes('beach')) return 'type-beach';
-    if (code.includes('mountain')) return 'type-mountain';
-    if (code.includes('cultural')) return 'type-cultural';
-    if (code.includes('adventure')) return 'type-adventure';
-    if (code.includes('relax')) return 'type-relax';
-    return 'type-city';
+  getTypeColors(destinationTypeId?: number): { background: string; foreground: string } {
+    if (!destinationTypeId) {
+      return { background: '#f1f5f9', foreground: '#64748b' };
+    }
+
+    const type = this.destinationTypes().find(t => t.id === destinationTypeId);
+    if (!type) {
+      return { background: '#f1f5f9', foreground: '#64748b' };
+    }
+
+    return {
+      background: type.colorBackground || '#eaf0ff',
+      foreground: type.colorForeground || '#1d4ed8'
+    };
   }
 
   showAlert(type: string, message: string): void {

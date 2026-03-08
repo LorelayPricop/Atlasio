@@ -1306,6 +1306,10 @@ export class DestinationTypeDto implements IDestinationTypeDto {
     name!: string | undefined;
     /** Identificador de icono o clase CSS */
     icon?: string | undefined;
+    /** Color de fondo en formato hexadecimal (ej: #dbeafe) */
+    colorBackground?: string | undefined;
+    /** Color de texto en formato hexadecimal (ej: #0284c7) */
+    colorForeground?: string | undefined;
     /** Orden de visualización */
     displayOrder?: number;
     /** Indica si el tipo está activo */
@@ -1326,6 +1330,8 @@ export class DestinationTypeDto implements IDestinationTypeDto {
             this.code = _data["code"];
             this.name = _data["name"];
             this.icon = _data["icon"];
+            this.colorBackground = _data["colorBackground"];
+            this.colorForeground = _data["colorForeground"];
             this.displayOrder = _data["displayOrder"];
             this.isActive = _data["isActive"];
         }
@@ -1344,6 +1350,8 @@ export class DestinationTypeDto implements IDestinationTypeDto {
         data["code"] = this.code;
         data["name"] = this.name;
         data["icon"] = this.icon;
+        data["colorBackground"] = this.colorBackground;
+        data["colorForeground"] = this.colorForeground;
         data["displayOrder"] = this.displayOrder;
         data["isActive"] = this.isActive;
         return data;
@@ -1360,6 +1368,10 @@ export interface IDestinationTypeDto {
     name: string | undefined;
     /** Identificador de icono o clase CSS */
     icon?: string | undefined;
+    /** Color de fondo en formato hexadecimal (ej: #dbeafe) */
+    colorBackground?: string | undefined;
+    /** Color de texto en formato hexadecimal (ej: #0284c7) */
+    colorForeground?: string | undefined;
     /** Orden de visualización */
     displayOrder?: number;
     /** Indica si el tipo está activo */

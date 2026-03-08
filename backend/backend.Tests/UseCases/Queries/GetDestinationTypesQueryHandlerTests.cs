@@ -32,12 +32,60 @@ namespace backend.Tests.Application.Queries
         {
             var types = new[]
             {
-                new backend.Domain.Entities.DestinationType { Code = "BEACH", Name = "Beach", Icon = "beach_access", DisplayOrder = 1 },
-                new backend.Domain.Entities.DestinationType { Code = "MOUNTAIN", Name = "Mountain", Icon = "terrain", DisplayOrder = 2 },
-                new backend.Domain.Entities.DestinationType { Code = "CITY", Name = "City", Icon = "location_city", DisplayOrder = 3 },
-                new backend.Domain.Entities.DestinationType { Code = "CULTURAL", Name = "Cultural", Icon = "museum", DisplayOrder = 4 },
-                new backend.Domain.Entities.DestinationType { Code = "ADVENTURE", Name = "Adventure", Icon = "hiking", DisplayOrder = 5 },
-                new backend.Domain.Entities.DestinationType { Code = "RELAX", Name = "Relax", Icon = "spa", DisplayOrder = 6 }
+                new backend.Domain.Entities.DestinationType 
+                { 
+                    Code = "BEACH", 
+                    Name = "Beach", 
+                    Icon = "beach_access", 
+                    DisplayOrder = 1,
+                    ColorBackground = "#dbeafe",
+                    ColorForeground = "#0284c7"
+                },
+                new backend.Domain.Entities.DestinationType 
+                { 
+                    Code = "MOUNTAIN", 
+                    Name = "Mountain", 
+                    Icon = "terrain", 
+                    DisplayOrder = 2,
+                    ColorBackground = "#d1fae5",
+                    ColorForeground = "#059669"
+                },
+                new backend.Domain.Entities.DestinationType 
+                { 
+                    Code = "CITY", 
+                    Name = "City", 
+                    Icon = "location_city", 
+                    DisplayOrder = 3,
+                    ColorBackground = "#e0e7ff",
+                    ColorForeground = "#4f46e5"
+                },
+                new backend.Domain.Entities.DestinationType 
+                { 
+                    Code = "CULTURAL", 
+                    Name = "Cultural", 
+                    Icon = "museum", 
+                    DisplayOrder = 4,
+                    ColorBackground = "#fae8ff",
+                    ColorForeground = "#a855f7"
+                },
+                new backend.Domain.Entities.DestinationType 
+                { 
+                    Code = "ADVENTURE", 
+                    Name = "Adventure", 
+                    Icon = "hiking", 
+                    DisplayOrder = 5,
+                    ColorBackground = "#fed7aa",
+                    ColorForeground = "#ea580c"
+                },
+                new backend.Domain.Entities.DestinationType 
+                { 
+                    Code = "RELAX", 
+                    Name = "Relax", 
+                    Icon = "spa", 
+                    DisplayOrder = 6,
+                    ColorBackground = "#ccfbf1",
+                    ColorForeground = "#14b8a6"
+                }
             };
             _context.DestinationTypes.AddRange(types);
             _context.SaveChanges();

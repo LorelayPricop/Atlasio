@@ -165,6 +165,12 @@ app-alert {
   justify-content: center;
 }
 
+.icon-wrap.large {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+}
+
 
 .desc-col {
   max-width: 370px;
@@ -181,6 +187,7 @@ app-alert {
   border-radius: 999px;
   padding: 2px 10px;
   font-size: 12px;
+  font-weight: 600;
 }
 
 .country-chip {

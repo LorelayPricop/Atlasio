@@ -27,6 +27,16 @@ namespace backend.Domain.Entities
         public string? Icon { get; set; }
 
         /// <summary>
+        /// Color de fondo en formato hexadecimal (ej: #dbeafe)
+        /// </summary>
+        public string? ColorBackground { get; set; }
+
+        /// <summary>
+        /// Color de texto/primer plano en formato hexadecimal (ej: #0284c7)
+        /// </summary>
+        public string? ColorForeground { get; set; }
+
+        /// <summary>
         /// Orden para mostrar en listas y dropdowns
         /// </summary>
         public int DisplayOrder { get; set; }

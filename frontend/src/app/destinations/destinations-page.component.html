@@ -76,15 +76,25 @@
               <td class="id-col">{{ destination.id }}</td>
               <td>
                 <a [routerLink]="['/destinations', destination.id]" (click)="$event.stopPropagation()" class="name-cell">
-                  <span [ngClass]="['icon-wrap', getTypeClass(destination.typeName)]">
+                  <span 
+                    class="icon-wrap" 
+                    [style.background-color]="getTypeColors(destination.destinationTypeId).background"
+                    [style.color]="getTypeColors(destination.destinationTypeId).foreground">
                     <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.typeName) }}</span>
                   </span>
                   <span>{{ destination.name }}</span>
                 </a>
               </td>
-              <td class="desc-col">{{ destination.description }}</td>
+              <td class="desc-col" [title]="destination.description || ''">{{ destination.description }}</td>
               <td><span class="country-chip">{{ getCountryDisplayName(destination.countryCode) }}</span></td>
-              <td><span [ngClass]="['type-chip', getTypeClass(destination.typeName)]">{{ destination.typeName || 'Unknown' }}</span></td>
+              <td>
+                <span 
+                  class="type-chip" 
+                  [style.background-color]="getTypeColors(destination.destinationTypeId).background"
+                  [style.color]="getTypeColors(destination.destinationTypeId).foreground">
+                  {{ destination.typeName || 'Unknown' }}
+                </span>
+              </td>
               <td class="date-col">{{ destination.lastModif | date:'yyyy-MM-dd HH:mm' }}</td>
               <td class="menu-col">
                 <button type="button" class="row-menu" aria-label="Row options" (click)="$event.stopPropagation()">
@@ -115,7 +125,10 @@
         <article class="destination-card" (click)="selectRow(destination.id!)" [class.selected]="selectedId() === destination.id">
           <div class="card-body">
             <div class="card-head">
-              <div [ngClass]="['icon-wrap', 'large', getTypeClass(destination.typeName)]">
+              <div 
+                class="icon-wrap large" 
+                [style.background-color]="getTypeColors(destination.destinationTypeId).background"
+                [style.color]="getTypeColors(destination.destinationTypeId).foreground">
                 <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.typeName) }}</span>
               </div>
               <button type="button" class="row-menu" aria-label="Row options" (click)="$event.stopPropagation()">
@@ -124,10 +137,15 @@
             </div>
 
             <a [routerLink]="['/destinations', destination.id]" (click)="$event.stopPropagation()" class="card-title">{{ destination.name }}</a>
-            <p class="card-desc">{{ destination.description }}</p>
+            <p class="card-desc" [title]="destination.description || ''">{{ destination.description }}</p>
 
             <div class="card-tags">
-              <span [ngClass]="['type-chip', getTypeClass(destination.typeName)]">{{ destination.typeName || 'Unknown' }}</span>
+              <span 
+                class="type-chip" 
+                [style.background-color]="getTypeColors(destination.destinationTypeId).background"
+                [style.color]="getTypeColors(destination.destinationTypeId).foreground">
+                {{ destination.typeName || 'Unknown' }}
+              </span>
               <span class="country-chip">{{ getCountryDisplayName(destination.countryCode) }}</span>
             </div>
           </div>

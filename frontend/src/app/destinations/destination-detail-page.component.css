@@ -29,7 +29,7 @@
 .status-indicator.status-inactive { background: #dc3545; }
 .content-card, .metadata-card { background: #fff; padding: 20px 22px; border-radius: 12px; border: 1px solid #dde6f2; }
 .card-title { margin: 0 0 14px; font-size: 30px; font-weight: 800; color: #0f172a; }
-.card-description { font-size: 26px; line-height: 1.32; color: #374151; margin: 0; }
+.card-description { font-size: 15px; line-height: 1.6; color: #374151; margin: 0; }
 .metadata-item { display: flex; flex-direction: column; padding: 12px 0; border-bottom: 1px solid #edf2fa; }
 .metadata-item:last-child { border-bottom: none; }
 .metadata-label { font-size: 10px; font-weight: 700; color: #91a0b9; letter-spacing: 0.08em; margin-bottom: 6px; text-transform: uppercase; }
@@ -41,7 +41,7 @@
   .header-copy h1 { font-size: 36px; }
   .main-grid { grid-template-columns: 1fr; }
   .hero-content h2 { font-size: 44px; }
-  .hero-content p, .card-description { font-size: 22px; }
+  .hero-content p, .card-description { font-size: 14px; }
 }
 @media (max-width: 768px) {
   .content-wrapper { padding: 0 14px 24px; }

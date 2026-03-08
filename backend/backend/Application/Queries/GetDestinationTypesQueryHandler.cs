@@ -28,6 +28,8 @@ namespace backend.Application.Queries
                     Code = t.Code,
                     Name = t.Name,
                     Icon = t.Icon,
+                    ColorBackground = t.ColorBackground,
+                    ColorForeground = t.ColorForeground,
                     DisplayOrder = t.DisplayOrder,
                     IsActive = t.IsActive
                 })

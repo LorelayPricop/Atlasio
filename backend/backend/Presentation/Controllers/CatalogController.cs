@@ -76,7 +76,7 @@ namespace backend.Presentation.Controllers
         /// Obtiene el catálogo completo de tipos de destino
         /// </summary>
         /// <param name="onlyActive">Si es true, retorna solo tipos activos (default: true)</param>
-        /// <returns>Lista de tipos de destino con ID, código, nombre, ícono y orden de visualización</returns>
+        /// <returns>Lista de tipos de destino con ID, código, nombre, ícono, colores y orden de visualización</returns>
         /// <response code="200">Lista de tipos de destino obtenida exitosamente</response>
         /// <remarks>
         /// Ejemplo de respuesta:
@@ -88,6 +88,8 @@ namespace backend.Presentation.Controllers
         ///             "code": "BEACH",
         ///             "name": "Beach",
         ///             "icon": "beach_access",
+        ///             "colorBackground": "#dbeafe",
+        ///             "colorForeground": "#0284c7",
         ///             "displayOrder": 1,
         ///             "isActive": true
         ///         },
@@ -96,18 +98,24 @@ namespace backend.Presentation.Controllers
         ///             "code": "MOUNTAIN",
         ///             "name": "Mountain",
         ///             "icon": "terrain",
+        ///             "colorBackground": "#d1fae5",
+        ///             "colorForeground": "#059669",
         ///             "displayOrder": 2,
         ///             "isActive": true
         ///         }
         ///     ]
         ///     
         /// Los códigos de tipo de destino disponibles son:
-        /// - BEACH: Playas y destinos costeros
-        /// - MOUNTAIN: Montañas y destinos de altura
-        /// - CITY: Ciudades y metrópolis
-        /// - CULTURAL: Sitios de interés cultural e histórico
-        /// - ADVENTURE: Destinos de aventura y deportes extremos
-        /// - RELAX: Destinos de relajación y bienestar (spas, retiros)
+        /// - BEACH: Playas y destinos costeros (Azul)
+        /// - MOUNTAIN: Montañas y destinos de altura (Verde)
+        /// - CITY: Ciudades y metrópolis (Índigo)
+        /// - CULTURAL: Sitios de interés cultural e histórico (Púrpura)
+        /// - ADVENTURE: Destinos de aventura y deportes extremos (Naranja)
+        /// - RELAX: Destinos de relajación y bienestar (Turquesa)
+        /// 
+        /// Los colores están diseñados para usar directamente en CSS con las propiedades:
+        /// - colorBackground: Para el fondo del badge/chip
+        /// - colorForeground: Para el texto y el icono
         /// </remarks>
         [HttpGet("destination-types")]
         [ProducesResponseType(typeof(List<DestinationTypeDto>), 200)]
@@ -128,6 +136,8 @@ namespace backend.Presentation.Controllers
                     Code = dt.Code,
                     Name = dt.Name,
                     Icon = dt.Icon,
+                    ColorBackground = dt.ColorBackground,
+                    ColorForeground = dt.ColorForeground,
                     DisplayOrder = dt.DisplayOrder,
                     IsActive = dt.IsActive
                 })
@@ -250,6 +260,8 @@ namespace backend.Presentation.Controllers
                     Code = dt.Code,
                     Name = dt.Name,
                     Icon = dt.Icon,
+                    ColorBackground = dt.ColorBackground,
+                    ColorForeground = dt.ColorForeground,
                     DisplayOrder = dt.DisplayOrder,
                     IsActive = dt.IsActive
                 })

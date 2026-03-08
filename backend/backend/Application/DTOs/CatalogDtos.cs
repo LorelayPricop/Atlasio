@@ -35,6 +35,12 @@ namespace backend.Application.DTOs
         /// <summary>Identificador de icono o clase CSS</summary>
         public string? Icon { get; init; }
 
+        /// <summary>Color de fondo en formato hexadecimal (ej: #dbeafe)</summary>
+        public string? ColorBackground { get; init; }
+
+        /// <summary>Color de texto en formato hexadecimal (ej: #0284c7)</summary>
+        public string? ColorForeground { get; init; }
+
         /// <summary>Orden de visualización</summary>
         public int DisplayOrder { get; init; }
 
