@@ -93,6 +93,20 @@
             <h2 class="card-title">About Destination</h2>
             <p class="card-description">{{ dest.longDescription || dest.description }}</p>
           </div>
+
+          <div class="content-card map-card">
+            <h2 class="card-title">Map Location</h2>
+            <div class="map-frame-wrap">
+              <iframe
+                class="map-frame"
+                [src]="getMapEmbedUrl(dest)"
+                title="Map of {{ dest.name }}"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
         </div>
 
         <!-- Right Column - Metadata -->

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DestinationDto, ApiClient, CountryDto, DestinationTypeDto } from '../services/api-client';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
@@ -18,6 +19,7 @@ export class DestinationDetailPageComponent implements OnInit {
   private readonly catalogService = inject(CatalogService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly sanitizer = inject(DomSanitizer);
 
   destination = signal<DestinationDto | null>(null);
   countries = signal<CountryDto[]>([]);
@@ -94,6 +96,12 @@ export class DestinationDetailPageComponent implements OnInit {
     }
 
     return status.toLowerCase() === 'active' ? 'status-active' : 'status-inactive';
+  }
+
+  getMapEmbedUrl(destination: DestinationDto): SafeResourceUrl {
+    const countryName = this.getCountryName(destination.countryCode);
+    const query = encodeURIComponent(`${destination.name || ''}, ${countryName}`);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`https://maps.google.com/maps?q=${query}&z=6&output=embed`);
   }
 
   isActiveStatus(status?: string): boolean {

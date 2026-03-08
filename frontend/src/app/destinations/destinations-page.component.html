@@ -56,6 +56,42 @@
   }
 
   @if (viewMode() === 'table') {
+    <section class="grid-filters" aria-label="List filters">
+      <label class="grid-filter search">
+        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+        <input
+          type="text"
+          placeholder="Search destination..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange($event)" />
+      </label>
+
+      <label class="grid-filter">
+        <select [(ngModel)]="countryCode" (change)="onFilterChange()">
+          <option value="">All countries</option>
+          @for (country of countries(); track country.code) {
+            <option [value]="country.code">{{ country.name }}</option>
+          }
+        </select>
+        <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+      </label>
+
+      <label class="grid-filter">
+        <select [(ngModel)]="destinationTypeId" (change)="onFilterChange()">
+          <option [ngValue]="null">All types</option>
+          @for (type of destinationTypes(); track type.id) {
+            <option [ngValue]="type.id">{{ type.name }}</option>
+          }
+        </select>
+        <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+      </label>
+
+      <button type="button" class="clear-filters" (click)="clearFilters()">
+        <span class="material-symbols-outlined" aria-hidden="true">filter_alt_off</span>
+        Clear
+      </button>
+    </section>
+
     <section class="table-shell">
       <table class="destinations-table">
         <thead>
@@ -120,6 +156,42 @@
       </footer>
     </section>
   } @else {
+    <section class="grid-filters" aria-label="Grid filters">
+      <label class="grid-filter search">
+        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+        <input
+          type="text"
+          placeholder="Search destination..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange($event)" />
+      </label>
+
+      <label class="grid-filter">
+        <select [(ngModel)]="countryCode" (change)="onFilterChange()">
+          <option value="">All countries</option>
+          @for (country of countries(); track country.code) {
+            <option [value]="country.code">{{ country.name }}</option>
+          }
+        </select>
+        <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+      </label>
+
+      <label class="grid-filter">
+        <select [(ngModel)]="destinationTypeId" (change)="onFilterChange()">
+          <option [ngValue]="null">All types</option>
+          @for (type of destinationTypes(); track type.id) {
+            <option [ngValue]="type.id">{{ type.name }}</option>
+          }
+        </select>
+        <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+      </label>
+
+      <button type="button" class="clear-filters" (click)="clearFilters()">
+        <span class="material-symbols-outlined" aria-hidden="true">filter_alt_off</span>
+        Clear
+      </button>
+    </section>
+
     <section class="grid-shell">
       @for (destination of destinations(); track destination.id) {
         @let typeColors = getTypeColors(destination.destinationTypeId);

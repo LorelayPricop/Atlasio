@@ -193,6 +193,14 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     this.loadDestinations();
   }
 
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.countryCode = '';
+    this.destinationTypeId = null;
+    this.filter.set({ page: 1, pageSize: this.pageSize });
+    this.loadDestinations();
+  }
+
   /**
    * Cambia de página (offset: -1 para anterior, +1 para siguiente)
    */
