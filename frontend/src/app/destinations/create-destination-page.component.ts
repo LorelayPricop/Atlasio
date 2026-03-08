@@ -28,6 +28,7 @@ export class CreateDestinationPageComponent implements OnInit {
   countries = signal<string[]>(COUNTRY_OPTIONS);
   destinationTypes = signal<string[]>([]);
   selectedImageName = signal<string>('');
+  selectedImageDataUrl = signal<string>('');
 
   formModel: { name: string; countryCode: string; type: number; description: string; longDescription: string } = {
     name: '',
@@ -68,7 +69,34 @@ export class CreateDestinationPageComponent implements OnInit {
   onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files.length > 0 ? input.files[0] : null;
-    this.selectedImageName.set(file?.name || '');
+
+    if (!file) {
+      this.selectedImageName.set('');
+      this.selectedImageDataUrl.set('');
+      return;
+    }
+
+    const maxSizeBytes = 10 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      this.selectedImageName.set('');
+      this.selectedImageDataUrl.set('');
+      this.showAlert('warning', 'Image exceeds 10MB limit. Please choose a smaller file.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      this.selectedImageName.set(file.name);
+      this.selectedImageDataUrl.set(result);
+    };
+    reader.onerror = () => {
+      this.selectedImageName.set('');
+      this.selectedImageDataUrl.set('');
+      this.showAlert('error', 'Error reading selected image.');
+    };
+
+    reader.readAsDataURL(file);
   }
 
   onCancel(): void {
@@ -86,6 +114,7 @@ export class CreateDestinationPageComponent implements OnInit {
     dto.name = model.name.trim();
     dto.description = model.description.trim();
     dto.longDescription = model.longDescription.trim() || undefined;
+    dto.imageUrl = this.selectedImageDataUrl() || undefined;
     dto.countryCode = model.countryCode;
     dto.type = this.getDestinationTypeFromIndex(model.type);
 
