@@ -1,7 +1,9 @@
 <div class="app-shell">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark">A</div>
+      <div class="brand-mark">
+        <span class="material-symbols-outlined" aria-hidden="true">map</span>
+      </div>
       <div>
         <p class="brand-title">Atlasio</p>
         <p class="brand-subtitle">Management Portal</p>
@@ -9,11 +11,26 @@
     </div>
 
     <nav class="menu">
-      <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">Dashboard</a>
-      <a routerLink="/destinations" routerLinkActive="active" class="menu-item">Destinations</a>
-      <button type="button" class="menu-item muted" disabled>Bookings</button>
-      <button type="button" class="menu-item muted" disabled>Hotels</button>
-      <button type="button" class="menu-item muted" disabled>Settings</button>
+      <a routerLink="/dashboard" routerLinkActive="active" class="menu-item">
+        <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+        Dashboard
+      </a>
+      <a routerLink="/destinations" routerLinkActive="active" class="menu-item">
+        <span class="material-symbols-outlined" aria-hidden="true">explore</span>
+        Destinations
+      </a>
+      <button type="button" class="menu-item muted" disabled>
+        <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
+        Bookings
+      </button>
+      <button type="button" class="menu-item muted" disabled>
+        <span class="material-symbols-outlined" aria-hidden="true">hotel</span>
+        Hotels
+      </button>
+      <button type="button" class="menu-item muted" disabled>
+        <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+        Settings
+      </button>
     </nav>
 
     <div class="sidebar-footer">
@@ -23,7 +40,9 @@
           <p class="account-name">Alex Morgan</p>
           <p class="account-role">Admin Account</p>
         </div>
-        <button type="button" class="account-action" aria-label="Open account menu">></button>
+        <button type="button" class="account-action" aria-label="Logout">
+          <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+        </button>
       </div>
     </div>
   </aside>
@@ -33,7 +52,14 @@
       <h1 class="page-title">Overview</h1>
       <div class="topbar-actions">
         <input class="search" type="search" placeholder="Search report..." aria-label="Search report" />
-        <button type="button" class="primary">+ New Property</button>
+        <button type="button" class="icon-btn" aria-label="Notifications">
+          <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+          <span class="dot"></span>
+        </button>
+        <button type="button" class="primary">
+          <span class="material-symbols-outlined" aria-hidden="true">add</span>
+          New Property
+        </button>
       </div>
     </header>
 

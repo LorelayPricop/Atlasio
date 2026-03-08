@@ -1,1 +1,177 @@
-<!-- Dashboard intentionally left empty for now. -->
+<section class="dashboard">
+	<div class="metrics-grid">
+		<article class="card metric-card">
+			<div class="metric-head">
+				<p>Total Destinations</p>
+				<span class="metric-icon blue material-symbols-outlined" aria-hidden="true">public</span>
+			</div>
+			<h3>1,240</h3>
+			<p class="trend up"><span class="material-symbols-outlined" aria-hidden="true">trending_up</span>+12% from last month</p>
+		</article>
+
+		<article class="card metric-card">
+			<div class="metric-head">
+				<p>Active Bookings</p>
+				<span class="metric-icon blue material-symbols-outlined" aria-hidden="true">confirmation_number</span>
+			</div>
+			<h3>856</h3>
+			<p class="trend up"><span class="material-symbols-outlined" aria-hidden="true">trending_up</span>+5.2% from last month</p>
+		</article>
+
+		<article class="card metric-card">
+			<div class="metric-head">
+				<p>New Requests</p>
+				<span class="metric-icon amber material-symbols-outlined" aria-hidden="true">pending_actions</span>
+			</div>
+			<h3>42</h3>
+			<p class="trend down"><span class="material-symbols-outlined" aria-hidden="true">trending_down</span>-2% from last week</p>
+		</article>
+
+		<article class="card metric-card">
+			<div class="metric-head">
+				<p>System Health</p>
+				<span class="metric-icon green material-symbols-outlined" aria-hidden="true">check_circle</span>
+			</div>
+			<h3>98.2%</h3>
+			<p class="trend up"><span class="material-symbols-outlined" aria-hidden="true">bolt</span>All systems operational</p>
+		</article>
+	</div>
+
+	<div class="layout-grid">
+		<div class="left-column">
+			<article class="card chart-card">
+				<div class="section-head">
+					<h4>Destinations by Type</h4>
+					<button type="button" class="chip">Last 6 Months</button>
+				</div>
+				<div class="bars">
+					<div class="bar-item">
+						<div class="bar-track" style="--value: 90%"></div>
+						<p>City</p>
+					</div>
+					<div class="bar-item">
+						<div class="bar-track" style="--value: 60%"></div>
+						<p>Resort</p>
+					</div>
+					<div class="bar-item">
+						<div class="bar-track" style="--value: 40%"></div>
+						<p>Nature</p>
+					</div>
+					<div class="bar-item">
+						<div class="bar-track" style="--value: 80%"></div>
+						<p>Airport</p>
+					</div>
+					<div class="bar-item">
+						<div class="bar-track" style="--value: 30%"></div>
+						<p>Historic</p>
+					</div>
+				</div>
+			</article>
+
+			<article class="card updates-card">
+				<div class="section-head">
+					<h4>Latest Destination Updates</h4>
+					<button type="button" class="link-btn">View All</button>
+				</div>
+
+				<div class="update-item">
+					<div class="thumb one"></div>
+					<div class="update-copy">
+						<p class="title">Santorini Luxury Resorts</p>
+						<p class="subtitle">Updated availability and seasonal pricing</p>
+					</div>
+					<div class="update-meta">
+						<p>2h ago</p>
+						<span class="pill success">Success</span>
+					</div>
+				</div>
+
+				<div class="update-item">
+					<div class="thumb two"></div>
+					<div class="update-copy">
+						<p class="title">Tokyo Metropolitan Hub</p>
+						<p class="subtitle">New high-speed rail integration added</p>
+					</div>
+					<div class="update-meta">
+						<p>5h ago</p>
+						<span class="pill info">Update</span>
+					</div>
+				</div>
+
+				<div class="update-item">
+					<div class="thumb three"></div>
+					<div class="update-copy">
+						<p class="title">Swiss Alps Retreat</p>
+						<p class="subtitle">Pending gallery moderation (12 images)</p>
+					</div>
+					<div class="update-meta">
+						<p>1d ago</p>
+						<span class="pill pending">Pending</span>
+					</div>
+				</div>
+			</article>
+		</div>
+
+		<div class="right-column">
+			<article class="card approvals-card">
+				<h4>Pending Approvals</h4>
+
+				<div class="approval-box">
+					<div class="approval-head">
+						<span>Destination</span>
+						<span class="accent">New Listing</span>
+					</div>
+					<p class="title">Hotel Grand Palace, Paris</p>
+					<p class="subtitle">Submitted by: Michael S.</p>
+					<div class="approval-actions">
+						<button type="button" class="btn-primary">Approve</button>
+						<button type="button" class="btn-soft">Review</button>
+					</div>
+				</div>
+
+				<div class="approval-box">
+					<div class="approval-head">
+						<span>Agency</span>
+						<span class="accent warn">Contract</span>
+					</div>
+					<p class="title">Safari Tours Kenya Ltd.</p>
+					<p class="subtitle">Expiring in 3 days</p>
+					<button type="button" class="btn-outline">Renew Contract</button>
+				</div>
+			</article>
+
+			<article class="card tasks-card">
+				<h4>Upcoming Tasks</h4>
+
+				<div class="task-item">
+					<span class="check active"></span>
+					<div>
+						<p class="title">Quarterly Audit - SE Asia</p>
+						<p class="subtitle">Deadline: Oct 24, 2023</p>
+					</div>
+				</div>
+
+				<div class="task-item">
+					<span class="check"></span>
+					<div>
+						<p class="title">Update Winter Pricing</p>
+						<p class="subtitle">Assignee: Sales Team</p>
+					</div>
+				</div>
+
+				<div class="task-item">
+					<span class="check"></span>
+					<div>
+						<p class="title">API Security Patch</p>
+						<p class="subtitle">Engineering Dept.</p>
+					</div>
+				</div>
+
+				<button type="button" class="btn-add-task">
+					<span class="material-symbols-outlined" aria-hidden="true">add</span>
+					Add Task
+				</button>
+			</article>
+		</div>
+	</div>
+</section>
