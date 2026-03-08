@@ -6,6 +6,7 @@ import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { getCountryNameByCity } from '../shared/enums/city.enum';
 import { getCountryNameByCode } from '../shared/enums/country.enum';
+import { getDestinationTypeLabel } from '../shared/enums/destination-type.enum';
 
 @Component({
   selector: 'app-destination-detail-page',
@@ -53,16 +54,7 @@ export class DestinationDetailPageComponent implements OnInit {
   }
 
   getTypeLabel(type: string | number): string {
-    const typeMap: { [key: number]: string } = {
-      0: 'Beach',
-      1: 'Mountain',
-      2: 'City',
-      3: 'Cultural',
-      4: 'Adventure',
-      5: 'Relax'
-    };
-    const numType = typeof type === 'string' ? parseInt(type) : type;
-    return typeMap[numType] || String(type);
+    return getDestinationTypeLabel(type);
   }
 
   getCountryName(countryCode?: string, cityName?: string): string {
@@ -93,9 +85,7 @@ export class DestinationDetailPageComponent implements OnInit {
   onEdit(): void {
     const destination = this.destination();
     if (destination?.id) {
-      this.router.navigate(['/destinations'], { 
-        queryParams: { edit: destination.id } 
-      });
+      this.router.navigate(['/destinations', destination.id, 'edit']);
     }
   }
 

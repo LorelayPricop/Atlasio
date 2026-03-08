@@ -39,6 +39,8 @@ namespace backend.Application.Adapters
                 {
                     Name = createDto.Name,
                     Description = createDto.Description,
+                    LongDescription = createDto.LongDescription,
+                    ImageUrl = createDto.ImageUrl,
                     CountryCode = createDto.CountryCode,
                     Type = createDto.Type,
                     LastModif = DateTime.UtcNow,
@@ -53,6 +55,8 @@ namespace backend.Application.Adapters
                 {
                     Name = updateDto.Name,
                     Description = updateDto.Description,
+                    LongDescription = updateDto.LongDescription,
+                    ImageUrl = updateDto.ImageUrl,
                     CountryCode = updateDto.CountryCode,
                     Type = updateDto.Type,
                     LastModif = DateTime.UtcNow
@@ -68,6 +72,8 @@ namespace backend.Application.Adapters
             {
                 existingEntity.Name = updateDto.Name;
                 existingEntity.Description = updateDto.Description;
+                existingEntity.LongDescription = updateDto.LongDescription;
+                existingEntity.ImageUrl = updateDto.ImageUrl;
                 existingEntity.CountryCode = updateDto.CountryCode;
                 existingEntity.Type = updateDto.Type;
                 existingEntity.LastModif = DateTime.UtcNow;

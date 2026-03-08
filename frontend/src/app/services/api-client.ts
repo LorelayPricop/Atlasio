@@ -566,6 +566,10 @@ export class CreateDestinationDto implements ICreateDestinationDto {
     name!: string;
     /** Descripción detallada del destino */
     description!: string;
+    /** Descripción larga y detallada del destino con información completa */
+    longDescription?: string | undefined;
+    /** URL o data URL de la imagen principal del destino */
+    imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode!: string;
     type!: DestinationType;
@@ -583,6 +587,8 @@ export class CreateDestinationDto implements ICreateDestinationDto {
         if (_data) {
             this.name = _data["name"];
             this.description = _data["description"];
+            this.longDescription = _data["longDescription"];
+            this.imageUrl = _data["imageUrl"];
             this.countryCode = _data["countryCode"];
             this.type = _data["type"];
         }
@@ -599,6 +605,8 @@ export class CreateDestinationDto implements ICreateDestinationDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["description"] = this.description;
+        data["longDescription"] = this.longDescription;
+        data["imageUrl"] = this.imageUrl;
         data["countryCode"] = this.countryCode;
         data["type"] = this.type;
         return data;
@@ -611,6 +619,10 @@ export interface ICreateDestinationDto {
     name: string;
     /** Descripción detallada del destino */
     description: string;
+    /** Descripción larga y detallada del destino con información completa */
+    longDescription?: string | undefined;
+    /** URL o data URL de la imagen principal del destino */
+    imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode: string;
     type: DestinationType;
@@ -884,6 +896,10 @@ export class UpdateDestinationDto implements IUpdateDestinationDto {
     name!: string;
     /** Descripción detallada del destino */
     description!: string;
+    /** Descripción larga y detallada del destino con información completa */
+    longDescription?: string | undefined;
+    /** URL o data URL de la imagen principal del destino */
+    imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode!: string;
     type!: DestinationType;
@@ -901,6 +917,8 @@ export class UpdateDestinationDto implements IUpdateDestinationDto {
         if (_data) {
             this.name = _data["name"];
             this.description = _data["description"];
+            this.longDescription = _data["longDescription"];
+            this.imageUrl = _data["imageUrl"];
             this.countryCode = _data["countryCode"];
             this.type = _data["type"];
         }
@@ -917,6 +935,8 @@ export class UpdateDestinationDto implements IUpdateDestinationDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["description"] = this.description;
+        data["longDescription"] = this.longDescription;
+        data["imageUrl"] = this.imageUrl;
         data["countryCode"] = this.countryCode;
         data["type"] = this.type;
         return data;
@@ -929,6 +949,10 @@ export interface IUpdateDestinationDto {
     name: string;
     /** Descripción detallada del destino */
     description: string;
+    /** Descripción larga y detallada del destino con información completa */
+    longDescription?: string | undefined;
+    /** URL o data URL de la imagen principal del destino */
+    imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode: string;
     type: DestinationType;

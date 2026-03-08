@@ -11,6 +11,14 @@ export const routes: Routes = [
     loadComponent: () => import('./destinations/destinations-page.component').then(m => m.DestinationsPageComponent)
   },
   {
+    path: 'destinations/new',
+    loadComponent: () => import('./destinations/create-destination-page.component').then(m => m.CreateDestinationPageComponent)
+  },
+  {
+    path: 'destinations/:id/edit',
+    loadComponent: () => import('./destinations/edit-destination-page.component').then(m => m.EditDestinationPageComponent)
+  },
+  {
     path: 'destinations/:id',
     loadComponent: () => import('./destinations/destination-detail-page.component').then(m => m.DestinationDetailPageComponent)
   },
