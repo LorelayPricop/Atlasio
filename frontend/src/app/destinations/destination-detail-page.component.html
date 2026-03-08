@@ -6,56 +6,132 @@
     (dismissed)="onAlertDismissed()">
   </app-alert>
 
-  <div class="detail-header">
-    <app-button variant="secondary" (clicked)="onBack()">← Volver</app-button>
-    <h1>Detalle del Destino</h1>
-    <app-button variant="primary" (clicked)="onEdit()">Editar</app-button>
-  </div>
-
   <app-loading [isLoading]="loading()"></app-loading>
 
   @if (destination(); as dest) {
-    <div class="detail-content">
-      <div class="detail-card">
-        <div class="detail-section">
-          <h2>{{ dest.name }}</h2>
-          <div class="detail-meta">
-            <span class="detail-badge">{{ dest.countryCode }}</span>
-            <span class="detail-badge">{{ getTypeLabel(dest.type || '') }}</span>
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb">
+      <a href="/destinations">Destinations</a>
+      <span class="separator">›</span>
+      <span class="current">{{ dest.name }}</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+      <header class="detail-header">
+        <div class="header-copy">
+          <h1>Destination Details</h1>
+          <p>View and manage detailed information for {{ dest.name }}</p>
+        </div>
+
+        <div class="header-actions">
+          <button type="button" class="detail-btn back" (click)="onBack()">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+            Back to List
+          </button>
+
+          <button type="button" class="detail-btn edit" (click)="onEdit()">
+            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            Edit
+          </button>
+
+          <button type="button" class="detail-btn delete" (click)="onDelete()">
+            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+            Delete
+          </button>
+        </div>
+      </header>
+
+      <!-- Hero Section with Image -->
+      <div class="hero-section" [style.background-image]="'url(' + (dest.imageUrl || 'https://via.placeholder.com/1200x400?text=' + dest.name) + ')'">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-content-inner">
+            @if (isActiveStatus(dest.status)) {
+              <div class="featured-badge">FEATURED</div>
+            }
+            <h2>{{ dest.name }}, {{ getCountryName(dest.countryCode, dest.name) }}</h2>
+            <p>{{ dest.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="left-column">
+          <!-- Stats Section -->
+          <div class="stats-section">
+            <div class="stat-card">
+              <div class="stat-label">TOTAL BOOKINGS</div>
+              <div class="stat-value">{{ (dest.totalBookings ?? 0) | number }}</div>
+              @if ((dest.totalBookings ?? 0) > 0) {
+                <div class="stat-change" [class.positive]="true">+{{ dest.totalBookings ?? 0 }}%</div>
+              }
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">AVG. RATING</div>
+              <div class="stat-value">{{ dest.averageRating ?? 0 }}/5.0</div>
+              @if ((dest.reviewCount ?? 0) > 0) {
+                <div class="stat-subtext">Based on {{ dest.reviewCount ?? 0 }} reviews</div>
+              }
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">STATUS</div>
+              <div class="stat-value">
+                <span class="status-indicator" [ngClass]="getStatusClass(dest.status)"></span>
+                {{ dest.status ?? 'No status' }}
+              </div>
+              @if (isActiveStatus(dest.status)) {
+                <div class="stat-subtext">Live on platform</div>
+              }
+            </div>
+          </div>
+
+          <!-- About Section -->
+          <div class="content-card">
+            <h2 class="card-title">About Destination</h2>
+            <p class="card-description">{{ dest.longDescription || dest.description }}</p>
           </div>
         </div>
 
-        <div class="detail-section">
-          <h3>Descripción</h3>
-          <p class="detail-description">{{ dest.description }}</p>
-        </div>
-
-        <div class="detail-section">
-          <h3>Información</h3>
-          <div class="detail-info">
-            <div class="info-row">
-              <span class="info-label">ID:</span>
-              <span class="info-value">{{ dest.id }}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">País:</span>
-              <span class="info-value">{{ dest.countryCode }}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Tipo:</span>
-              <span class="info-value">{{ getTypeLabel(dest.type || '') }}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Última modificación:</span>
-              <span class="info-value">{{ dest.lastModif | date:'dd/MM/yyyy HH:mm' }}</span>
+        <!-- Right Column - Metadata -->
+        <aside class="right-column">
+          <div class="metadata-card">
+            <h2 class="card-title">Metadata</h2>
+            <div class="metadata-list">
+              <div class="metadata-item">
+                <span class="metadata-label">Country</span>
+                <span class="metadata-value">{{ dest.name }}, {{ getCountryName(dest.countryCode, dest.name) }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Type</span>
+                <span class="metadata-value">{{ getTypeLabel(dest.type || '') }}</span>
+              </div>
+              @if (dest.createdBy) {
+                <div class="metadata-item">
+                  <span class="metadata-label">Created by</span>
+                  <span class="metadata-value">{{ dest.createdBy }}</span>
+                </div>
+              }
+              @if (dest.createdDate) {
+                <div class="metadata-item">
+                  <span class="metadata-label">Created date</span>
+                  <span class="metadata-value">{{ dest.createdDate | date:'MMM d, y, h:mm a' }}</span>
+                </div>
+              }
+              <div class="metadata-item">
+                <span class="metadata-label">Last updated</span>
+                <span class="metadata-value">{{ dest.lastModif | date:'MMM d, y' }}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   } @else if (!loading()) {
     <div class="detail-empty">
-      <p>No se encontró el destino solicitado.</p>
+      <p>The requested destination was not found.</p>
     </div>
   }
 </div>

@@ -10,6 +10,8 @@ import { AlertComponent } from '../shared/alert/alert.component';
 import { ModalComponent } from '../shared/modal/modal.component';
 import { ConfirmComponent } from '../shared/confirm/confirm.component';
 import { DestinationCategory } from '../shared/enums/destination-category.enum';
+import { CITY_OPTIONS } from '../shared/enums/city.enum';
+import { COUNTRY_OPTIONS, getCountryNameByCode } from '../shared/enums/country.enum';
 
 @Component({
   selector: 'app-destinations-page',
@@ -45,10 +47,11 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
   
   // Opciones para selectores
   pageSizeOptions = [5, 10, 20, 50, 100];
+  cityOptions = CITY_OPTIONS;
 
   // Opciones para selects
   destinationTypes = signal<string[]>([]);
-  countries = signal<string[]>([]);
+  countries = signal<string[]>(COUNTRY_OPTIONS);
 
   // Estado modal y formulario
   isModalOpen = signal<boolean>(false);
@@ -87,8 +90,14 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
 
   loadCountries(): void {
     this.apiService.countries().subscribe({
-      next: (countries: string[]) => this.countries.set(countries),
-      error: (error: any) => console.error('Error al cargar países:', error)
+      next: (countries: string[]) => {
+        const merged = new Set<string>([...COUNTRY_OPTIONS, ...(countries || [])]);
+        this.countries.set(Array.from(merged));
+      },
+      error: (error: any) => {
+        console.error('Error al cargar países:', error);
+        this.countries.set(COUNTRY_OPTIONS);
+      }
     });
   }
 
@@ -416,6 +425,10 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
 
   getTypeClass(type: string | number | DestinationType): string {
     return this.getTypeCategory(type);
+  }
+
+  getCountryDisplayName(countryCode?: string): string {
+    return getCountryNameByCode(countryCode) || countryCode || 'Not specified';
   }
 
   getTypeIcon(type: string | number | DestinationType): string {

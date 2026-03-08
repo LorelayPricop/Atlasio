@@ -4,12 +4,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DestinationDto, ApiClient } from '../services/api-client';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
-import { ButtonComponent } from '../shared/button/button.component';
+import { getCountryNameByCity } from '../shared/enums/city.enum';
+import { getCountryNameByCode } from '../shared/enums/country.enum';
 
 @Component({
   selector: 'app-destination-detail-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoadingComponent, AlertComponent, ButtonComponent],
+  imports: [CommonModule, RouterModule, LoadingComponent, AlertComponent],
   templateUrl: './destination-detail-page.component.html',
   styleUrls: ['./destination-detail-page.component.css']
 })
@@ -31,7 +32,7 @@ export class DestinationDetailPageComponent implements OnInit {
     if (id) {
       this.loadDestination(parseInt(id, 10));
     } else {
-      this.showAlert('error', 'ID de destino no válido');
+      this.showAlert('error', 'Invalid destination ID');
     }
   }
 
@@ -46,13 +47,43 @@ export class DestinationDetailPageComponent implements OnInit {
       },
       error: (error: any) => {
         this.loading.set(false);
-        this.showAlert('error', 'Error al cargar el destino: ' + error.message);
+        this.showAlert('error', 'Error loading destination: ' + error.message);
       }
     });
   }
 
   getTypeLabel(type: string | number): string {
-    return String(type);
+    const typeMap: { [key: number]: string } = {
+      0: 'Beach',
+      1: 'Mountain',
+      2: 'City',
+      3: 'Cultural',
+      4: 'Adventure',
+      5: 'Relax'
+    };
+    const numType = typeof type === 'string' ? parseInt(type) : type;
+    return typeMap[numType] || String(type);
+  }
+
+  getCountryName(countryCode?: string, cityName?: string): string {
+    const inferredFromCity = getCountryNameByCity(cityName);
+    if (inferredFromCity) {
+      return inferredFromCity;
+    }
+
+    return getCountryNameByCode(countryCode) || countryCode || 'Not specified';
+  }
+
+  getStatusClass(status?: string): string {
+    if (!status) {
+      return 'status-inactive';
+    }
+
+    return status.toLowerCase() === 'active' ? 'status-active' : 'status-inactive';
+  }
+
+  isActiveStatus(status?: string): boolean {
+    return (status ?? '').toLowerCase() === 'active';
   }
 
   onBack(): void {
@@ -64,6 +95,23 @@ export class DestinationDetailPageComponent implements OnInit {
     if (destination?.id) {
       this.router.navigate(['/destinations'], { 
         queryParams: { edit: destination.id } 
+      });
+    }
+  }
+
+  onDelete(): void {
+    const destination = this.destination();
+    if (destination?.id && confirm(`Are you sure you want to delete "${destination.name}"?`)) {
+      this.loading.set(true);
+      this.apiService.destinationsDELETE(destination.id).subscribe({
+        next: () => {
+          this.showAlert('success', 'Destination deleted successfully');
+          setTimeout(() => this.router.navigate(['/destinations']), 1500);
+        },
+        error: (error: any) => {
+          this.loading.set(false);
+          this.showAlert('error', 'Error deleting destination: ' + error.message);
+        }
       });
     }
   }

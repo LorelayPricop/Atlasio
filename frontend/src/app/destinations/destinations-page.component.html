@@ -83,7 +83,7 @@
                 </a>
               </td>
               <td class="desc-col">{{ destination.description }}</td>
-              <td><span class="country-chip">{{ destination.countryCode }}</span></td>
+              <td><span class="country-chip">{{ getCountryDisplayName(destination.countryCode) }}</span></td>
               <td><span [ngClass]="['type-chip', getTypeClass(destination.type || 0)]">{{ getTypeLabel(destination.type || 0) }}</span></td>
               <td class="date-col">{{ destination.lastModif | date:'yyyy-MM-dd HH:mm' }}</td>
               <td class="menu-col">
@@ -128,7 +128,7 @@
 
             <div class="card-tags">
               <span [ngClass]="['type-chip', getTypeClass(destination.type || 0)]">{{ getTypeLabel(destination.type || 0) }}</span>
-              <span class="country-chip">{{ destination.countryCode }}</span>
+              <span class="country-chip">{{ getCountryDisplayName(destination.countryCode) }}</span>
             </div>
           </div>
 
@@ -160,8 +160,14 @@
     <div class="form-grid">
       <label>
         Nombre
-        <input name="name" [(ngModel)]="formModel.name" required />
+        <input name="name" [(ngModel)]="formModel.name" list="city-options" required />
       </label>
+
+      <datalist id="city-options">
+        @for (city of cityOptions; track city) {
+          <option [value]="city"></option>
+        }
+      </datalist>
 
       <label>
         Descripción
@@ -173,7 +179,7 @@
         <select name="countryCode" [(ngModel)]="formModel.countryCode" required>
           <option value="" disabled>Selecciona un país</option>
           @for (country of countries(); track country) {
-            <option [value]="country">{{ country }}</option>
+            <option [value]="country">{{ getCountryDisplayName(country) }}</option>
           }
         </select>
       </label>
