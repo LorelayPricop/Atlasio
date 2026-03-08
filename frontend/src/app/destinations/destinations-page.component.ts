@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -15,7 +15,8 @@ import { CatalogService } from '../services/catalog.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, LoadingComponent, AlertComponent, ConfirmComponent],
   templateUrl: './destinations-page.component.html',
-  styleUrls: ['./destinations-page.component.css']
+  styleUrls: ['./destinations-page.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DestinationsPageComponent implements OnInit, OnDestroy {
   private readonly apiService = inject(ApiClient);
@@ -40,6 +41,27 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
   // Catálogos cargados del backend
   countries = signal<CountryDto[]>([]);
   destinationTypes = signal<DestinationTypeDto[]>([]);
+  readonly defaultDestinationImage = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&h=300&fit=crop';
+
+  private readonly countriesMap = computed(() => {
+    const map = new Map<string, string>();
+    for (const country of this.countries()) {
+      if (country.code) {
+        map.set(country.code, country.name || country.code);
+      }
+    }
+    return map;
+  });
+
+  private readonly destinationTypesMap = computed(() => {
+    const map = new Map<number, DestinationTypeDto>();
+    for (const type of this.destinationTypes()) {
+      if (type.id != null) {
+        map.set(type.id, type);
+      }
+    }
+    return map;
+  });
   
   // Estados de alertas
   alert = signal<{ show: boolean; type: string; message: string }>({
@@ -281,8 +303,7 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
    */
   getCountryDisplayName(countryCode?: string): string {
     if (!countryCode) return 'Not specified';
-    const country = this.countries().find(c => c.code === countryCode);
-    return country?.name || countryCode;
+    return this.countriesMap().get(countryCode) || countryCode;
   }
 
   /**
@@ -308,7 +329,7 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
       return { background: '#f1f5f9', foreground: '#64748b' };
     }
 
-    const type = this.destinationTypes().find(t => t.id === destinationTypeId);
+    const type = this.destinationTypesMap().get(destinationTypeId);
     if (!type) {
       return { background: '#f1f5f9', foreground: '#64748b' };
     }

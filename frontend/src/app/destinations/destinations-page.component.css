@@ -271,10 +271,68 @@ app-alert {
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: 340px;
 }
 
 .destination-card.selected {
   border-color: #9cb7ff;
+}
+
+.card-image {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: #eef2f8;
+}
+
+.card-image-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.icon-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.icon-badge .material-symbols-outlined {
+  font-size: 24px;
+}
+
+.card-menu {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.card-menu:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.card-menu .material-symbols-outlined {
+  font-size: 18px;
+  color: #475569;
 }
 
 .card-body {
