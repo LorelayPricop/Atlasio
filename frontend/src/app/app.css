@@ -244,6 +244,7 @@
   font-weight: 600;
   background: var(--brand);
   color: #fff;
+  white-space: nowrap;
 }
 
 .content {
@@ -251,6 +252,20 @@
   min-height: 0;
   padding-top: 14px;
   overflow: auto;
+}
+
+@media (max-width: 1200px) {
+  .app-shell {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .workspace {
+    padding: 12px;
+  }
+
+  .search {
+    width: 200px;
+  }
 }
 
 @media (max-width: 960px) {
@@ -268,11 +283,17 @@
   .sidebar {
     border-right: 0;
     border-bottom: 1px solid var(--line);
+    padding: 12px;
   }
 
   .menu {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .menu-item {
+    flex: 0 0 auto;
   }
 
   .sidebar-footer {
@@ -301,7 +322,17 @@
   }
 
   .search {
-    width: min(62vw, 260px);
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .account-card {
+    width: 100%;
   }
 
   .content {

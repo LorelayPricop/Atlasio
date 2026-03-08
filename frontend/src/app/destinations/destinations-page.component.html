@@ -1,85 +1,159 @@
-<div class="layout">
-  <aside class="sidebar">
-    <h3>Filtros</h3>
-    <input 
-      type="text" 
-      placeholder="Buscar..." 
-      [ngModel]="searchTerm"
-      (ngModelChange)="onSearchChange($event)"
-      (keyup.enter)="onSearch()" />
-    <select [(ngModel)]="countryCode" (change)="onFilterChange()">
-      <option value="">Todos los países</option>
-      @for (country of countries(); track country) {
-        <option [value]="country">{{ country }}</option>
-      }
-    </select>
-    <select [(ngModel)]="type" (change)="onFilterChange()">
-      <option value="">Todos los tipos</option>
-      @for (destType of destinationTypes(); track destType) {
-        <option [value]="destType">{{ getTypeLabel(destType) }}</option>
-      }
-    </select>
-  </aside>
+<section class="destinations-page">
+  <header class="page-head">
+    <div>
+      <h1>Destinations</h1>
+      <p>Manage and organize global travel destinations and properties.</p>
+    </div>
 
-  <section class="content">
-    <app-alert 
-      [show]="alert().show" 
-      [type]="alert().type" 
+    <div class="head-actions">
+      <div class="view-toggle-group">
+        <button
+          type="button"
+          class="icon-toggle"
+          [class.active]="viewMode() === 'table'"
+          aria-label="List view"
+          (click)="setViewMode('table')">
+          <span class="material-symbols-outlined" aria-hidden="true">format_list_bulleted</span>
+        </button>
+        <button
+          type="button"
+          class="icon-toggle"
+          [class.active]="viewMode() === 'grid'"
+          aria-label="Grid view"
+          (click)="setViewMode('grid')">
+          <span class="material-symbols-outlined" aria-hidden="true">grid_view</span>
+        </button>
+      </div>
+
+      <button type="button" class="btn primary" (click)="onCreate()">
+        <span class="material-symbols-outlined" aria-hidden="true">add_circle</span>
+        Create destiny
+      </button>
+
+      <button type="button" class="btn soft" [disabled]="selectedId() === null" (click)="onEdit()">
+        <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+        Modify
+      </button>
+
+      <button type="button" class="btn danger" [disabled]="selectedId() === null" (click)="onRemove()">
+        <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+        Remove
+      </button>
+    </div>
+  </header>
+
+  @if (alert().show) {
+    <app-alert
+      [show]="alert().show"
+      [type]="alert().type"
       [message]="alert().message"
       (dismissed)="onAlertDismissed()">
     </app-alert>
-    
-    <h2>Destinos Turísticos</h2>
-    
+  }
+
+  @if (loading()) {
     <app-loading [isLoading]="loading()"></app-loading>
+  }
 
-    <div class="actions">
-      <app-button variant="primary" (clicked)="onCreate()">Crear</app-button>
-      <app-button variant="secondary" [disabled]="selectedId() === null" (clicked)="onEdit()">Editar</app-button>
-      <app-button variant="danger" [disabled]="selectedId() === null" (clicked)="onRemove()">Eliminar</app-button>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th (click)="onSort('id')" [class.sortable]="true">ID <span class="sort-indicator" [class.active]="sortState()?.key === 'id'" [attr.data-dir]="sortState()?.dir"></span></th>
-          <th (click)="onSort('name')" [class.sortable]="true">Nombre <span class="sort-indicator" [class.active]="sortState()?.key === 'name'" [attr.data-dir]="sortState()?.dir"></span></th>
-          <th (click)="onSort('description')" [class.sortable]="true">Descripción <span class="sort-indicator" [class.active]="sortState()?.key === 'description'" [attr.data-dir]="sortState()?.dir"></span></th>
-          <th (click)="onSort('countryCode')" [class.sortable]="true">País <span class="sort-indicator" [class.active]="sortState()?.key === 'countryCode'" [attr.data-dir]="sortState()?.dir"></span></th>
-          <th (click)="onSort('type')" [class.sortable]="true">Tipo <span class="sort-indicator" [class.active]="sortState()?.key === 'type'" [attr.data-dir]="sortState()?.dir"></span></th>
-          <th (click)="onSort('lastModif')" [class.sortable]="true">Modificado <span class="sort-indicator" [class.active]="sortState()?.key === 'lastModif'" [attr.data-dir]="sortState()?.dir"></span></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (destination of getSortedDestinations(); track destination.id) {
-          <tr (click)="selectRow(destination.id!)" [class.selected]="selectedId() === destination.id">
-            <td>{{ destination.id }}</td>
-            <td><a [routerLink]="['/destinations', destination.id]" (click)="$event.stopPropagation()" class="destination-link">{{ destination.name }}</a></td>
-            <td>{{ destination.description }}</td>
-            <td>{{ destination.countryCode }}</td>
-            <td>{{ getTypeLabel(destination.type || 0) }}</td>
-            <td>{{ destination.lastModif | date:'dd/MM/yyyy' }}</td>
+  @if (viewMode() === 'table') {
+    <section class="table-shell">
+      <table class="destinations-table">
+        <thead>
+          <tr>
+            <th (click)="onSort('id')" class="sortable">ID</th>
+            <th (click)="onSort('name')" class="sortable">Name</th>
+            <th (click)="onSort('description')" class="sortable">Description</th>
+            <th (click)="onSort('countryCode')" class="sortable">Country</th>
+            <th (click)="onSort('type')" class="sortable">Type</th>
+            <th (click)="onSort('lastModif')" class="sortable">Last Modif.</th>
+            <th></th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
 
-    <div class="pagination">
-      <app-button variant="secondary" [disabled]="!canGoToPreviousPage()" (clicked)="changePage(-1)">Anterior</app-button>
-      <span>Página {{ filter().page || 1 }} | Total: {{ totalCount() }}</span>
-      <app-button variant="secondary" [disabled]="!canGoToNextPage()" (clicked)="changePage(1)">Siguiente</app-button>
-      
-      <div class="page-size-selector">
-        <label>Mostrar:</label>
-        <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
-          @for (size of pageSizeOptions; track size) {
-            <option [value]="size">{{ size }}</option>
+        <tbody>
+          @for (destination of getSortedDestinations(); track destination.id) {
+            <tr (click)="selectRow(destination.id!)" [class.selected]="selectedId() === destination.id">
+              <td class="id-col">{{ destination.id }}</td>
+              <td>
+                <a [routerLink]="['/destinations', destination.id]" (click)="$event.stopPropagation()" class="name-cell">
+                  <span [ngClass]="['icon-wrap', getTypeClass(destination.type || 0)]">
+                    <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.type || 0) }}</span>
+                  </span>
+                  <span>{{ destination.name }}</span>
+                </a>
+              </td>
+              <td class="desc-col">{{ destination.description }}</td>
+              <td><span class="country-chip">{{ destination.countryCode }}</span></td>
+              <td><span [ngClass]="['type-chip', getTypeClass(destination.type || 0)]">{{ getTypeLabel(destination.type || 0) }}</span></td>
+              <td class="date-col">{{ destination.lastModif | date:'yyyy-MM-dd HH:mm' }}</td>
+              <td class="menu-col">
+                <button type="button" class="row-menu" aria-label="Row options" (click)="$event.stopPropagation()">
+                  <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>
+                </button>
+              </td>
+            </tr>
           }
-        </select>
+        </tbody>
+      </table>
+
+      <footer class="table-footer">
+        <p>
+          Showing {{ getStartResult() }} to
+          {{ getEndResult() }}
+          of {{ totalCount() }} results
+        </p>
+
+        <div class="pager-actions">
+          <button type="button" class="pager-btn" [disabled]="!canGoToPreviousPage()" (click)="changePage(-1)">Previous</button>
+          <button type="button" class="pager-btn next" [disabled]="!canGoToNextPage()" (click)="changePage(1)">Next</button>
+        </div>
+      </footer>
+    </section>
+  } @else {
+    <section class="grid-shell">
+      @for (destination of getSortedDestinations(); track destination.id) {
+        <article class="destination-card" (click)="selectRow(destination.id!)" [class.selected]="selectedId() === destination.id">
+          <div class="card-body">
+            <div class="card-head">
+              <div [ngClass]="['icon-wrap', 'large', getTypeClass(destination.type || 0)]">
+                <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.type || 0) }}</span>
+              </div>
+              <button type="button" class="row-menu" aria-label="Row options" (click)="$event.stopPropagation()">
+                <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>
+              </button>
+            </div>
+
+            <a [routerLink]="['/destinations', destination.id]" (click)="$event.stopPropagation()" class="card-title">{{ destination.name }}</a>
+            <p class="card-desc">{{ destination.description }}</p>
+
+            <div class="card-tags">
+              <span [ngClass]="['type-chip', getTypeClass(destination.type || 0)]">{{ getTypeLabel(destination.type || 0) }}</span>
+              <span class="country-chip">{{ destination.countryCode }}</span>
+            </div>
+          </div>
+
+          <footer class="card-footer">
+            <span>ID: {{ destination.id }}</span>
+            <span>{{ destination.lastModif | date:'MMM dd, yyyy' }}</span>
+          </footer>
+        </article>
+      }
+    </section>
+
+    <footer class="table-footer floating">
+      <p>
+        Showing {{ getStartResult() }} to
+        {{ getEndResult() }}
+        of {{ totalCount() }} results
+      </p>
+
+      <div class="pager-actions">
+        <button type="button" class="pager-btn" [disabled]="!canGoToPreviousPage()" (click)="changePage(-1)">Previous</button>
+        <button type="button" class="pager-btn next" [disabled]="!canGoToNextPage()" (click)="changePage(1)">Next</button>
       </div>
-    </div>
-  </section>
-</div>
+    </footer>
+  }
+</section>
 
 <app-modal [show]="isModalOpen()" [title]="isEditing() ? 'Editar destino' : 'Crear destino'" (closed)="onModalClose()">
   <form (ngSubmit)="onSubmitForm()" #destForm="ngForm">
@@ -115,8 +189,8 @@
     </div>
 
     <div modal-actions>
-      <app-button variant="secondary" (clicked)="onModalClose()" type="button">Cancelar</app-button>
-      <app-button variant="primary" type="submit">Guardar</app-button>
+      <button type="button" class="modal-btn soft" (click)="onModalClose()">Cancel</button>
+      <button type="submit" class="modal-btn primary">Save</button>
     </div>
   </form>
 </app-modal>

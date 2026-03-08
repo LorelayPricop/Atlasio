@@ -48,22 +48,24 @@
   </aside>
 
   <main class="workspace">
-    <header class="topbar">
-      <h1 class="page-title">Overview</h1>
-      <div class="topbar-actions">
-        <input class="search" type="search" placeholder="Search report..." aria-label="Search report" />
-        <button type="button" class="icon-btn" aria-label="Notifications">
-          <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
-          <span class="dot"></span>
-        </button>
-        <button type="button" class="primary">
-          <span class="material-symbols-outlined" aria-hidden="true">add</span>
-          New Property
-        </button>
-      </div>
-    </header>
+    @if (showTopbar()) {
+      <header class="topbar">
+        <h1 class="page-title">Overview</h1>
+        <div class="topbar-actions">
+          <input class="search" type="search" placeholder="Search report..." aria-label="Search report" />
+          <button type="button" class="icon-btn" aria-label="Notifications">
+            <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+            <span class="dot"></span>
+          </button>
+          <button type="button" class="primary">
+            <span class="material-symbols-outlined" aria-hidden="true">add</span>
+            New Property
+          </button>
+        </div>
+      </header>
+    }
 
-    <section class="content">
+    <section class="content" [class.without-topbar]="!showTopbar()">
       <router-outlet />
     </section>
   </main>

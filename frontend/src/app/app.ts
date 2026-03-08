@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +8,9 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
+  private readonly router = inject(Router);
+
+  showTopbar(): boolean {
+    return !this.router.url.startsWith('/destinations');
+  }
 }

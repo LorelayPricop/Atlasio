@@ -7,14 +7,14 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
-import { ButtonComponent } from '../shared/button/button.component';
 import { ModalComponent } from '../shared/modal/modal.component';
 import { ConfirmComponent } from '../shared/confirm/confirm.component';
+import { DestinationCategory } from '../shared/enums/destination-category.enum';
 
 @Component({
   selector: 'app-destinations-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, LoadingComponent, AlertComponent, ButtonComponent, ModalComponent, ConfirmComponent],
+  imports: [CommonModule, FormsModule, RouterModule, LoadingComponent, AlertComponent, ModalComponent, ConfirmComponent],
   templateUrl: './destinations-page.component.html',
   styleUrls: ['./destinations-page.component.css']
 })
@@ -27,6 +27,7 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
   totalCount = signal<number>(0);
   loading = signal<boolean>(false);
   selectedId = signal<number | null>(null);
+  viewMode = signal<'table' | 'grid'>('table');
   sortState = signal<{ key: 'id' | 'name' | 'description' | 'countryCode' | 'type' | 'lastModif'; dir: 'asc' | 'desc' } | null>(null);
   
   // Estados de alertas
@@ -173,8 +174,26 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     return currentPage < totalPages;
   }
 
+  getStartResult(): number {
+    if (this.totalCount() === 0) return 0;
+    const currentPage = this.filter().page || 1;
+    const pageSize = this.filter().pageSize || 5;
+    return (currentPage - 1) * pageSize + 1;
+  }
+
+  getEndResult(): number {
+    const currentPage = this.filter().page || 1;
+    const pageSize = this.filter().pageSize || 5;
+    const lastOnPage = (currentPage - 1) * pageSize + this.getSortedDestinations().length;
+    return Math.min(lastOnPage, this.totalCount());
+  }
+
   selectRow(id: number): void {
     this.selectedId.set(id === this.selectedId() ? null : id);
+  }
+
+  setViewMode(mode: 'table' | 'grid'): void {
+    this.viewMode.set(mode);
   }
 
   onSort(key: 'id' | 'name' | 'description' | 'countryCode' | 'type' | 'lastModif'): void {
@@ -393,6 +412,39 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     }
     
     return String(type || '');
+  }
+
+  getTypeClass(type: string | number | DestinationType): string {
+    return this.getTypeCategory(type);
+  }
+
+  getTypeIcon(type: string | number | DestinationType): string {
+    const category = this.getTypeCategory(type);
+    if (category === DestinationCategory.Beach) return 'beach_access';
+    if (category === DestinationCategory.Mountain) return 'terrain';
+    if (category === DestinationCategory.Cultural) return 'museum';
+    if (category === DestinationCategory.Adventure) return 'hiking';
+    if (category === DestinationCategory.Relax) return 'self_improvement';
+    return 'location_city';
+  }
+
+  private getTypeCategory(type: string | number | DestinationType): DestinationCategory {
+    const normalized = this.normalizeTypeLabel(this.getTypeLabel(type));
+
+    if (normalized.includes('beach') || normalized.includes('playa')) return DestinationCategory.Beach;
+    if (normalized.includes('mountain') || normalized.includes('montana')) return DestinationCategory.Mountain;
+    if (normalized.includes('cultural') || normalized.includes('cultura') || normalized.includes('historic') || normalized.includes('historico')) return DestinationCategory.Cultural;
+    if (normalized.includes('adventure') || normalized.includes('aventura')) return DestinationCategory.Adventure;
+    if (normalized.includes('relax') || normalized.includes('relaj')) return DestinationCategory.Relax;
+    return DestinationCategory.City;
+  }
+
+  private normalizeTypeLabel(value: string): string {
+    return (value || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 
   private getDestinationTypeFromIndex(index: number): DestinationType {
