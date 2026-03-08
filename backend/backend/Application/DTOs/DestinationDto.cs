@@ -15,6 +15,8 @@ namespace backend.Application.DTOs
         public required string Name { get; init; }
         /// <summary>Descripción detallada del destino</summary>
         public required string Description { get; init; }
+        /// <summary>Descripción larga y detallada del destino con información completa</summary>
+        public string? LongDescription { get; init; }
         /// <summary>Código ISO del país (3 caracteres)</summary>
         public required string CountryCode { get; init; }
         /// <summary>Tipo de destino turístico</summary>
@@ -44,22 +46,22 @@ namespace backend.Application.DTOs
     public class CreateDestinationDto
     {
         /// <summary>Nombre del destino turístico</summary>
-        [Required(ErrorMessage = "El nombre es requerido")]
-        [StringLength(100, MinimumLength = 1, ErrorMessage = "El nombre debe tener entre 1 y 100 caracteres")]
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Name must be between 1 and 100 characters")]
         public required string Name { get; init; }
 
         /// <summary>Descripción detallada del destino</summary>
-        [Required(ErrorMessage = "La descripción es requerida")]
-        [StringLength(500, MinimumLength = 1, ErrorMessage = "La descripción debe tener entre 1 y 500 caracteres")]
+        [Required(ErrorMessage = "Description is required")]
+        [StringLength(500, MinimumLength = 1, ErrorMessage = "Description must be between 1 and 500 characters")]
         public required string Description { get; init; }
 
         /// <summary>Código ISO del país (3 caracteres)</summary>
-        [Required(ErrorMessage = "El código de país es requerido")]
-        [StringLength(3, MinimumLength = 3, ErrorMessage = "El código de país debe tener exactamente 3 caracteres")]
+        [Required(ErrorMessage = "Country code is required")]
+        [StringLength(3, MinimumLength = 3, ErrorMessage = "Country code must be exactly 3 characters")]
         public required string CountryCode { get; init; }
 
         /// <summary>Tipo de destino turístico</summary>
-        [Required(ErrorMessage = "El tipo de destino es requerido")]
+        [Required(ErrorMessage = "Destination type is required")]
         public required DestinationType Type { get; init; }
     }
 
@@ -70,22 +72,22 @@ namespace backend.Application.DTOs
     public class UpdateDestinationDto
     {
         /// <summary>Nombre del destino turístico</summary>
-        [Required(ErrorMessage = "El nombre es requerido")]
-        [StringLength(100, MinimumLength = 1, ErrorMessage = "El nombre debe tener entre 1 y 100 caracteres")]
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Name must be between 1 and 100 characters")]
         public required string Name { get; init; }
 
         /// <summary>Descripción detallada del destino</summary>
-        [Required(ErrorMessage = "La descripción es requerida")]
-        [StringLength(500, MinimumLength = 1, ErrorMessage = "La descripción debe tener entre 1 y 500 caracteres")]
+        [Required(ErrorMessage = "Description is required")]
+        [StringLength(500, MinimumLength = 1, ErrorMessage = "Description must be between 1 and 500 characters")]
         public required string Description { get; init; }
 
         /// <summary>Código ISO del país (3 caracteres)</summary>
-        [Required(ErrorMessage = "El código de país es requerido")]
-        [StringLength(3, MinimumLength = 3, ErrorMessage = "El código de país debe tener exactamente 3 caracteres")]
+        [Required(ErrorMessage = "Country code is required")]
+        [StringLength(3, MinimumLength = 3, ErrorMessage = "Country code must be exactly 3 characters")]
         public required string CountryCode { get; init; }
 
         /// <summary>Tipo de destino turístico</summary>
-        [Required(ErrorMessage = "El tipo de destino es requerido")]
+        [Required(ErrorMessage = "Destination type is required")]
         public required DestinationType Type { get; init; }
     }
 

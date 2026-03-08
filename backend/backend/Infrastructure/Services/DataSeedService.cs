@@ -28,16 +28,16 @@ namespace backend.Infrastructure.Services
         /// </summary>
         public async Task SeedDataAsync()
         {
-            Log.Information("Iniciando proceso de seed de datos");
-            
+            Log.Information("Starting data seed process");
+
             // Verificar si ya existen destinos para evitar duplicación
             if (_context.Destinations.Any())
             {
-                Log.Information("La base de datos ya contiene destinos. Saltando el seed de datos");
+                Log.Information("Database already contains destinations. Skipping data seed");
                 return;
             }
 
-            Log.Information("Base de datos vacía. Iniciando seed de datos de ejemplo");
+            Log.Information("Empty database. Starting sample data seed");
 
             // Lista de destinos turísticos de ejemplo
             // Incluye una variedad de países, tipos y descripciones realistas
@@ -47,102 +47,182 @@ namespace backend.Infrastructure.Services
                 new Destination
                 {
                     Name = "Playa del Carmen",
-                    Description = "Hermosa playa caribeña con aguas cristalinas y arena blanca. Perfecta para buceo y snorkel.",
-                    CountryCode = "MEX", // México
+                    Description = "Beautiful Caribbean beach with crystal-clear waters and white sand. Perfect for diving and snorkeling.",
+                    LongDescription = "Playa del Carmen is one of the most popular destinations in the Mexican Riviera Maya. With its white sand beaches, turquoise waters and coral reefs, it offers unforgettable experiences for both diving enthusiasts and those seeking to relax under the Caribbean sun. Fifth Avenue, its main street, is full of restaurants, shops and nightlife. Additionally, it is the perfect starting point to explore Tulum, Cozumel and nearby cenotes.",
+                    CountryCode = "MEX",
                     Type = DestinationType.Beach,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-30),
+                    ImageUrl = "https://images.unsplash.com/photo-1512813389649-e0c5bb4c6a51",
+                    TotalBookings = 1250,
+                    AverageRating = 4.7m,
+                    ReviewCount = 892,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
-                
+
                 // Destinos culturales
                 new Destination
                 {
                     Name = "Santorini",
-                    Description = "Isla griega famosa por sus casas blancas y azules, puestas de sol espectaculares y vistas al mar Egeo.",
-                    CountryCode = "GRC", // Grecia
+                    Description = "Greek island famous for its white and blue houses, spectacular sunsets and Aegean Sea views.",
+                    LongDescription = "Santorini is the jewel of the Greek Cyclades islands, known worldwide for its breathtaking sunsets in Oia, its whitewashed houses with blue domes perched on volcanic cliffs, and its unique red and black sand beaches. The island offers a perfect combination of natural beauty, ancient history (with the Minoan ruins of Akrotiri), exquisite Mediterranean cuisine and distinctive local wines grown in volcanic vineyards.",
+                    CountryCode = "GRC",
                     Type = DestinationType.Cultural,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-45),
+                    ImageUrl = "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e",
+                    TotalBookings = 2100,
+                    AverageRating = 4.9m,
+                    ReviewCount = 1534,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
                 new Destination
                 {
                     Name = "Kyoto",
-                    Description = "Antigua capital de Japón con templos históricos, jardines zen y la famosa geisha de Gion.",
-                    CountryCode = "JPN", // Japón
+                    Description = "Former capital of Japan with historic temples, Zen gardens and the famous geisha of Gion.",
+                    LongDescription = "Kyoto was the imperial capital of Japan for over a thousand years and retains traditional Japanese charm with its 2,000 Buddhist temples, Shinto shrines and meticulously maintained Zen gardens. Walking through the Gion district at dusk may reveal the charm of geishas, while the Arashiyama Bamboo Forest offers a magical experience. During spring, the cherry blossom (sakura) turns the city into a pink spectacle, and in autumn, maple trees offer golden and red hues.",
+                    CountryCode = "JPN",
                     Type = DestinationType.Cultural,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-60),
+                    ImageUrl = "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e",
+                    TotalBookings = 1875,
+                    AverageRating = 4.8m,
+                    ReviewCount = 1267,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
-                
+
                 // Destinos de aventura
                 new Destination
                 {
                     Name = "Machu Picchu",
-                    Description = "Ciudad inca perdida en las alturas de los Andes peruanos, una de las maravillas del mundo.",
-                    CountryCode = "PER", // Perú
+                    Description = "Lost Inca city high in the Peruvian Andes, one of the wonders of the world.",
+                    LongDescription = "Machu Picchu, the legendary Inca citadel located 2,430 meters above sea level, is considered one of the Seven Wonders of the Modern World. Built in the 15th century and rediscovered in 1911, this impressive stone city is nestled between green mountains and clouds, offering spectacular views of the Sacred Valley. Visitors can arrive via the famous Inca Trail (a 4-day hike) or by train from Cusco, and explore its agricultural terraces, temples, astronomical observatories and the mysterious Intihuatana (ritual stone).",
+                    CountryCode = "PER",
                     Type = DestinationType.Adventure,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-90),
+                    ImageUrl = "https://images.unsplash.com/photo-1587595431973-160d0d94add1",
+                    TotalBookings = 1650,
+                    AverageRating = 4.95m,
+                    ReviewCount = 2103,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
-                
+
                 // Destinos urbanos
                 new Destination
                 {
-                    Name = "París",
-                    Description = "La ciudad del amor, con la Torre Eiffel, el Louvre y los Campos Elíseos.",
-                    CountryCode = "FRA", // Francia
+                    Name = "Paris",
+                    Description = "The city of love, with the Eiffel Tower, the Louvre and the Champs-Élysées.",
+                    LongDescription = "Paris, the City of Light, captivates millions of visitors each year with its unparalleled blend of history, art, gastronomy and romance. From the iconic Eiffel Tower to the masterpieces of the Louvre Museum (including the Mona Lisa), through the majestic Notre-Dame Cathedral and the bohemian Montmartre neighborhood, every corner tells a story. Strolling down the Champs-Élysées, sailing on the Seine, savoring croissants on a café terrace or exploring the Latin Quarter are experiences that define Parisian essence.",
+                    CountryCode = "FRA",
                     Type = DestinationType.City,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-120),
+                    ImageUrl = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
+                    TotalBookings = 3200,
+                    AverageRating = 4.85m,
+                    ReviewCount = 2845,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
                 new Destination
                 {
-                    Name = "Nueva York",
-                    Description = "La ciudad que nunca duerme, con Times Square, Central Park y la Estatua de la Libertad.",
-                    CountryCode = "USA", // Estados Unidos
+                    Name = "New York",
+                    Description = "The city that never sleeps, with Times Square, Central Park and the Statue of Liberty.",
+                    LongDescription = "New York is the cultural, financial and entertainment epicenter of the world. The Big Apple offers unique experiences: from gazing at the Statue of Liberty and Manhattan's skyline, to getting lost in the 341 hectares of Central Park, watching a Broadway musical, visiting world-class museums (MET, MoMA, Guggenheim), or enjoying the vibrant energy of Times Square. The five boroughs (Manhattan, Brooklyn, Queens, Bronx and Staten Island) offer incomparable cultural diversity with neighborhoods like Chinatown, Little Italy, SoHo and Williamsburg.",
+                    CountryCode = "USA",
                     Type = DestinationType.City,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-100),
+                    ImageUrl = "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9",
+                    TotalBookings = 4150,
+                    AverageRating = 4.75m,
+                    ReviewCount = 3521,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
                 new Destination
                 {
                     Name = "Barcelona",
-                    Description = "Ciudad catalana con la arquitectura de Gaudí, playas mediterráneas y la Sagrada Familia.",
-                    CountryCode = "ESP", // España
+                    Description = "Catalan city with Gaudí's architecture, Mediterranean beaches and the Sagrada Familia.",
+                    LongDescription = "Barcelona is a vibrant Mediterranean metropolis that masterfully combines its rich historical heritage with a unique modernist spirit. The city is famous for Antoni Gaudí's surrealist architectural works, especially the Sagrada Familia Basilica (still under construction), Park Güell and Casa Batlló. Las Ramblas, the Gothic Quarter, Barceloneta beach, La Boquería market and Camp Nou (FC Barcelona stadium) are must-see stops. Catalan gastronomy, with its tapas and paellas, perfectly complements the experience.",
+                    CountryCode = "ESP",
                     Type = DestinationType.Cultural,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-75),
+                    ImageUrl = "https://images.unsplash.com/photo-1583422409516-2895a77efded",
+                    TotalBookings = 2650,
+                    AverageRating = 4.8m,
+                    ReviewCount = 1987,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
                 new Destination
                 {
-                    Name = "Río de Janeiro",
-                    Description = "Ciudad brasileña famosa por el Cristo Redentor, el Pan de Azúcar y las playas de Copacabana.",
-                    CountryCode = "BRA", // Brasil
+                    Name = "Rio de Janeiro",
+                    Description = "Brazilian city famous for Christ the Redeemer, Sugarloaf Mountain and Copacabana beaches.",
+                    LongDescription = "Rio de Janeiro, the 'Cidade Maravilhosa', is a dazzling destination where green mountains meet golden beaches and the Atlantic Ocean. Christ the Redeemer on Corcovado and Sugarloaf Mountain offer spectacular panoramic views of the city. The famous beaches of Copacabana and Ipanema are the heart of the Carioca lifestyle, while Rio Carnival is the largest and most colorful celebration on the planet. The urban jungle of Tijuca Forest, the neighborhoods of Santa Teresa and Lapa, and samba complete the Brazilian experience.",
+                    CountryCode = "BRA",
                     Type = DestinationType.City,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-50),
+                    ImageUrl = "https://images.unsplash.com/photo-1483729558449-99ef09a8c325",
+                    TotalBookings = 1890,
+                    AverageRating = 4.65m,
+                    ReviewCount = 1456,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
-                
+
                 // Destinos de montaña
                 new Destination
                 {
-                    Name = "Alpes Suizos",
-                    Description = "Impresionantes montañas para esquí, senderismo y deportes de invierno.",
-                    CountryCode = "CHE", // Suiza
+                    Name = "Swiss Alps",
+                    Description = "Impressive mountains for skiing, hiking and winter sports.",
+                    LongDescription = "The Swiss Alps represent the ultimate paradise for mountain lovers and winter sports enthusiasts. With iconic peaks like the Matterhorn, Jungfrau and Eiger, the region offers world-class ski resorts such as Zermatt, St. Moritz and Verbier. In summer, the mountains transform into spectacular hiking trails with alpine meadows full of flowers, crystal-clear lakes and picturesque villages. Panoramic trains like the Glacier Express offer breathtaking views of the alpine landscape.",
+                    CountryCode = "CHE",
                     Type = DestinationType.Mountain,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-110),
+                    ImageUrl = "https://images.unsplash.com/photo-1531366936337-7c912a4589a7",
+                    TotalBookings = 1425,
+                    AverageRating = 4.9m,
+                    ReviewCount = 978,
+                    Status = "Active",
+                    CreatedBy = "System"
                 },
-                
+
                 // Destinos de relajación
                 new Destination
                 {
                     Name = "Bali",
-                    Description = "Isla indonesia famosa por sus templos, playas y ambiente relajante.",
-                    CountryCode = "IDN", // Indonesia
+                    Description = "Indonesian island famous for its temples, beaches and relaxing atmosphere.",
+                    LongDescription = "Bali, the 'Island of the Gods', is a tropical paradise that combines spirituality, natural beauty and Balinese hospitality. With sacred temples like Tanah Lot and Uluwatu perched on cliffs, emerald rice terraces in Tegalalang, surf beaches in Uluwatu and Canggu, and the cultural center of Ubud with its art galleries and traditional markets, Bali offers unique experiences. Yoga retreats, luxury spas, traditional ceremonies and delicious Indonesian cuisine make this island the perfect destination for relaxation and spiritual rejuvenation.",
+                    CountryCode = "IDN",
                     Type = DestinationType.Relax,
-                    LastModif = DateTime.UtcNow
+                    LastModif = DateTime.UtcNow,
+                    CreatedDate = DateTime.UtcNow.AddDays(-35),
+                    ImageUrl = "https://images.unsplash.com/photo-1537996194471-e657df975ab4",
+                    TotalBookings = 2340,
+                    AverageRating = 4.85m,
+                    ReviewCount = 1723,
+                    Status = "Active",
+                    CreatedBy = "System"
                 }
             };
 
             // Insertar todos los destinos en la base de datos
-            Log.Information("Insertando {DestinationCount} destinos de ejemplo en la base de datos", destinations.Count);
-            
+            Log.Information("Inserting {DestinationCount} sample destinations into the database", destinations.Count);
+
             _context.Destinations.AddRange(destinations);
             await _context.SaveChangesAsync();
-            
-            Log.Information("Seed de datos completado exitosamente. {DestinationCount} destinos insertados", destinations.Count);
+
+            Log.Information("Data seed completed successfully. {DestinationCount} destinations inserted", destinations.Count);
         }
     }
 }

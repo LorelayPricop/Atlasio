@@ -17,6 +17,7 @@ namespace backend.Application.Adapters
                 ID = entity.ID,
                 Name = entity.Name,
                 Description = entity.Description,
+                LongDescription = entity.LongDescription,
                 CountryCode = entity.CountryCode,
                 Type = entity.Type,
                 LastModif = entity.LastModif,

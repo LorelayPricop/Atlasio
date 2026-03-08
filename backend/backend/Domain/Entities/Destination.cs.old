@@ -23,11 +23,6 @@ namespace backend.Domain.Entities
         public required string Description { get; set; }
 
         /// <summary>
-        /// Descripción larga y detallada del destino con información completa
-        /// </summary>
-        public string? LongDescription { get; set; }
-
-        /// <summary>
         /// Código ISO del país (formato de 3 caracteres: MEX, USA, ESP, etc.)
         /// </summary>
         public required string CountryCode { get; set; }
