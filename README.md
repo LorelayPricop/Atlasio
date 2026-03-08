@@ -1,12 +1,12 @@
-# HotelBediaX - Portal de Gestión de Destinos Turísticos
+# Atlasio - Portal de Gestión de Destinos Turísticos
 
 ## Descripción del Proyecto
 
-**HotelBediaX** es un portal completo de gestión de destinos turísticos desarrollado para FDSA. La aplicación implementa **Arquitectura Hexagonal** (Ports and Adapters) con patrones CQRS, Repository y Unit of Work, permitiendo a los usuarios gestionar destinos turísticos con operaciones CRUD completas, filtrado avanzado, documentación automática con Swagger y una arquitectura optimizada y mantenible.
+**Atlasio** es un portal completo de gestión de destinos turísticos desarrollado para FDSA. La aplicación implementa **Arquitectura Hexagonal** (Ports and Adapters) con patrones CQRS, Repository y Unit of Work, permitiendo a los usuarios gestionar destinos turísticos con operaciones CRUD completas, filtrado avanzado, documentación automática con Swagger y una arquitectura optimizada y mantenible.
 
 ### Objetivos de la Prueba Técnica
 
-- **Backend**: API REST con .NET 9
+- **Backend**: API REST con .NET 10 (LTS)
 - **Frontend**: SPA con Angular (módulo Destinations implementado)
 - **Base de Datos**: Mock database para demostración
 - **Funcionalidades**: CRUD completo + filtrado + paginación
@@ -23,8 +23,8 @@
 ### Estructura General
 
 ```
-HotelBediaX/
-├── backend/                 # API REST con .NET 9
+Atlasio/
+├── backend/                 # API REST con .NET 10 (LTS)
 │   ├── backend/            # Proyecto principal con Arquitectura Hexagonal
 │   │   ├── Domain/         # Entidades, enums e interfaces
 │   │   ├── Application/    # Commands, Queries, DTOs y Mapping
@@ -38,7 +38,7 @@ HotelBediaX/
 │   │   ├── Presentation/   # Tests de controladores
 │   │   └── Integration/    # Tests end-to-end
 │   └── backend.sln         # Solución Visual Studio
-├── frontend/               # Aplicación Angular 18
+├── frontend/               # Aplicación Angular 21
 │   ├── src/               # Código fuente
 │   │   ├── app/           # Módulos y componentes
 │   │   │   ├── destinations/    # Módulo de destinos
@@ -109,14 +109,14 @@ El sistema incluye **10 destinos turísticos reales** con datos completos:
 ### Prerrequisitos
 
 #### Backend
-- **.NET 9 SDK** instalado
+- **.NET 10 SDK** instalado
 - **Visual Studio 2022** o **VS Code** (recomendado)
 
 #### Frontend
-- **Node.js** (versión 18 o superior)
+- **Node.js** (versión 20.19 o superior recomendada para Angular 21)
 - **npm** (incluido con Node.js)
-- **Angular 18** (versión específica del proyecto)
-- **Angular CLI** 
+- **Angular 21** (versión específica del proyecto)
+- **Angular CLI**
 
 ### Ejecutar el Backend
 

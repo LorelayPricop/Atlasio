@@ -65,7 +65,7 @@ builder.Services.AddCors(options =>
 // Configurar Entity Framework Core con base de datos en memoria
 // Esta es la implementación del "mock database" solicitado en la prueba técnica
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("HotelBediaXDb"));
+    options.UseInMemoryDatabase("AtlasioDb"));
 
 // Registrar adaptadores para conversión entre entidades y DTOs
 builder.Services.AddScoped<backend.Domain.Interfaces.IDestinationAdapter, backend.Application.Adapters.DestinationAdapter>();
@@ -124,9 +124,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelBediaX API v1.0");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atlasio API v1.0");
         c.RoutePrefix = "swagger"; // Swagger UI estará disponible en /swagger
-        c.DocumentTitle = "HotelBediaX API Documentation";
+        c.DocumentTitle = "Atlasio API Documentation";
     });
 }
 
@@ -151,7 +151,7 @@ app.Run();
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Error fatal al iniciar la aplicación HotelBediaX");
+    Log.Fatal(ex, "Error fatal al iniciar la aplicación Atlasio");
 }
 finally
 {

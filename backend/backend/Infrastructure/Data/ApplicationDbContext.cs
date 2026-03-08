@@ -4,7 +4,7 @@ using backend.Domain.Entities;
 namespace backend.Infrastructure.Data
 {
     /// <summary>
-    /// Contexto principal de Entity Framework para la aplicación HotelBediaX
+    /// Contexto principal de Entity Framework para la aplicación Atlasio
     /// Configurado para usar base de datos en memoria para desarrollo y demos
     /// </summary>
     public class ApplicationDbContext : DbContext

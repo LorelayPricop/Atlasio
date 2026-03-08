@@ -1,8 +1,8 @@
-# Frontend - HotelBediaX
+# Frontend - Atlasio
 
 ## Arquitectura Modular Escalable
 
-Este frontend está organizado siguiendo las mejores prácticas de Angular con una arquitectura modular que facilita el mantenimiento y la escalabilidad. Utiliza Angular 18 con componentes standalone y TypeScript para una experiencia de desarrollo moderna y eficiente.
+Este frontend está organizado siguiendo las mejores prácticas de Angular con una arquitectura modular que facilita el mantenimiento y la escalabilidad. Utiliza Angular 21 con componentes standalone y TypeScript para una experiencia de desarrollo moderna y eficiente.
 
 ## Características Principales
 
@@ -16,7 +16,7 @@ Este frontend está organizado siguiendo las mejores prácticas de Angular con u
 - **Responsive Design**: Adaptable a diferentes dispositivos
 
 ### **Tecnologías Utilizadas**
-- **Angular 18**: Framework principal con componentes standalone
+- **Angular 21**: Framework principal con componentes standalone
 - **TypeScript**: Tipado estático para mayor robustez
 - **RxJS**: Programación reactiva para manejo de datos
 - **Angular Signals**: Estado reactivo moderno
@@ -114,8 +114,8 @@ ng test
 ### **TypeScript Configuration**
 - **Target**: ES2022
 - **Strict Mode**: Habilitado
-- **Angular**: 18.x
-- **Node**: 18.x o superior
+- **Angular**: 21.x
+- **Node**: 20.19.x o superior (LTS recomendado)
 
 ### **Angular Features**
 - **Standalone Components**: Habilitado
