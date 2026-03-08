@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { DestinationDto, CreateDestinationDto, UpdateDestinationDto, DestinationType, DestinationDtoPagedResultDto, ApiClient } from '../services/api-client';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -22,6 +22,7 @@ import { COUNTRY_OPTIONS, getCountryNameByCode } from '../shared/enums/country.e
 })
 export class DestinationsPageComponent implements OnInit, OnDestroy {
   private readonly apiService = inject(ApiClient);
+  private readonly router = inject(Router);
 
   // Estado de filtros y datos
   filter = signal<{ page?: number; pageSize?: number; search?: string; countryCode?: string; type?: string }>({ page: 1, pageSize: 5 });
@@ -247,14 +248,7 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
   }
 
   onCreate(): void {
-    this.isEditing.set(false);
-    this.formModel = {
-      name: '',
-      description: '',
-      countryCode: this.countries()[0] || '',
-      type: 0
-    };
-    this.isModalOpen.set(true);
+    this.router.navigate(['/destinations/new']);
   }
 
   onEdit(): void {

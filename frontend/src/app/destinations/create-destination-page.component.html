@@ -1,0 +1,101 @@
+<section class="create-page">
+  <div class="crumbs">
+    <a routerLink="/destinations">Destinations</a>
+    <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+    <span>Add New</span>
+  </div>
+
+  <app-alert
+    [show]="alert().show"
+    [type]="alert().type"
+    [message]="alert().message"
+    (dismissed)="onAlertDismissed()">
+  </app-alert>
+
+  <app-loading [isLoading]="loading()"></app-loading>
+
+  <div class="form-shell">
+    <header class="page-head">
+      <h1>Create Destination</h1>
+      <p>Fill in the essential information to add a new travel destination to the portal.</p>
+    </header>
+
+    <form class="destination-form" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <label class="field field-full">
+          <span>Destination Name <span class="required">*</span></span>
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="formModel.name"
+            placeholder="e.g. Santorini Coastal Resort"
+            required />
+        </label>
+
+        <label class="field">
+          <span>Country <span class="required">*</span></span>
+          <div class="select-wrap">
+            <select name="countryCode" [(ngModel)]="formModel.countryCode" required>
+              <option value="" disabled>Select a country</option>
+              @for (country of countries(); track country) {
+                <option [value]="country">{{ getCountryDisplayName(country) }}</option>
+              }
+            </select>
+            <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </div>
+        </label>
+
+        <label class="field">
+          <span>Destination Type <span class="required">*</span></span>
+          <div class="select-wrap">
+            <select name="type" [(ngModel)]="formModel.type" required>
+              <option [ngValue]="-1" disabled>Select type</option>
+              @for (destType of destinationTypes(); track destType; let i = $index) {
+                <option [ngValue]="i">{{ destType }}</option>
+              }
+            </select>
+            <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </div>
+        </label>
+
+        <label class="field field-full">
+          <span>Description <span class="required">*</span></span>
+          <textarea
+            name="description"
+            [(ngModel)]="formModel.description"
+            rows="5"
+            placeholder="Provide a detailed description of the destination, including key highlights and features..."
+            required></textarea>
+        </label>
+
+        <label class="field field-full">
+          <span>Long Description</span>
+          <textarea
+            name="longDescription"
+            [(ngModel)]="formModel.longDescription"
+            rows="7"
+            placeholder="Add a complete long-form description for destination detail pages..."></textarea>
+        </label>
+      </div>
+
+      <div class="upload-block">
+        <span class="upload-label">Featured Image</span>
+        <label class="upload-zone">
+          <input type="file" accept="image/png,image/jpeg" (change)="onImageSelected($event)" />
+          <span class="material-symbols-outlined" aria-hidden="true">add_photo_alternate</span>
+          @if (selectedImageName()) {
+            <p>{{ selectedImageName() }}</p>
+          } @else {
+            <p>Click to upload or drag and drop</p>
+          }
+          <small>PNG, JPG, up to 10MB</small>
+        </label>
+      </div>
+
+      <footer class="form-actions">
+        <button type="button" class="btn ghost" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn primary" [disabled]="loading()">Save Destination</button>
+      </footer>
+    </form>
+  </div>
+</section>
