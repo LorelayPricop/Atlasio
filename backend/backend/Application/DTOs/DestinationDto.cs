@@ -59,6 +59,9 @@ namespace backend.Application.DTOs
         [StringLength(2000, ErrorMessage = "Long description must not exceed 2000 characters")]
         public string? LongDescription { get; init; }
 
+        /// <summary>URL o data URL de la imagen principal del destino</summary>
+        public string? ImageUrl { get; init; }
+
         /// <summary>Código ISO del país (3 caracteres)</summary>
         [Required(ErrorMessage = "Country code is required")]
         [StringLength(3, MinimumLength = 3, ErrorMessage = "Country code must be exactly 3 characters")]
@@ -88,6 +91,9 @@ namespace backend.Application.DTOs
         /// <summary>Descripción larga y detallada del destino con información completa</summary>
         [StringLength(2000, ErrorMessage = "Long description must not exceed 2000 characters")]
         public string? LongDescription { get; init; }
+
+        /// <summary>URL o data URL de la imagen principal del destino</summary>
+        public string? ImageUrl { get; init; }
 
         /// <summary>Código ISO del país (3 caracteres)</summary>
         [Required(ErrorMessage = "Country code is required")]

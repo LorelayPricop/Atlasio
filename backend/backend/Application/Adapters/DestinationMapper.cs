@@ -43,6 +43,7 @@ namespace backend.Application.Adapters
                 Name = dto.Name,
                 Description = dto.Description,
                 LongDescription = dto.LongDescription,
+                ImageUrl = dto.ImageUrl,
                 CountryCode = dto.CountryCode,
                 Type = dto.Type,
                 LastModif = DateTime.UtcNow,
@@ -59,6 +60,7 @@ namespace backend.Application.Adapters
             existingEntity.Name = dto.Name;
             existingEntity.Description = dto.Description;
             existingEntity.LongDescription = dto.LongDescription;
+            existingEntity.ImageUrl = dto.ImageUrl;
             existingEntity.CountryCode = dto.CountryCode;
             existingEntity.Type = dto.Type;
             existingEntity.LastModif = DateTime.UtcNow;
