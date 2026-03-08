@@ -1,6 +1,6 @@
-# Tests Unitarios - HotelBediaX Backend
+# Tests Unitarios - Atlasio Backend
 
-Este proyecto contiene los tests unitarios y de integración para el backend de HotelBediaX desarrollado en **.NET 10 (LTS)**.
+Este proyecto contiene los tests unitarios y de integración para el backend de Atlasio desarrollado en **.NET 10 (LTS)**.
 
 ## Estructura del Proyecto - Tests por Puertos/Contratos (Clean Architecture)
 

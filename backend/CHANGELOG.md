@@ -5,6 +5,27 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [2.1.0] - 2026-03-08
+
+### Rebranding: HotelBediaX → Atlasio
+
+#### Changed
+- **Nombre de la aplicación**: HotelBediaX → Atlasio
+- **Program.cs**: Mensaje de inicio actualizado a "Atlasio API"
+- **Swagger**: Título de API actualizado a "Atlasio API"
+- **Logging**: Propiedad Application actualizada a "Atlasio"
+- **Archivos de log**: Renombrados de hotelbediax-*.log → atlasio-*.log
+- **Documentación**: Todos los READMEs actualizados con nuevo nombre
+- **README principal**: Actualizado con nombre Atlasio y .NET 10
+
+#### Documentation
+- README.md principal actualizado
+- backend/README.md actualizado
+- backend.Tests/README.md actualizado
+- Todos los comentarios de código revisados
+
+---
+
 ## [2.0.0] - 2026-03-08
 
 ### Actualización Mayor: Migración a .NET 10 (LTS)

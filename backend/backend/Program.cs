@@ -22,7 +22,7 @@ builder.Host.UseSerilog((context, configuration) =>
 
 try
 {
-    Log.Information("Iniciando HotelBediaX API...");
+    Log.Information("Iniciando Atlasio API...");
 
 // ============================================================================
 // CONFIGURACIÓN DE SERVICIOS
@@ -86,7 +86,7 @@ builder.Services.AddScoped<DataSeedService>();                          // Servi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "HotelBediaX API", Version = "v1.0" });
+    c.SwaggerDoc("v1", new() { Title = "Atlasio API", Version = "v1.0" });
 
     // Incluir comentarios XML para documentación
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";

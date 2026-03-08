@@ -1,4 +1,4 @@
-# HotelBediaX Backend - API REST
+# Atlasio Backend - API REST
 
 API REST desarrollada con **.NET 10 (LTS)** para la gestión de destinos turísticos, implementando **Arquitectura Hexagonal** con patrones CQRS, Repository y Unit of Work.
 
