@@ -39,6 +39,7 @@ namespace backend.Application.Adapters
                 {
                     Name = createDto.Name,
                     Description = createDto.Description,
+                    LongDescription = createDto.LongDescription,
                     CountryCode = createDto.CountryCode,
                     Type = createDto.Type,
                     LastModif = DateTime.UtcNow,
@@ -53,6 +54,7 @@ namespace backend.Application.Adapters
                 {
                     Name = updateDto.Name,
                     Description = updateDto.Description,
+                    LongDescription = updateDto.LongDescription,
                     CountryCode = updateDto.CountryCode,
                     Type = updateDto.Type,
                     LastModif = DateTime.UtcNow

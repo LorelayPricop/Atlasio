@@ -79,6 +79,7 @@ namespace backend.Tests.Helpers
             {
                 Name = "Barcelona",
                 Description = "Ciudad cosmopolita con arquitectura única",
+                LongDescription = "Barcelona es una ciudad vibrante con la arquitectura de Gaudí, playas mediterráneas y una rica cultura catalana.",
                 CountryCode = "ESP",
                 Type = DestinationType.Cultural
             };
@@ -93,6 +94,7 @@ namespace backend.Tests.Helpers
             {
                 Name = "Barcelona Actualizada",
                 Description = "Descripción actualizada de Barcelona",
+                LongDescription = "Descripción larga actualizada con información completa sobre Barcelona.",
                 CountryCode = "ESP",
                 Type = DestinationType.City
             };
