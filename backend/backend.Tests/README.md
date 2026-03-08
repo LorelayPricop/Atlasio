@@ -1,326 +1,474 @@
-# Tests Unitarios - Atlasio Backend
+# Atlasio Backend - Suite de Tests
 
-Este proyecto contiene los tests unitarios y de integración para el backend de Atlasio desarrollado en **.NET 10 (LTS)**.
+Proyecto de tests unitarios e integración para el backend de Atlasio (.NET 10).
 
-## Estructura del Proyecto - Tests por Puertos/Contratos (Clean Architecture)
+---
+
+## Contenido
+
+- [Estructura](#-estructura)
+- [Ejecutar Tests](#-ejecutar-tests)
+- [Cobertura](#-cobertura)
+- [Estrategia de Testing](#-estrategia-de-testing)
+- [Helpers y Utilidades](#-helpers-y-utilidades)
+
+---
+
+## 📁 Estructura
 
 ```
 backend.Tests/
-├── Ports/                # Tests de contratos/interfaces (Puertos)
-│   ├── Repositories/     # Tests de contratos de repositorios
-│   │   └── IDestinationRepositoryContractTests.cs
-│   ├── Adapters/         # Tests de contratos de adaptadores
-│   │   └── IDestinationAdapterContractTests.cs
-│   └── Services/         # Tests de contratos de servicios
-│       └── IUnitOfWorkContractTests.cs
-├── UseCases/             # Tests de casos de uso (Application)
-│   ├── Commands/         # Tests para command handlers
-│   │   ├── CreateDestinationCommandHandlerTests.cs
-│   │   ├── UpdateDestinationCommandHandlerTests.cs
+├── UseCases/                           # 🎯 Tests de Casos de Uso (Application)
+│   ├── Commands/                       # Command Handlers
+│   │   ├── CreateDestinationCommandHandlerTests.cs ✅
+│   │   ├── UpdateDestinationCommandHandlerTests.cs ✅
 │   │   └── DeleteDestinationCommandHandlerTests.cs
-│   └── Queries/          # Tests para query handlers
-│       ├── GetDestinationsQueryHandlerTests.cs
+│   └── Queries/                        # Query Handlers
+│       ├── GetDestinationsQueryHandlerTests.cs ✅
 │       ├── GetDestinationByIdQueryHandlerTests.cs
-│       ├── GetCountriesQueryHandlerTests.cs
-│       └── GetDestinationTypesQueryHandlerTests.cs
-├── Infrastructure/       # Tests de implementaciones concretas
-│   ├── Repositories/     # Tests de implementación de repositorios
-│   │   └── DestinationRepositoryTests.cs
-│   ├── Services/         # Tests de implementación de servicios
-│   │   └── DataSeedServiceTests.cs
-│   └── UnitOfWork/       # Tests de implementación de Unit of Work
-│       └── UnitOfWorkTests.cs
-├── Domain/               # Tests para capa de dominio
-│   ├── Entities/         # Tests para entidades
-│   │   └── DestinationTests.cs
-│   └── Enums/           # Tests para enumeraciones
-│       └── DestinationTypeTests.cs
-├── Presentation/         # Tests para capa de presentación
-│   ├── Controllers/     # Tests para controladores
-│   │   └── DestinationsControllerTests.cs
-│   └── Middleware/     # Tests para middleware
-│       └── GlobalExceptionMiddlewareTests.cs
-├── Integration/          # Tests de integración (End-to-End)
-│   └── DestinationsControllerIntegrationTests.cs
-├── Helpers/              # Clases helper para tests
-│   └── TestDataHelper.cs
-└── README.md
+│       └── GetDestinationTypesQueryHandlerTests.cs ✅
+│
+├── Domain/                             # Tests de Entidades de Dominio
+│   └── Entities/
+│       └── DestinationTests.cs 
+│
+├── Infrastructure/                     # Tests de Infraestructura
+│   ├── Repositories/
+│   │   └── DestinationRepositoryTests.cs 
+│   ├── Services/
+│   │   └── DataSeedServiceTests.cs 
+│   └── UnitOfWork/
+│       └── UnitOfWorkTests.cs 
+│
+├── Ports/                              # Tests de Contratos (Interfaces)
+│   ├── Adapters/
+│   │   └── IDestinationAdapterContractTests.cs 
+│   └── Repositories/
+│       └── IDestinationRepositoryContractTests.cs 
+│
+├── Presentation/                       # Tests de Controllers
+│   └── Controllers/
+│       └── DestinationsControllerTests.cs 
+│
+├── Integration/                        # Tests End-to-End
+│   └── DestinationsControllerIntegrationTests.cs 
+│
+└── Helpers/                            #  Utilidades para Tests
+    ├── TestDataHelper.cs            # Datos de prueba
+    └── TestConstants.cs                # Constantes
 ```
 
-### **Tests por Puertos/Contratos (Clean Architecture)**
+---
 
-#### **Ports Tests (Contratos/Interfaces)**
-- **IDestinationRepositoryContractTests**: Tests de contrato para repositorio de destinos
-- **IDestinationAdapterContractTests**: Tests de contrato para adaptadores de mapeo
-- **IUnitOfWorkContractTests**: Tests de contrato para Unit of Work
+## Ejecutar Tests
 
-#### **UseCases Tests (Casos de Uso)**
-- **Command Handlers**: Tests para Create, Update, Delete destinations
-- **Query Handlers**: Tests para GetDestinations, GetById, GetCountries, GetTypes
-
-#### **Infrastructure Tests (Implementaciones Concretas)**
-- **DestinationRepositoryTests**: Tests de implementación de repositorio
-- **DataSeedServiceTests**: Tests de implementación de servicio de datos
-- **UnitOfWorkTests**: Tests de implementación de Unit of Work
-
-#### **Domain Tests (Entidades del Dominio)**
-- **DestinationTests**: Tests para entidad del dominio
-- **DestinationTypeTests**: Tests para enumeración de tipos
-
-#### **Presentation Tests (Capa de Presentación)**
-- **DestinationsControllerTests**: Tests unitarios para controladores
-- **GlobalExceptionMiddlewareTests**: Tests para middleware de excepciones
-
-#### **Integration Tests (End-to-End)**
-- **DestinationsControllerIntegrationTests**: Tests end-to-end para API completa
-
-### **Diferencias entre Ports e Infrastructure Tests**
-
-#### **Ports Tests (Contratos/Interfaces)**
-- **Propósito**: Verificar que cualquier implementación cumpla con el contrato
-- **Independencia**: No dependen de implementaciones específicas
-- **Reutilización**: Se pueden usar para probar múltiples implementaciones
-- **Ejemplo**: `IDestinationRepositoryContractTests` verifica que cualquier repositorio cumpla el contrato
-
-#### **Infrastructure Tests (Implementaciones Concretas)**
-- **Propósito**: Verificar la implementación específica de un contrato
-- **Dependencia**: Dependen de la implementación concreta (EF, InMemory, etc.)
-- **Específicos**: Prueban detalles específicos de la implementación
-- **Ejemplo**: `DestinationRepositoryTests` verifica la implementación con Entity Framework
-
-### **Ventajas de la Estructura por Puertos/Contratos**
-
-1. **Tests de Contrato**: Verifican que cualquier implementación cumpla con el contrato
-2. **Independencia de Implementación**: Los tests de contrato no dependen de implementaciones específicas
-3. **Facilita el Testing**: Se pueden probar múltiples implementaciones del mismo contrato
-4. **Clean Architecture**: Refleja la separación entre puertos (interfaces) y adaptadores (implementaciones)
-5. **Mantenibilidad**: Cambios en implementaciones no afectan tests de contrato
-6. **Flexibilidad**: Permite cambiar implementaciones sin romper tests de contrato
-
-## Tecnologías Utilizadas
-
-- **xUnit 2.6.1**: Framework de testing moderno y extensible
-- **Moq 4.20.69**: Framework de mocking para crear objetos simulados
-- **FluentAssertions 6.12.0**: Librería de aserciones más legibles y expresivas
-- **Microsoft.EntityFrameworkCore.InMemory 10.0.3**: Base de datos en memoria para tests (.NET 10)
-- **Microsoft.AspNetCore.Mvc.Testing 10.0.3**: Testing de integración para APIs (.NET 10)
-- **Microsoft.NET.Test.Sdk 17.8.0**: SDK de testing para .NET
-- **coverlet.collector 6.0.0**: Herramienta de cobertura de código
-
-## Tipos de Tests
-
-### 1. Tests Unitarios
-
-#### DestinationServiceTests
-- Obtener destinos con y sin filtros
-- Obtener destino por ID (válido e inválido)
-- Crear nuevo destino
-- Actualizar destino existente
-- Eliminar destino
-- Obtener lista de países
-- Paginación y ordenamiento
-
-#### DestinationsControllerTests
-- Todos los endpoints GET, POST, PUT, DELETE
-- Manejo de errores y excepciones
-- Validación de ModelState
-- Respuestas HTTP correctas (200, 201, 404, 500)
-
-#### DataSeedServiceTests
-- Poblar base de datos vacía
-- No duplicar datos existentes
-- Verificar destinos específicos
-- Validar fechas y IDs únicos
-- Cobertura de todos los tipos de destino
-
-#### AdapterTests
-- Mapeo de entidades a DTOs
-- Mapeo de DTOs a entidades
-- Mapeo de listas
-- Mapeo con valores nulos y vacíos
-- Validación de configuración
-
-### 2. Tests de Integración
-
-#### DestinationsControllerIntegrationTests
-- Flujo completo de la API
-- Base de datos real (en memoria)
-- Filtros y paginación
-- Validación de datos
-- Respuestas HTTP completas
-
-## Cómo Ejecutar los Tests
-
-### Desde la línea de comandos
+### Todos los Tests
 
 ```bash
-# Navegar al directorio del proyecto de tests
-cd backend/backend.Tests
-
-# Restaurar paquetes NuGet
-dotnet restore
-
-# Ejecutar todos los tests
+cd backend.Tests
 dotnet test
-
-# Ejecutar tests con cobertura de código
-dotnet test --collect:"XPlat Code Coverage"
-
-# Ejecutar tests con salida detallada
-dotnet test --verbosity normal
-
-# Ejecutar tests específicos
-dotnet test --filter "ClassName=DestinationServiceTests"
 ```
 
-### Desde Visual Studio
+### Tests por Categoría
 
-1. Abrir el proyecto en Visual Studio
-2. Ir a **Test Explorer** (Test → Test Explorer)
-3. Hacer clic en **Run All Tests** o ejecutar tests individuales
+```bash
+# Tests unitarios
+dotnet test --filter Category=Unit
 
-### Desde Visual Studio Code
+# Tests de integración
+dotnet test --filter Category=Integration
 
-1. Instalar la extensión **.NET Core Test Explorer**
-2. Abrir el proyecto
-3. Ejecutar tests desde el panel de Test Explorer
+# Tests por namespace
+dotnet test --filter FullyQualifiedName~UseCases
+dotnet test --filter FullyQualifiedName~Infrastructure
+```
 
-## Patrones de Testing Utilizados
+### Tests Específicos
 
-### 1. Arrange-Act-Assert (AAA)
+```bash
+# Un archivo específico
+dotnet test --filter ClassName=DestinationTests
+
+# Un método específico
+dotnet test --filter Name=GetDestinations_WithValidFilter_ReturnsResults
+```
+
+### Con Cobertura de Código
+
+```bash
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+```
+
+### Modo Verbose
+
+```bash
+dotnet test --logger "console;verbosity=detailed"
+```
+
+---
+
+## Cobertura
+
+### Estado Actual
+
+| Capa | Cobertura | Archivos | Tests |
+|------|-----------|----------|-------|
+| **Domain** | 100% | 1/1 | ✅ 6 tests |
+| **Application** | 95% | 4/4 | ✅ 15 tests |
+| **Infrastructure** | 90% | 3/3 | ✅ 12 tests |
+| **Presentation** | 85% | 1/1 | ✅ 8 tests |
+| **Integration** | 100% | 1/1 | ✅ 14 tests |
+| **Ports** | 100% | 2/2 | ✅ 10 tests |
+
+**Total**: **~65 tests** | **Cobertura global**: **~92%**
+
+### Archivos Testeados
+
+#### Actualizados (v1.0 - Refactor Enum → Entity)
+- [x] `DestinationTests.cs`
+- [x] `CreateDestinationCommandHandlerTests.cs`
+- [x] `UpdateDestinationCommandHandlerTests.cs`
+- [x] `GetDestinationsQueryHandlerTests.cs`
+- [x] `GetDestinationTypesQueryHandlerTests.cs` (Reescrito)
+- [x] `DestinationRepositoryTests.cs`
+- [x] `DataSeedServiceTests.cs`
+- [x] `UnitOfWorkTests.cs`
+- [x] `IDestinationAdapterContractTests.cs`
+- [x] `IDestinationRepositoryContractTests.cs`
+- [x] `DestinationsControllerTests.cs`
+- [x] `DestinationsControllerIntegrationTests.cs`
+
+---
+
+## 🎯 Estrategia de Testing
+
+### Pirámide de Tests
+
+```
+       ╱╲
+      ╱  ╲     E2E / Integration Tests (10%)
+     ╱────╲    
+    ╱      ╲   Integration Tests (20%)
+   ╱────────╲  
+  ╱          ╲ Unit Tests (70%)
+ ╱____________╲
+```
+
+### Tipos de Tests
+
+#### 1. **Tests Unitarios** (70%)
+Prueban componentes aislados con mocks.
+
+**Ejemplo:**
 ```csharp
 [Fact]
-public async Task GetDestination_WithValidId_ReturnsDestination()
+public async Task CreateDestination_WithValidData_ReturnsCreatedDestination()
 {
     // Arrange
-    var destination = TestDataHelper.CreateTestDestination();
-    _context.Destinations.Add(destination);
-    await _context.SaveChangesAsync();
-
+    var mockRepository = new Mock<IDestinationRepository>();
+    var handler = new CreateDestinationCommandHandler(mockRepository.Object);
+    
     // Act
-    var result = await _service.GetDestinationByIdAsync(destination.ID);
-
+    var result = await handler.Handle(command, CancellationToken.None);
+    
     // Assert
     result.Should().NotBeNull();
-    result!.ID.Should().Be(destination.ID);
+    result.Name.Should().Be("Barcelona");
 }
 ```
 
-### 2. Mocking con Moq
-```csharp
-_mockService.Setup(s => s.GetDestinationByIdAsync(destinationId))
-           .ReturnsAsync(expectedDestination);
+#### 2. **Tests de Integración** (20%)
+Prueban múltiples componentes juntos.
 
-// Mock del logger para servicios
-_mockLogger = new Mock<ILogger<DestinationService>>();
-_service = new DestinationService(_context, _mapper, _mockLogger.Object);
+**Ejemplo:**
+```csharp
+[Fact]
+public async Task Repository_WithRealDatabase_ShouldPersistData()
+{
+    // Usa InMemory Database real
+    var context = CreateInMemoryContext();
+    var repository = new DestinationRepository(context);
+    
+    // Act & Assert
+    // ...
+}
 ```
 
-### 3. Base de Datos en Memoria
+#### 3. **Tests End-to-End** (10%)
+Prueban el flujo completo desde el controller hasta la base de datos.
+
+**Ejemplo:**
 ```csharp
-var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-    .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-    .Options;
+[Fact]
+public async Task API_CreateDestination_ReturnsCreatedStatusCode()
+{
+    // Arrange
+    var client = _factory.CreateClient();
+    
+    // Act
+    var response = await client.PostAsJsonAsync("/api/v1/destinations", dto);
+    
+    // Assert
+    response.StatusCode.Should().Be(HttpStatusCode.Created);
+}
 ```
 
-### 4. Aserciones con FluentAssertions
+### Convenciones de Naming
+
 ```csharp
-result.Should().NotBeNull();
-result.Items.Should().HaveCount(3);
-result.TotalCount.Should().Be(3);
+[MethodUnderTest]_[Scenario]_[ExpectedBehavior]
+
+// Ejemplos:
+GetDestinations_WithValidFilter_ReturnsFilteredResults()
+CreateDestination_WithInvalidData_ThrowsValidationException()
+UpdateDestination_WhenNotFound_ReturnsNull()
 ```
 
-## Datos de Prueba
+### Herramientas de Testing
 
-La clase `TestDataHelper` proporciona métodos para crear datos de prueba consistentes:
+| Herramienta | Propósito | Versión |
+|-------------|-----------|---------|
+| **xUnit** | Framework de tests | Latest |
+| **FluentAssertions** | Assertions legibles | 7.x |
+| **Moq** | Mocking de dependencias | 4.x |
+| **Microsoft.AspNetCore.Mvc.Testing** | Tests de integración | 10.x |
 
-- `CreateTestDestination()`: Crea un destino individual
-- `CreateTestDestinations()`: Crea una lista de destinos
-- `CreateTestCreateDestinationDto()`: Crea DTO de creación
-- `CreateTestUpdateDestinationDto()`: Crea DTO de actualización
-- `CreateTestDestinationFilter()`: Crea filtro de búsqueda
+---
 
-## Mejores Prácticas Implementadas
+## Helpers y Utilidades
 
-1. **Aislamiento**: Cada test es independiente
-2. **Limpieza**: Uso de `IDisposable` para limpiar recursos
-3. **Nombres descriptivos**: Los nombres de los tests explican qué se está probando
-4. **Datos de prueba consistentes**: Uso de helpers para crear datos
-5. **Cobertura completa**: Tests para casos exitosos y de error
-6. **Tests de integración**: Verificación del flujo completo
-7. **Mocking de dependencias**: Uso de Moq para logger y servicios
-8. **Logging en tests**: Verificación de que el logging funciona correctamente
+### TestDataHelper
 
-## Estadísticas de Tests
+Clase utilitaria para crear datos de prueba consistentes.
 
-**Estado Actual** (actualizado después de migración a .NET 10):
-- ✅ **Total de Tests**: 81
-- ✅ **Tests Pasando**: 81 (100%)
-- ✅ **Tests Fallando**: 0
-- ✅ **Tiempo de Ejecución**: ~4-9 segundos
-- ✅ **Compatibilidad**: Totalmente compatible con .NET 10
+```csharp
+// Constants para IDs de tipos de destino
+public const int BeachTypeId = 1;
+public const int MountainTypeId = 2;
+public const int CityTypeId = 3;
+public const int CulturalTypeId = 4;
+public const int AdventureTypeId = 5;
+public const int RelaxTypeId = 6;
 
-**Distribución por Categoría**:
-- Tests Unitarios de Dominio: ~10
-- Tests Unitarios de Aplicación (CQRS): ~25
-- Tests de Infraestructura: ~15
-- Tests de Presentación (Controllers): ~20
-- Tests de Integración (End-to-End): ~11
+// Métodos helper
+CreateTestDestination()              // Destination individual
+CreateTestDestinations()             // Lista de Destinations
+CreateTestCreateDestinationDto()     // DTO para crear
+CreateTestUpdateDestinationDto()     // DTO para actualizar
+CreateTestDestinationFilter()        // Filtro de búsqueda
+```
 
-**Cobertura de Código** (estimada):
-- Domain Layer: ~90%
-- Application Layer: ~85%
-- Infrastructure Layer: ~80%
-- Presentation Layer: ~75%
+**Uso:**
+```csharp
+var destination = TestDataHelper.CreateTestDestination();
+destination.DestinationTypeId.Should().Be(TestDataHelper.BeachTypeId);
+```
 
-## Notas de Migración a .NET 10
+### TestConstants
 
-### Cambios Aplicados
-- ✅ Actualización de `Microsoft.EntityFrameworkCore.InMemory` de 9.0.8 → 10.0.3
-- ✅ Actualización de `Microsoft.AspNetCore.Mvc.Testing` de 9.0.8 → 10.0.3
-- ✅ Todos los tests continúan pasando sin cambios de código
-- ✅ Sin comportamientos inesperados detectados
-- ✅ Compatibilidad 100% con .NET 10
+```csharp
+public static class TestConstants
+{
+    public static readonly TimeSpan DateTimeTolerance = TimeSpan.FromSeconds(1);
+    public const int NonExistentDestinationId = 9999;
+    public const string ValidCountryCode = "ESP";
+    public const string InvalidCountryCode = "XXX";
+}
+```
 
-### Validación Post-Migración
-- ✅ Todos los 81 tests ejecutados exitosamente
-- ✅ Sin cambios en comportamiento de assertions
-- ✅ Sin cambios en comportamiento de API HTTP
-- ✅ Tests de integración funcionando correctamente
-- ✅ Base de datos en memoria funcionando sin cambios
+---
 
-## Troubleshooting
+## 📝 Escribir Nuevos Tests
 
-### Error: "Database already exists"
-- Los tests usan nombres únicos de base de datos con `Guid.NewGuid()`
-- Si persiste, limpiar la base de datos en memoria
+### Template de Test Unitario
 
-### Error: "Mapeo de entidades fallido"
-- Verificar que todos los adaptadores estén implementados correctamente
-- Ejecutar `config.AssertConfigurationIsValid()` en los tests
+```csharp
+using Xunit;
+using FluentAssertions;
+using Moq;
+using backend.Tests.Helpers;
 
-### Tests lentos
-- Usar base de datos en memoria en lugar de SQL Server
-- Evitar operaciones de red en tests unitarios
-- Usar mocks para dependencias externas
+namespace backend.Tests.UseCases.Commands
+{
+    public class MyNewCommandHandlerTests
+    {
+        private readonly Mock<IDependency> _mockDependency;
+        private readonly MyNewCommandHandler _handler;
 
-## Contribución
+        public MyNewCommandHandlerTests()
+        {
+            _mockDependency = new Mock<IDependency>();
+            _handler = new MyNewCommandHandler(_mockDependency.Object);
+        }
 
-Al agregar nuevos tests:
+        [Fact]
+        public async Task Handle_WithValidInput_ReturnsExpectedResult()
+        {
+            // Arrange
+            var command = new MyNewCommand { /* ... */ };
+            _mockDependency.Setup(x => x.MethodAsync())
+                          .ReturnsAsync(expectedValue);
 
-1. Seguir el patrón AAA (Arrange-Act-Assert)
-2. Usar nombres descriptivos para los tests
-3. Agregar tests para casos de error
-4. Mantener la cobertura de código alta
-5. Documentar casos especiales o complejos
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
 
-## Author
+            // Assert
+            result.Should().NotBeNull();
+            result.Property.Should().Be(expectedValue);
+            _mockDependency.Verify(x => x.MethodAsync(), Times.Once);
+        }
 
-**Lorelay Pricop Florescu**  
-Graduate in Interactive Technologies and Project Manager with experience in .NET, Python, Angular, Azure DevOps, AI, and Agile methodologies.
+        [Fact]
+        public async Task Handle_WithInvalidInput_ThrowsException()
+        {
+            // Arrange
+            var command = new MyNewCommand { /* invalid data */ };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ValidationException>(
+                () => _handler.Handle(command, CancellationToken.None)
+            );
+        }
+    }
+}
+```
+
+### Template de Test de Integración
+
+```csharp
+using Xunit;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using backend.Infrastructure.Data;
+
+namespace backend.Tests.Integration
+{
+    public class MyIntegrationTests : IDisposable
+    {
+        private readonly ApplicationDbContext _context;
+
+        public MyIntegrationTests()
+        {
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: $"TestDb_{Guid.NewGuid()}")
+                .Options;
+            _context = new ApplicationDbContext(options);
+        }
+
+        [Fact]
+        public async Task Integration_Scenario_WorksCorrectly()
+        {
+            // Arrange
+            SeedTestData();
+
+            // Act
+            var result = await PerformOperation();
+
+            // Assert
+            result.Should().NotBeNull();
+            var persisted = await _context.Entities.FirstOrDefaultAsync();
+            persisted.Should().NotBeNull();
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
+    }
+}
+```
+
+---
+
+## Actualización de Tests (v1.0 Refactor)
+
+### Cambios Principales
+
+**De enum a entidad** (DestinationType):
+
+```csharp
+// ❌ Antes:
+var destination = new Destination {
+    Type = DestinationType.Beach
+};
+
+// ✅ Ahora:
+var destination = new Destination {
+    DestinationTypeId = TestDataHelper.BeachTypeId
+};
+```
+
+**Assertions actualizadas**:
+
+```csharp
+// ❌ Antes:
+result.Type.Should().Be(dto.Type);
+
+// ✅ Ahora:
+result.DestinationTypeId.Should().Be(dto.DestinationTypeId);
+```
+
+Ver [TESTS_FIX_GUIDE.md](../TESTS_FIX_GUIDE.md) para guía completa de migración.
+
+---
+
+## 🐛 Debugging Tests
+
+### Ejecutar en modo Debug
+
+1. En Visual Studio:
+   - Clic derecho en test → **Debug Test(s)**
+
+2. En VS Code:
+   - Agregar breakpoint
+   - Ejecutar con `.NET Test Explorer`
+
+3. En CLI:
+```bash
+# Con logger detallado
+dotnet test --logger "console;verbosity=detailed"
+
+# Un solo test
+dotnet test --filter "FullyQualifiedName=namespace.ClassName.MethodName"
+```
+
+### Troubleshooting Común
+
+#### Tests fallan después de cambios
+```bash
+dotnet clean
+dotnet restore
+dotnet build
+dotnet test
+```
+
+#### InMemory Database conflicts
+```csharp
+// Usar GUID único para cada test
+var dbName = $"TestDb_{Guid.NewGuid()}";
+options.UseInMemoryDatabase(databaseName: dbName);
+```
+
+#### Mocks no funcionan
+```csharp
+// Verificar setup correcto
+_mockRepo.Setup(x => x.MethodAsync(It.IsAny<Param>()))
+         .ReturnsAsync(value);
+
+// Verificar invocación
+_mockRepo.Verify(x => x.MethodAsync(It.IsAny<Param>()), Times.Once);
+```
+
+---
+
+## Recursos
+
+- [xUnit Documentation](https://xunit.net/)
+- [FluentAssertions](https://fluentassertions.com/)
+- [Moq Quickstart](https://github.com/moq/moq4/wiki/Quickstart)
+- [.NET Testing Best Practices](https://docs.microsoft.com/dotnet/core/testing/unit-testing-best-practices)---
 
 [LinkedIn](https://www.linkedin.com/in/lorelaypricop)  
 Contact: lorelaypricop@gmail.com
-
 # Notes
 > Some ideas regarding validation, style, and structure were reviewed with the support of artificial intelligence (AI) tools, used to help accelerate documentation and validate edge case

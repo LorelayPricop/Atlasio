@@ -50,7 +50,7 @@
             @if (isActiveStatus(dest.status)) {
               <div class="featured-badge">FEATURED</div>
             }
-            <h2>{{ dest.name }}, {{ getCountryName(dest.countryCode, dest.name) }}</h2>
+            <h2>{{ dest.name }}, {{ getCountryName(dest.countryCode) }}</h2>
             <p>{{ dest.description }}</p>
           </div>
         </div>
@@ -102,11 +102,11 @@
             <div class="metadata-list">
               <div class="metadata-item">
                 <span class="metadata-label">Country</span>
-                <span class="metadata-value">{{ dest.name }}, {{ getCountryName(dest.countryCode, dest.name) }}</span>
+                <span class="metadata-value">{{ dest.name }}, {{ getCountryName(dest.countryCode) }}</span>
               </div>
               <div class="metadata-item">
                 <span class="metadata-label">Type</span>
-                <span class="metadata-value">{{ getTypeLabel(dest.type || '') }}</span>
+                <span class="metadata-value">{{ dest.typeName || 'Unknown' }}</span>
               </div>
               @if (dest.createdBy) {
                 <div class="metadata-item">

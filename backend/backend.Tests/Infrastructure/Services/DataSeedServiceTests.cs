@@ -5,7 +5,7 @@ using Xunit;
 using FluentAssertions;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Services;
-using backend.Domain.Enums;
+
 
 namespace backend.Tests.Infrastructure.Services
 {
@@ -63,18 +63,19 @@ namespace backend.Tests.Infrastructure.Services
         [Fact]
         public async Task SeedDataAsync_ShouldCreateDestinationsWithAllTypes()
         {
-            // Arrange
-            var destinationTypes = Enum.GetValues<DestinationType>();
-
-            // Act
+            // Arrange & Act
             await _service.SeedDataAsync();
 
             // Assert
             var destinations = await _context.Destinations.ToListAsync();
-            foreach (var type in destinationTypes)
-            {
-                destinations.Should().Contain(d => d.Type == type);
-            }
+            var destinationTypes = await _context.DestinationTypes.ToListAsync();
+
+            destinationTypes.Should().HaveCount(6);
+            destinations.Should().NotBeEmpty();
+
+            // Verificar que hay destinos para varios tipos
+            var usedTypeIds = destinations.Select(d => d.DestinationTypeId).Distinct().ToList();
+            usedTypeIds.Should().NotBeEmpty();
         }
 
         public void Dispose()

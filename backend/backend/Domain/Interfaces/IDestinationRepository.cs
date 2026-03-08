@@ -1,5 +1,4 @@
 using backend.Domain.Entities;
-using backend.Domain.Enums;
 
 namespace backend.Domain.Interfaces
 {
@@ -21,13 +20,6 @@ namespace backend.Domain.Interfaces
         /// </summary>
         /// <returns>Lista de códigos de países ordenados</returns>
         Task<List<string>> GetUniqueCountryCodesAsync();
-
-        /// <summary>
-        /// Obtiene destinos por tipo específico
-        /// </summary>
-        /// <param name="type">Tipo de destino</param>
-        /// <returns>Lista de destinos del tipo especificado</returns>
-        Task<List<Destination>> GetDestinationsByTypeAsync(DestinationType type);
 
         /// <summary>
         /// Busca destinos por término de búsqueda

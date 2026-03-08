@@ -37,8 +37,8 @@
           <div class="select-wrap">
             <select name="countryCode" [(ngModel)]="formModel.countryCode" required>
               <option value="" disabled>Select a country</option>
-              @for (country of countries(); track country) {
-                <option [value]="country">{{ getCountryDisplayName(country) }}</option>
+              @for (country of countries(); track country.code) {
+                <option [value]="country.code">{{ country.name }}</option>
               }
             </select>
             <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
@@ -48,10 +48,10 @@
         <label class="field">
           <span>Destination Type <span class="required">*</span></span>
           <div class="select-wrap">
-            <select name="type" [(ngModel)]="formModel.type" required>
+            <select name="destinationTypeId" [(ngModel)]="formModel.destinationTypeId" required>
               <option [ngValue]="null" disabled>Select type</option>
-              @for (option of destinationTypeOptions; track option.value) {
-                <option [ngValue]="option.value">{{ option.label }}</option>
+              @for (type of destinationTypes(); track type.id) {
+                <option [ngValue]="type.id">{{ type.name }}</option>
               }
             </select>
             <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>

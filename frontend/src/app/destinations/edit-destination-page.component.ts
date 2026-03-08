@@ -2,11 +2,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ApiClient, DestinationDto, DestinationType, UpdateDestinationDto } from '../services/api-client';
+import { ApiClient, DestinationDto, UpdateDestinationDto, CountryDto, DestinationTypeDto } from '../services/api-client';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
-import { COUNTRY_OPTIONS, getCountryNameByCode } from '../shared/enums/country.enum';
-import { DESTINATION_TYPE_OPTIONS } from '../shared/enums/destination-type.enum';
+import { CatalogService } from '../services/catalog.service';
 
 @Component({
   selector: 'app-edit-destination-page',
@@ -17,6 +16,7 @@ import { DESTINATION_TYPE_OPTIONS } from '../shared/enums/destination-type.enum'
 })
 export class EditDestinationPageComponent implements OnInit {
   private readonly apiService = inject(ApiClient);
+  private readonly catalogService = inject(CatalogService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -28,8 +28,9 @@ export class EditDestinationPageComponent implements OnInit {
   });
 
   destination = signal<DestinationDto | null>(null);
-  countries = signal<string[]>(COUNTRY_OPTIONS);
-  destinationTypeOptions = DESTINATION_TYPE_OPTIONS;
+  // Catálogos cargados del backend
+  countries = signal<CountryDto[]>([]);
+  destinationTypes = signal<DestinationTypeDto[]>([]);
   selectedImageName = signal<string>('');
   selectedImageDataUrl = signal<string>('');
   imageRemoved = signal<boolean>(false);
@@ -38,14 +39,14 @@ export class EditDestinationPageComponent implements OnInit {
     id: number;
     name: string;
     countryCode: string;
-    type: DestinationType | null;
+    destinationTypeId: number | null;
     description: string;
     longDescription: string;
   } = {
     id: 0,
     name: '',
     countryCode: '',
-    type: null,
+    destinationTypeId: null,
     description: '',
     longDescription: ''
   };
@@ -63,18 +64,33 @@ export class EditDestinationPageComponent implements OnInit {
       return;
     }
 
-    this.loadCountries();
+    this.loadCatalogs();
     this.loadDestination(id);
   }
 
-  loadCountries(): void {
-    this.apiService.countries().subscribe({
-      next: (countries: string[]) => {
-        const merged = new Set<string>([...COUNTRY_OPTIONS, ...(countries || [])]);
-        this.countries.set(Array.from(merged));
+  /**
+   * Carga catálogos de países y tipos de destino desde el backend
+   */
+  loadCatalogs(): void {
+    // Cargar países
+    this.catalogService.getCountries().subscribe({
+      next: (countries) => {
+        this.countries.set(countries);
       },
-      error: () => {
-        this.countries.set(COUNTRY_OPTIONS);
+      error: (error) => {
+        console.error('Error loading countries:', error);
+        this.showAlert('warning', 'Could not load countries catalog.');
+      }
+    });
+
+    // Cargar tipos de destino
+    this.catalogService.getDestinationTypes().subscribe({
+      next: (types) => {
+        this.destinationTypes.set(types);
+      },
+      error: (error) => {
+        console.error('Error loading destination types:', error);
+        this.showAlert('warning', 'Could not load destination types catalog.');
       }
     });
   }
@@ -90,7 +106,7 @@ export class EditDestinationPageComponent implements OnInit {
           id: dest.id,
           name: dest.name || '',
           countryCode: dest.countryCode || '',
-          type: dest.type,
+          destinationTypeId: dest.destinationTypeId,
           description: dest.description || '',
           longDescription: dest.longDescription || ''
         };
@@ -105,10 +121,6 @@ export class EditDestinationPageComponent implements OnInit {
         this.showAlert('error', 'Error loading destination: ' + (error?.message || 'Unknown error'));
       }
     });
-  }
-
-  getCountryDisplayName(countryCode?: string): string {
-    return getCountryNameByCode(countryCode) || countryCode || 'Not specified';
   }
 
   onImageSelected(event: Event): void {
@@ -151,7 +163,7 @@ export class EditDestinationPageComponent implements OnInit {
 
   onSubmit(): void {
     const model = this.formModel;
-    if (!model.name.trim() || !model.description.trim() || !model.countryCode || model.type === null) {
+    if (!model.name.trim() || !model.description.trim() || !model.countryCode || model.destinationTypeId === null) {
       this.showAlert('warning', 'Please complete all required fields.');
       return;
     }
@@ -161,7 +173,7 @@ export class EditDestinationPageComponent implements OnInit {
     dto.description = model.description.trim();
     dto.longDescription = model.longDescription.trim() || undefined;
     dto.countryCode = model.countryCode;
-    dto.type = model.type;
+    dto.destinationTypeId = model.destinationTypeId;
 
     if (this.imageRemoved()) {
       (dto as any).imageUrl = null;

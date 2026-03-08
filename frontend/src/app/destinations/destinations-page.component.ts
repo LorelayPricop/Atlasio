@@ -2,36 +2,44 @@ import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { DestinationDto, CreateDestinationDto, UpdateDestinationDto, DestinationType, DestinationDtoPagedResultDto, ApiClient } from '../services/api-client';
+import { DestinationDto, DestinationDtoPagedResultDto, ApiClient, CountryDto, DestinationTypeDto } from '../services/api-client';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
-import { ModalComponent } from '../shared/modal/modal.component';
 import { ConfirmComponent } from '../shared/confirm/confirm.component';
-import { DestinationCategory } from '../shared/enums/destination-category.enum';
-import { CITY_OPTIONS } from '../shared/enums/city.enum';
-import { COUNTRY_OPTIONS, getCountryNameByCode } from '../shared/enums/country.enum';
+import { CatalogService } from '../services/catalog.service';
 
 @Component({
   selector: 'app-destinations-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, LoadingComponent, AlertComponent, ModalComponent, ConfirmComponent],
+  imports: [CommonModule, FormsModule, RouterModule, LoadingComponent, AlertComponent, ConfirmComponent],
   templateUrl: './destinations-page.component.html',
   styleUrls: ['./destinations-page.component.css']
 })
 export class DestinationsPageComponent implements OnInit, OnDestroy {
   private readonly apiService = inject(ApiClient);
+  private readonly catalogService = inject(CatalogService);
   private readonly router = inject(Router);
 
   // Estado de filtros y datos
-  filter = signal<{ page?: number; pageSize?: number; search?: string; countryCode?: string; type?: string }>({ page: 1, pageSize: 5 });
+  filter = signal<{ 
+    page?: number; 
+    pageSize?: number; 
+    search?: string; 
+    countryCode?: string; 
+    destinationTypeId?: number;
+  }>({ page: 1, pageSize: 10 });
+  
   destinations = signal<DestinationDto[]>([]);
   totalCount = signal<number>(0);
   loading = signal<boolean>(false);
   selectedId = signal<number | null>(null);
   viewMode = signal<'table' | 'grid'>('table');
-  sortState = signal<{ key: 'id' | 'name' | 'description' | 'countryCode' | 'type' | 'lastModif'; dir: 'asc' | 'desc' } | null>(null);
+  
+  // Catálogos cargados del backend
+  countries = signal<CountryDto[]>([]);
+  destinationTypes = signal<DestinationTypeDto[]>([]);
   
   // Estados de alertas
   alert = signal<{ show: boolean; type: string; message: string }>({
@@ -40,25 +48,14 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     message: ''
   });
 
-  // Modelos para ngModel
+  // Modelos para ngModel de filtros
   searchTerm = '';
   countryCode = '';
-  type: DestinationType = DestinationType._0;
-  pageSize = 5;
+  destinationTypeId: number | null = null;
+  pageSize = 10;
   
-  // Opciones para selectores
+  // Opciones para paginación
   pageSizeOptions = [5, 10, 20, 50, 100];
-  cityOptions = CITY_OPTIONS;
-
-  // Opciones para selects
-  destinationTypes = signal<string[]>([]);
-  countries = signal<string[]>(COUNTRY_OPTIONS);
-
-  // Estado modal y formulario
-  isModalOpen = signal<boolean>(false);
-  isEditing = signal<boolean>(false);
-  formModel: { id?: number; name: string; description: string; countryCode: string; type: number } =
-    { name: '', description: '', countryCode: '', type: 0 };
 
   // Estado confirmación
   isConfirmOpen = signal<boolean>(false);
@@ -69,8 +66,7 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   ngOnInit(): void {
-    this.loadCountries();
-    this.loadDestinationTypes();
+    this.loadCatalogs();
     this.loadDestinations();
 
     // Debounce de la búsqueda
@@ -89,26 +85,34 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  loadCountries(): void {
-    this.apiService.countries().subscribe({
-      next: (countries: string[]) => {
-        const merged = new Set<string>([...COUNTRY_OPTIONS, ...(countries || [])]);
-        this.countries.set(Array.from(merged));
+  /**
+   * Carga catálogos de países y tipos de destino desde el backend
+   */
+  loadCatalogs(): void {
+    // Cargar países
+    this.catalogService.getCountries().subscribe({
+      next: (countries) => {
+        this.countries.set(countries);
       },
       error: (error: any) => {
-        console.error('Error al cargar países:', error);
-        this.countries.set(COUNTRY_OPTIONS);
+        console.error('Error loading countries catalog:', error);
+      }
+    });
+
+    // Cargar tipos de destino
+    this.catalogService.getDestinationTypes().subscribe({
+      next: (types) => {
+        this.destinationTypes.set(types);
+      },
+      error: (error: any) => {
+        console.error('Error loading destination types catalog:', error);
       }
     });
   }
 
-  loadDestinationTypes(): void {
-    this.apiService.types().subscribe({
-      next: (types: string[]) => this.destinationTypes.set(types),
-      error: (error: any) => console.error('Error al cargar tipos de destino:', error)
-    });
-  }
-
+  /**
+   * Carga destinos desde el backend con filtros y paginación
+   */
   loadDestinations(): void {
     this.loading.set(true);
     this.hideAlert();
@@ -117,7 +121,7 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     this.apiService.destinationsGET(
       currentFilter.search,
       currentFilter.countryCode,
-      currentFilter.type as unknown as DestinationType,
+      currentFilter.destinationTypeId,
       currentFilter.page,
       currentFilter.pageSize
     ).subscribe({
@@ -128,36 +132,36 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         this.loading.set(false);
-        this.showAlert('error', 'Error al cargar los destinos: ' + error.message);
+        this.showAlert('error', 'Error loading destinations: ' + (error.message || 'Unknown error'));
       }
     });
   }
 
-  onSearch(): void {
-    this.filter.update(f => ({ 
-      ...f, 
-      search: this.searchTerm || undefined, 
-      page: 1 
-    }));
-    this.loadDestinations();
-  }
-
+  /**
+   * Maneja cambio en el campo de búsqueda con debounce
+   */
   onSearchChange(value: string): void {
     this.searchTerm = value;
     this.searchChange$.next(value);
   }
 
+  /**
+   * Maneja cambios en filtros (país y tipo)
+   */
   onFilterChange(): void {
     this.filter.update(f => ({
       ...f,
       page: 1,
       countryCode: this.countryCode || undefined,
-      type: this.type ? String(this.type) : undefined,
+      destinationTypeId: this.destinationTypeId || undefined,
       pageSize: this.pageSize
     }));
     this.loadDestinations();
   }
 
+  /**
+   * Maneja cambio en tamaño de página
+   */
   onPageSizeChange(): void {
     this.filter.update(f => ({
       ...f,
@@ -167,6 +171,9 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     this.loadDestinations();
   }
 
+  /**
+   * Cambia de página (offset: -1 para anterior, +1 para siguiente)
+   */
   changePage(offset: number): void {
     const currentPage = this.filter().page || 1;
     const newPage = Math.max(1, currentPage + offset);
@@ -180,21 +187,21 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
 
   canGoToNextPage(): boolean {
     const currentPage = this.filter().page || 1;
-    const totalPages = Math.ceil(this.totalCount() / (this.filter().pageSize || 5));
+    const totalPages = Math.ceil(this.totalCount() / (this.filter().pageSize || 10));
     return currentPage < totalPages;
   }
 
   getStartResult(): number {
     if (this.totalCount() === 0) return 0;
     const currentPage = this.filter().page || 1;
-    const pageSize = this.filter().pageSize || 5;
+    const pageSize = this.filter().pageSize || 10;
     return (currentPage - 1) * pageSize + 1;
   }
 
   getEndResult(): number {
     const currentPage = this.filter().page || 1;
-    const pageSize = this.filter().pageSize || 5;
-    const lastOnPage = (currentPage - 1) * pageSize + this.getSortedDestinations().length;
+    const pageSize = this.filter().pageSize || 10;
+    const lastOnPage = (currentPage - 1) * pageSize + this.destinations().length;
     return Math.min(lastOnPage, this.totalCount());
   }
 
@@ -206,147 +213,36 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     this.viewMode.set(mode);
   }
 
-  onSort(key: 'id' | 'name' | 'description' | 'countryCode' | 'type' | 'lastModif'): void {
-    const current = this.sortState();
-    if (current?.key === key) {
-      const nextDir = current.dir === 'asc' ? 'desc' : 'asc';
-      this.sortState.set({ key, dir: nextDir });
-    } else {
-      this.sortState.set({ key, dir: 'asc' });
-    }
-  }
-
-  getSortedDestinations(): DestinationDto[] {
-    const data = [...(this.destinations() || [])];
-    const sort = this.sortState();
-    if (!sort) return data;
-
-    const compare = (a: any, b: any): number => {
-      const av = a ?? '';
-      const bv = b ?? '';
-      if (typeof av === 'number' && typeof bv === 'number') return av - bv;
-      const as = av instanceof Date ? av.getTime() : String(av).toLowerCase();
-      const bs = bv instanceof Date ? bv.getTime() : String(bv).toLowerCase();
-      if (as < bs) return -1;
-      if (as > bs) return 1;
-      return 0;
-    };
-
-    data.sort((a, b) => {
-      let res = 0;
-      switch (sort.key) {
-        case 'id': res = compare(a.id, b.id); break;
-        case 'name': res = compare(a.name, b.name); break;
-        case 'description': res = compare(a.description, b.description); break;
-        case 'countryCode': res = compare(a.countryCode, b.countryCode); break;
-        case 'type': res = compare(a.type, b.type); break;
-        case 'lastModif': res = compare(a.lastModif, b.lastModif); break;
-      }
-      return sort.dir === 'asc' ? res : -res;
-    });
-    return data;
-  }
-
   onCreate(): void {
     this.router.navigate(['/destinations/new']);
   }
 
   onEdit(): void {
     if (this.selectedId() == null) {
-      this.showAlert('warning', 'Selecciona un destino para editar');
+      this.showAlert('warning', 'Please select a destination to edit');
       return;
     }
     this.router.navigate(['/destinations', this.selectedId(), 'edit']);
   }
 
-  onModalClose(): void {
-    this.isModalOpen.set(false);
-  }
-
-  onSubmitForm(): void {
-    const model = this.formModel;
-    if (!model.name?.trim() || !model.description?.trim() || !model.countryCode) {
-      this.showAlert('warning', 'Completa los campos obligatorios');
+  onView(): void {
+    if (this.selectedId() == null) {
+      this.showAlert('warning', 'Please select a destination to view');
       return;
     }
-    this.loading.set(true);
-    
-    // Convertir el índice del formulario al enum correspondiente
-    const typeEnum = this.getDestinationTypeFromIndex(model.type);
-    
-    if (this.isEditing()) {
-      const dto = new UpdateDestinationDto();
-      dto.name = model.name.trim();
-      dto.description = model.description.trim();
-      dto.countryCode = model.countryCode;
-      dto.type = typeEnum;
-      this.apiService.destinationsPUT(model.id!, dto).subscribe({
-        next: (updated: DestinationDto) => {
-          this.loading.set(false);
-          this.isModalOpen.set(false);
-          this.showAlert('success', `Destino "${updated.name}" actualizado exitosamente`);
-          this.loadDestinations();
-        },
-        error: (error: any) => {
-          this.loading.set(false);
-          this.showAlert('error', 'Error al actualizar el destino: ' + this.extractApiErrorDetails(error));
-        }
-      });
-    } else {
-      const dto = new CreateDestinationDto();
-      dto.name = model.name.trim();
-      dto.description = model.description.trim();
-      dto.countryCode = model.countryCode;
-      dto.type = typeEnum;
-      this.apiService.destinationsPOST(dto).subscribe({
-        next: (created: DestinationDto) => {
-          this.loading.set(false);
-          this.isModalOpen.set(false);
-          this.showAlert('success', `Destino "${created.name}" creado exitosamente`);
-          this.loadDestinations();
-        },
-        error: (error: any) => {
-          this.loading.set(false);
-          this.showAlert('error', 'Error al crear el destino: ' + this.extractApiErrorDetails(error));
-        }
-      });
-    }
+    this.router.navigate(['/destinations', this.selectedId()]);
   }
 
-  private extractApiErrorDetails(error: any): string {
-    try {
-      const result = error?.result ?? null;
-      if (result?.errors) {
-        const parts: string[] = [];
-        for (const key of Object.keys(result.errors)) {
-          const msgs = result.errors[key];
-          if (Array.isArray(msgs)) {
-            for (const m of msgs) parts.push(`${key}: ${m}`);
-          }
-        }
-        if (parts.length) return parts.join(' | ');
-      }
-      if (result?.title) return result.title;
-      if (result?.detail) return result.detail;
-      return error?.message ?? 'Error desconocido';
-    } catch {
-      return error?.message ?? 'Error desconocido';
-    }
-  }
-
-  onRemove(): void {
+  onDelete(): void {
     const id = this.selectedId();
     if (id == null) {
-      this.showAlert('warning', 'Selecciona un destino para eliminar');
+      this.showAlert('warning', 'Please select a destination to delete');
       return;
     }
-    
     const destination = this.destinations().find(d => d.id === id);
-    const name = destination?.name || `ID ${id}`;
-    
     this.confirmData.set({
-      title: 'Eliminar destino',
-      message: `¿Estás seguro de que quieres eliminar "${name}"? Esta acción no se puede deshacer.`,
+      title: 'Delete Destination',
+      message: `Are you sure you want to delete "${destination?.name || 'this destination'}"?`,
       onConfirm: () => this.executeDelete(id)
     });
     this.isConfirmOpen.set(true);
@@ -358,11 +254,11 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
       next: () => {
         this.selectedId.set(null);
         this.loadDestinations();
-        this.showAlert('success', 'Destino eliminado correctamente');
+        this.showAlert('success', 'Destination deleted successfully');
       },
       error: (error: any) => {
         this.loading.set(false);
-        this.showAlert('error', 'Error al eliminar el destino: ' + error.message);
+        this.showAlert('error', 'Error deleting destination: ' + (error.message || 'Unknown error'));
       }
     });
   }
@@ -380,77 +276,43 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     this.onConfirmClose();
   }
 
-  getTypeLabel(type: string | number | DestinationType): string {
-    const typeStrings = this.destinationTypes();
-    
-    // Si es un número (índice del enum), obtener el string correspondiente
-    if (typeof type === 'number') {
-      return typeStrings[type] || String(type);
-    }
-    
-    // Si es un string, devolverlo tal como está
-    if (typeof type === 'string') {
-      return type;
-    }
-    
-    // Si es un enum DestinationType, convertir a número y luego a string
-    if (type !== null && type !== undefined) {
-      const enumIndex = Number(type);
-      if (!isNaN(enumIndex) && enumIndex >= 0 && enumIndex < typeStrings.length) {
-        return typeStrings[enumIndex] || String(type);
-      }
-    }
-    
-    return String(type || '');
-  }
-
-  getTypeClass(type: string | number | DestinationType): string {
-    return this.getTypeCategory(type);
-  }
-
+  /**
+   * Obtiene el nombre del país desde el catálogo
+   */
   getCountryDisplayName(countryCode?: string): string {
-    return getCountryNameByCode(countryCode) || countryCode || 'Not specified';
+    if (!countryCode) return 'Not specified';
+    const country = this.countries().find(c => c.code === countryCode);
+    return country?.name || countryCode;
   }
 
-  getTypeIcon(type: string | number | DestinationType): string {
-    const category = this.getTypeCategory(type);
-    if (category === DestinationCategory.Beach) return 'beach_access';
-    if (category === DestinationCategory.Mountain) return 'terrain';
-    if (category === DestinationCategory.Cultural) return 'museum';
-    if (category === DestinationCategory.Adventure) return 'hiking';
-    if (category === DestinationCategory.Relax) return 'self_improvement';
+  /**
+   * Obtiene el icono según el código del tipo de destino
+   */
+  getTypeIcon(typeCode?: string): string {
+    if (!typeCode) return 'location_city';
+    const code = typeCode.toLowerCase();
+    
+    if (code.includes('beach') || code.includes('playa')) return 'beach_access';
+    if (code.includes('mountain') || code.includes('montaña')) return 'terrain';
+    if (code.includes('cultural') || code.includes('cultura')) return 'museum';
+    if (code.includes('adventure') || code.includes('aventura')) return 'hiking';
+    if (code.includes('relax')) return 'self_improvement';
     return 'location_city';
   }
 
-  private getTypeCategory(type: string | number | DestinationType): DestinationCategory {
-    const normalized = this.normalizeTypeLabel(this.getTypeLabel(type));
-
-    if (normalized.includes('beach') || normalized.includes('playa')) return DestinationCategory.Beach;
-    if (normalized.includes('mountain') || normalized.includes('montana')) return DestinationCategory.Mountain;
-    if (normalized.includes('cultural') || normalized.includes('cultura') || normalized.includes('historic') || normalized.includes('historico')) return DestinationCategory.Cultural;
-    if (normalized.includes('adventure') || normalized.includes('aventura')) return DestinationCategory.Adventure;
-    if (normalized.includes('relax') || normalized.includes('relaj')) return DestinationCategory.Relax;
-    return DestinationCategory.City;
-  }
-
-  private normalizeTypeLabel(value: string): string {
-    return (value || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .trim();
-  }
-
-  private getDestinationTypeFromIndex(index: number): DestinationType {
-    // Mapear el índice del formulario al enum correspondiente
-    const enumValues = Object.values(DestinationType).filter(v => typeof v === 'number') as DestinationType[];
-    return enumValues[index] || DestinationType._0;
-  }
-
-  private getIndexFromDestinationType(type: DestinationType): number {
-    // Mapear el enum al índice del formulario
-    const enumValues = Object.values(DestinationType).filter(v => typeof v === 'number') as DestinationType[];
-    return enumValues.indexOf(type);
+  /**
+   * Obtiene clase CSS según el código del tipo de destino
+   */
+  getTypeClass(typeCode?: string): string {
+    if (!typeCode) return 'type-default';
+    const code = typeCode.toLowerCase();
+    
+    if (code.includes('beach')) return 'type-beach';
+    if (code.includes('mountain')) return 'type-mountain';
+    if (code.includes('cultural')) return 'type-cultural';
+    if (code.includes('adventure')) return 'type-adventure';
+    if (code.includes('relax')) return 'type-relax';
+    return 'type-city';
   }
 
   showAlert(type: string, message: string): void {
@@ -465,5 +327,3 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
     this.hideAlert();
   }
 }
-
-

@@ -35,7 +35,7 @@
         Modify
       </button>
 
-      <button type="button" class="btn danger" [disabled]="selectedId() === null" (click)="onRemove()">
+      <button type="button" class="btn danger" [disabled]="selectedId() === null" (click)="onDelete()">
         <span class="material-symbols-outlined" aria-hidden="true">delete</span>
         Remove
       </button>
@@ -60,31 +60,31 @@
       <table class="destinations-table">
         <thead>
           <tr>
-            <th (click)="onSort('id')" class="sortable">ID</th>
-            <th (click)="onSort('name')" class="sortable">Name</th>
-            <th (click)="onSort('description')" class="sortable">Description</th>
-            <th (click)="onSort('countryCode')" class="sortable">Country</th>
-            <th (click)="onSort('type')" class="sortable">Type</th>
-            <th (click)="onSort('lastModif')" class="sortable">Last Modif.</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Country</th>
+            <th>Type</th>
+            <th>Last Modif.</th>
             <th></th>
           </tr>
         </thead>
 
         <tbody>
-          @for (destination of getSortedDestinations(); track destination.id) {
+          @for (destination of destinations(); track destination.id) {
             <tr (click)="selectRow(destination.id!)" [class.selected]="selectedId() === destination.id">
               <td class="id-col">{{ destination.id }}</td>
               <td>
                 <a [routerLink]="['/destinations', destination.id]" (click)="$event.stopPropagation()" class="name-cell">
-                  <span [ngClass]="['icon-wrap', getTypeClass(destination.type || 0)]">
-                    <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.type || 0) }}</span>
+                  <span [ngClass]="['icon-wrap', getTypeClass(destination.typeName)]">
+                    <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.typeName) }}</span>
                   </span>
                   <span>{{ destination.name }}</span>
                 </a>
               </td>
               <td class="desc-col">{{ destination.description }}</td>
               <td><span class="country-chip">{{ getCountryDisplayName(destination.countryCode) }}</span></td>
-              <td><span [ngClass]="['type-chip', getTypeClass(destination.type || 0)]">{{ getTypeLabel(destination.type || 0) }}</span></td>
+              <td><span [ngClass]="['type-chip', getTypeClass(destination.typeName)]">{{ destination.typeName || 'Unknown' }}</span></td>
               <td class="date-col">{{ destination.lastModif | date:'yyyy-MM-dd HH:mm' }}</td>
               <td class="menu-col">
                 <button type="button" class="row-menu" aria-label="Row options" (click)="$event.stopPropagation()">
@@ -111,12 +111,12 @@
     </section>
   } @else {
     <section class="grid-shell">
-      @for (destination of getSortedDestinations(); track destination.id) {
+      @for (destination of destinations(); track destination.id) {
         <article class="destination-card" (click)="selectRow(destination.id!)" [class.selected]="selectedId() === destination.id">
           <div class="card-body">
             <div class="card-head">
-              <div [ngClass]="['icon-wrap', 'large', getTypeClass(destination.type || 0)]">
-                <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.type || 0) }}</span>
+              <div [ngClass]="['icon-wrap', 'large', getTypeClass(destination.typeName)]">
+                <span class="material-symbols-outlined" aria-hidden="true">{{ getTypeIcon(destination.typeName) }}</span>
               </div>
               <button type="button" class="row-menu" aria-label="Row options" (click)="$event.stopPropagation()">
                 <span class="material-symbols-outlined" aria-hidden="true">more_vert</span>
@@ -127,7 +127,7 @@
             <p class="card-desc">{{ destination.description }}</p>
 
             <div class="card-tags">
-              <span [ngClass]="['type-chip', getTypeClass(destination.type || 0)]">{{ getTypeLabel(destination.type || 0) }}</span>
+              <span [ngClass]="['type-chip', getTypeClass(destination.typeName)]">{{ destination.typeName || 'Unknown' }}</span>
               <span class="country-chip">{{ getCountryDisplayName(destination.countryCode) }}</span>
             </div>
           </div>
@@ -154,52 +154,6 @@
     </footer>
   }
 </section>
-
-<app-modal [show]="isModalOpen()" [title]="isEditing() ? 'Editar destino' : 'Crear destino'" (closed)="onModalClose()">
-  <form (ngSubmit)="onSubmitForm()" #destForm="ngForm">
-    <div class="form-grid">
-      <label>
-        Nombre
-        <input name="name" [(ngModel)]="formModel.name" list="city-options" required />
-      </label>
-
-      <datalist id="city-options">
-        @for (city of cityOptions; track city) {
-          <option [value]="city"></option>
-        }
-      </datalist>
-
-      <label>
-        Descripción
-        <textarea name="description" [(ngModel)]="formModel.description" rows="3" required></textarea>
-      </label>
-
-      <label>
-        País
-        <select name="countryCode" [(ngModel)]="formModel.countryCode" required>
-          <option value="" disabled>Selecciona un país</option>
-          @for (country of countries(); track country) {
-            <option [value]="country">{{ getCountryDisplayName(country) }}</option>
-          }
-        </select>
-      </label>
-
-      <label>
-        Tipo
-        <select name="type" [(ngModel)]="formModel.type" required>
-          @for (destType of destinationTypes(); track destType; let i = $index) {
-            <option [ngValue]="i">{{ destType }}</option>
-          }
-        </select>
-      </label>
-    </div>
-
-    <div modal-actions>
-      <button type="button" class="modal-btn soft" (click)="onModalClose()">Cancel</button>
-      <button type="submit" class="modal-btn primary">Save</button>
-    </div>
-  </form>
-</app-modal>
 
 <app-confirm 
   [show]="isConfirmOpen()" 

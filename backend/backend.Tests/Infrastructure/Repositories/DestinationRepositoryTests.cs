@@ -4,7 +4,6 @@ using FluentAssertions;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
 using backend.Domain.Interfaces;
 using backend.Tests.Helpers;
 
@@ -113,7 +112,7 @@ namespace backend.Tests.Infrastructure.Repositories
     {
         public string? SearchTerm { get; set; }
         public string? CountryCode { get; set; }
-        public DestinationType? Type { get; set; }
+        public int? DestinationTypeId { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
     }

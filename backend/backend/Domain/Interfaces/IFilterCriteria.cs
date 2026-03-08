@@ -1,5 +1,3 @@
-using backend.Domain.Enums;
-
 namespace backend.Domain.Interfaces
 {
     /// <summary>
@@ -12,8 +10,8 @@ namespace backend.Domain.Interfaces
         string? SearchTerm { get; set; }
         /// <summary>Filtro por código de país específico</summary>
         string? CountryCode { get; set; }
-        /// <summary>Filtro por tipo de destino específico</summary>
-        DestinationType? Type { get; set; }
+        /// <summary>Filtro por ID de tipo de destino específico</summary>
+        int? DestinationTypeId { get; set; }
         /// <summary>Número de página actual (comienza en 1)</summary>
         int Page { get; set; }
         /// <summary>Número de elementos por página (máximo 100 recomendado)</summary>

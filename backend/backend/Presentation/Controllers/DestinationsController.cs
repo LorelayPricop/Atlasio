@@ -21,12 +21,29 @@ namespace backend.Presentation.Controllers
         }
 
         /// <summary>
-        /// Obtiene todos los destinos con filtros y paginación
+        /// Obtiene todos los destinos con filtros opcionales y paginación
         /// </summary>
         /// <param name="filter">Filtros de búsqueda y paginación</param>
         /// <returns>Lista paginada de destinos</returns>
         /// <response code="200">Lista de destinos obtenida exitosamente</response>
         /// <response code="500">Error interno del servidor</response>
+        /// <remarks>
+        /// Ejemplos de uso:
+        /// 
+        ///     GET /api/v1/destinations
+        ///     GET /api/v1/destinations?searchTerm=playa
+        ///     GET /api/v1/destinations?countryCode=ESP
+        ///     GET /api/v1/destinations?destinationTypeId=1
+        ///     GET /api/v1/destinations?page=2&amp;pageSize=10
+        ///     GET /api/v1/destinations?searchTerm=barcelona&amp;destinationTypeId=4&amp;page=1&amp;pageSize=20
+        ///     
+        /// Filtros disponibles:
+        /// - searchTerm: Busca en nombre, descripción y código de país
+        /// - countryCode: Filtra por código de país (ej: ESP, USA, MEX)
+        /// - destinationTypeId: Filtra por ID de tipo de destino (obtenible desde /api/v1/destinations/types)
+        /// - page: Número de página (default: 1)
+        /// - pageSize: Elementos por página (default: 20, máximo: 100)
+        /// </remarks>
         [HttpGet]
         [ProducesResponseType(typeof(PagedResultDto<DestinationDto>), 200)]
         [ProducesResponseType(500)]
@@ -65,13 +82,29 @@ namespace backend.Presentation.Controllers
         }
 
         /// <summary>
-        /// Crea un nuevo destino
+        /// Crea un nuevo destino turístico
         /// </summary>
         /// <param name="createDto">Datos del nuevo destino</param>
         /// <returns>Destino creado</returns>
         /// <response code="201">Destino creado exitosamente</response>
         /// <response code="400">Datos de entrada inválidos</response>
         /// <response code="500">Error interno del servidor</response>
+        /// <remarks>
+        /// Ejemplo de request:
+        /// 
+        ///     POST /api/v1/destinations
+        ///     {
+        ///         "name": "Barcelona",
+        ///         "description": "Ciudad cosmopolita con arquitectura única de Gaudí",
+        ///         "longDescription": "Barcelona es una ciudad vibrante...",
+        ///         "countryCode": "ESP",
+        ///         "destinationTypeId": 4,
+        ///         "imageUrl": "https://example.com/barcelona.jpg"
+        ///     }
+        ///     
+        /// Nota: destinationTypeId debe ser un ID válido del catálogo de tipos de destino.
+        /// Usa GET /api/v1/destinations/types para obtener los IDs disponibles.
+        /// </remarks>
         [HttpPost]
         [ProducesResponseType(typeof(DestinationDto), 201)]
         [ProducesResponseType(400)]
@@ -99,6 +132,21 @@ namespace backend.Presentation.Controllers
         /// <response code="400">Datos de entrada inválidos</response>
         /// <response code="404">Destino no encontrado</response>
         /// <response code="500">Error interno del servidor</response>
+        /// <remarks>
+        /// Ejemplo de request:
+        /// 
+        ///     PUT /api/v1/destinations/1
+        ///     {
+        ///         "name": "Barcelona Actualizada",
+        ///         "description": "Nueva descripción",
+        ///         "longDescription": "Descripción larga actualizada...",
+        ///         "countryCode": "ESP",
+        ///         "destinationTypeId": 3,
+        ///         "imageUrl": "https://example.com/barcelona-new.jpg"
+        ///     }
+        ///     
+        /// Nota: destinationTypeId debe ser un ID válido del catálogo de tipos de destino.
+        /// </remarks>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(DestinationDto), 200)]
         [ProducesResponseType(400)]
@@ -167,15 +215,38 @@ namespace backend.Presentation.Controllers
         }
 
         /// <summary>
-        /// Obtiene la lista de tipos de destino disponibles
+        /// Obtiene la lista de tipos de destino disponibles desde el catálogo
         /// </summary>
-        /// <returns>Lista de tipos de destino</returns>
+        /// <returns>Lista de tipos de destino con ID, código, nombre e ícono</returns>
         /// <response code="200">Lista de tipos obtenida exitosamente</response>
         /// <response code="500">Error interno del servidor</response>
+        /// <remarks>
+        /// Ejemplo de respuesta:
+        /// 
+        ///     GET /api/v1/destinations/types
+        ///     [
+        ///         {
+        ///             "id": 1,
+        ///             "code": "BEACH",
+        ///             "name": "Beach",
+        ///             "icon": "beach_access",
+        ///             "displayOrder": 1,
+        ///             "isActive": true
+        ///         },
+        ///         {
+        ///             "id": 2,
+        ///             "code": "MOUNTAIN",
+        ///             "name": "Mountain",
+        ///             "icon": "terrain",
+        ///             "displayOrder": 2,
+        ///             "isActive": true
+        ///         }
+        ///     ]
+        /// </remarks>
         [HttpGet("types")]
-        [ProducesResponseType(typeof(List<string>), 200)]
+        [ProducesResponseType(typeof(List<DestinationTypeDto>), 200)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<List<string>>> GetDestinationTypes()
+        public async Task<ActionResult<List<DestinationTypeDto>>> GetDestinationTypes()
         {
             var query = new GetDestinationTypesQuery();
             var types = await _mediator.Send(query);

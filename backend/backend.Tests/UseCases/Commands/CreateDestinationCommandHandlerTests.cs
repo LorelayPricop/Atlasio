@@ -43,7 +43,7 @@ namespace backend.Tests.Application.Commands
             result.Name.Should().Be(createDto.Name);
             result.Description.Should().Be(createDto.Description);
             result.CountryCode.Should().Be(createDto.CountryCode);
-            result.Type.Should().Be(createDto.Type);
+            result.DestinationTypeId.Should().Be(createDto.DestinationTypeId);
             mockRepository.Verify(r => r.Add(It.IsAny<Destination>()), Times.Once);
             _mockRepositoryManager.Verify(r => r.SaveChangesAsync(), Times.Once);
         }

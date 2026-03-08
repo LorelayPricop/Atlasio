@@ -2,11 +2,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ApiClient, CreateDestinationDto, DestinationType } from '../services/api-client';
+import { ApiClient, CreateDestinationDto, CountryDto, DestinationTypeDto } from '../services/api-client';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
-import { COUNTRY_OPTIONS, getCountryNameByCode } from '../shared/enums/country.enum';
-import { DESTINATION_TYPE_OPTIONS } from '../shared/enums/destination-type.enum';
+import { CatalogService } from '../services/catalog.service';
 
 @Component({
   selector: 'app-create-destination-page',
@@ -17,6 +16,7 @@ import { DESTINATION_TYPE_OPTIONS } from '../shared/enums/destination-type.enum'
 })
 export class CreateDestinationPageComponent implements OnInit {
   private readonly apiService = inject(ApiClient);
+  private readonly catalogService = inject(CatalogService);
   private readonly router = inject(Router);
 
   loading = signal<boolean>(false);
@@ -26,37 +26,59 @@ export class CreateDestinationPageComponent implements OnInit {
     message: ''
   });
 
-  countries = signal<string[]>(COUNTRY_OPTIONS);
-  destinationTypeOptions = DESTINATION_TYPE_OPTIONS;
+  // Catálogos cargados del backend
+  countries = signal<CountryDto[]>([]);
+  destinationTypes = signal<DestinationTypeDto[]>([]);
   selectedImageName = signal<string>('');
   selectedImageDataUrl = signal<string>('');
 
-  formModel: { name: string; countryCode: string; type: DestinationType | null; description: string; longDescription: string } = {
+  formModel: { 
+    name: string; 
+    countryCode: string; 
+    destinationTypeId: number | null; 
+    description: string; 
+    longDescription: string 
+  } = {
     name: '',
     countryCode: '',
-    type: null,
+    destinationTypeId: null,
     description: '',
     longDescription: ''
   };
 
   ngOnInit(): void {
-    this.loadCountries();
+    this.loadCatalogs();
   }
 
-  loadCountries(): void {
-    this.apiService.countries().subscribe({
-      next: (countries: string[]) => {
-        const merged = new Set<string>([...COUNTRY_OPTIONS, ...(countries || [])]);
-        this.countries.set(Array.from(merged));
+  /**
+   * Carga catálogos de países y tipos de destino desde el backend
+   */
+  loadCatalogs(): void {
+    this.loading.set(true);
+
+    // Cargar países
+    this.catalogService.getCountries().subscribe({
+      next: (countries) => {
+        this.countries.set(countries);
       },
-      error: () => {
-        this.countries.set(COUNTRY_OPTIONS);
+      error: (error) => {
+        console.error('Error loading countries:', error);
+        this.showAlert('warning', 'Could not load countries catalog. Please refresh the page.');
       }
     });
-  }
 
-  getCountryDisplayName(countryCode?: string): string {
-    return getCountryNameByCode(countryCode) || countryCode || 'Not specified';
+    // Cargar tipos de destino
+    this.catalogService.getDestinationTypes().subscribe({
+      next: (types) => {
+        this.destinationTypes.set(types);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading destination types:', error);
+        this.showAlert('warning', 'Could not load destination types catalog. Please refresh the page.');
+        this.loading.set(false);
+      }
+    });
   }
 
   onImageSelected(event: Event): void {
@@ -98,7 +120,7 @@ export class CreateDestinationPageComponent implements OnInit {
 
   onSubmit(): void {
     const model = this.formModel;
-    if (!model.name.trim() || !model.description.trim() || !model.countryCode || model.type === null) {
+    if (!model.name.trim() || !model.description.trim() || !model.countryCode || model.destinationTypeId === null) {
       this.showAlert('warning', 'Please complete all required fields.');
       return;
     }
@@ -109,7 +131,7 @@ export class CreateDestinationPageComponent implements OnInit {
     dto.longDescription = model.longDescription.trim() || undefined;
     dto.imageUrl = this.selectedImageDataUrl() || undefined;
     dto.countryCode = model.countryCode;
-    dto.type = model.type;
+    dto.destinationTypeId = model.destinationTypeId;
 
     this.loading.set(true);
     this.hideAlert();

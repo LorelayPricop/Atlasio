@@ -29,4 +29,8 @@
     <ProjectReference Include="..\backend\backend.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\Enums\" />
+  </ItemGroup>
+
 </Project>

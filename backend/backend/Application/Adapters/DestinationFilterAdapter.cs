@@ -20,7 +20,7 @@ namespace backend.Application.Adapters
             {
                 SearchTerm = dto.SearchTerm,
                 CountryCode = dto.CountryCode,
-                Type = dto.Type,
+                DestinationTypeId = dto.DestinationTypeId,
                 Page = dto.Page,
                 PageSize = dto.PageSize
             };
@@ -34,7 +34,7 @@ namespace backend.Application.Adapters
     {
         public string? SearchTerm { get; set; }
         public string? CountryCode { get; set; }
-        public Domain.Enums.DestinationType? Type { get; set; }
+        public int? DestinationTypeId { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
     }

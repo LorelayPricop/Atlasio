@@ -1,7 +1,7 @@
 using Xunit;
 using FluentAssertions;
 using backend.Domain.Entities;
-using backend.Domain.Enums;
+using backend.Tests.Helpers;
 
 namespace backend.Tests.Domain.Entities
 {
@@ -12,13 +12,13 @@ namespace backend.Tests.Domain.Entities
     public class DestinationTests
     {
         [Theory]
-        [InlineData(DestinationType.Beach)]
-        [InlineData(DestinationType.Mountain)]
-        [InlineData(DestinationType.City)]
-        [InlineData(DestinationType.Cultural)]
-        [InlineData(DestinationType.Adventure)]
-        [InlineData(DestinationType.Relax)]
-        public void Destination_ShouldAcceptAllDestinationTypes(DestinationType type)
+        [InlineData(TestDataHelper.BeachTypeId)]
+        [InlineData(TestDataHelper.MountainTypeId)]
+        [InlineData(TestDataHelper.CityTypeId)]
+        [InlineData(TestDataHelper.CulturalTypeId)]
+        [InlineData(TestDataHelper.AdventureTypeId)]
+        [InlineData(TestDataHelper.RelaxTypeId)]
+        public void Destination_ShouldAcceptAllDestinationTypes(int typeId)
         {
             // Arrange & Act
             var destination = new Destination
@@ -26,11 +26,11 @@ namespace backend.Tests.Domain.Entities
                 Name = "Test Destination",
                 Description = "Test Description",
                 CountryCode = "MEX",
-                Type = type
+                DestinationTypeId = typeId
             };
 
             // Assert
-            destination.Type.Should().Be(type);
+            destination.DestinationTypeId.Should().Be(typeId);
         }
     }
 }

@@ -16,17 +16,48 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IApiClient {
     /**
-     * Obtiene todos los destinos con filtros y paginación
+     * Obtiene el catálogo de ciudades, opcionalmente filtrado por país
+     * @param countryCode (optional) Código de país ISO 3166-1 alpha-3 (opcional)
+     * @param onlyActive (optional) Si es true, retorna solo ciudades activas (default: true)
+     * @return Lista de ciudades obtenida exitosamente
+     */
+    cities(countryCode: string | undefined, onlyActive: boolean | undefined): Observable<CityDto[]>;
+    /**
+     * Obtiene el catálogo completo de países
+     * @param onlyActive (optional) Si es true, retorna solo países activos (default: true)
+     * @return Lista de países obtenida exitosamente
+     */
+    countriesAll(onlyActive: boolean | undefined): Observable<CountryDto[]>;
+    /**
+     * Obtiene un país específico por su código
+     * @param code Código de país ISO 3166-1 alpha-3 (ej: ESP, USA, MEX)
+     * @return País encontrado
+     */
+    countries(code: string): Observable<CountryDto>;
+    /**
+     * Obtiene el catálogo completo de tipos de destino
+     * @param onlyActive (optional) Si es true, retorna solo tipos activos (default: true)
+     * @return Lista de tipos de destino obtenida exitosamente
+     */
+    destinationTypesAll(onlyActive: boolean | undefined): Observable<DestinationTypeDto[]>;
+    /**
+     * Obtiene un tipo de destino específico por su ID
+     * @param id ID del tipo de destino
+     * @return Tipo de destino encontrado
+     */
+    destinationTypes(id: number): Observable<DestinationTypeDto>;
+    /**
+     * Obtiene todos los destinos con filtros opcionales y paginación
      * @param searchTerm (optional) Término de búsqueda que se aplica a nombre, descripción y código de país
      * @param countryCode (optional) Filtro por código de país específico
-     * @param type (optional) Filtro por tipo de destino específico
+     * @param destinationTypeId (optional) Filtro por ID de tipo de destino específico
      * @param page (optional) Número de página actual (comienza en 1)
      * @param pageSize (optional) Número de elementos por página (máximo 100 recomendado)
      * @return Lista de destinos obtenida exitosamente
      */
-    destinationsGET(searchTerm: string | undefined, countryCode: string | undefined, type: DestinationType | undefined, page: number | undefined, pageSize: number | undefined): Observable<DestinationDtoPagedResultDto>;
+    destinationsGET(searchTerm: string | undefined, countryCode: string | undefined, destinationTypeId: number | undefined, page: number | undefined, pageSize: number | undefined): Observable<DestinationDtoPagedResultDto>;
     /**
-     * Crea un nuevo destino
+     * Crea un nuevo destino turístico
      * @param body (optional) Datos del nuevo destino
      * @return Destino creado exitosamente
      */
@@ -54,12 +85,12 @@ export interface IApiClient {
      * Obtiene la lista de códigos de países disponibles
      * @return Lista de países obtenida exitosamente
      */
-    countries(): Observable<string[]>;
+    countriesAll2(): Observable<string[]>;
     /**
-     * Obtiene la lista de tipos de destino disponibles
+     * Obtiene la lista de tipos de destino disponibles desde el catálogo
      * @return Lista de tipos obtenida exitosamente
      */
-    types(): Observable<string[]>;
+    types(): Observable<DestinationTypeDto[]>;
 }
 
 @Injectable({
@@ -76,15 +107,338 @@ export class ApiClient implements IApiClient {
     }
 
     /**
-     * Obtiene todos los destinos con filtros y paginación
+     * Obtiene el catálogo de ciudades, opcionalmente filtrado por país
+     * @param countryCode (optional) Código de país ISO 3166-1 alpha-3 (opcional)
+     * @param onlyActive (optional) Si es true, retorna solo ciudades activas (default: true)
+     * @return Lista de ciudades obtenida exitosamente
+     */
+    cities(countryCode: string | undefined, onlyActive: boolean | undefined): Observable<CityDto[]> {
+        let url_ = this.baseUrl + "/api/v1/Catalog/cities?";
+        if (countryCode === null)
+            throw new globalThis.Error("The parameter 'countryCode' cannot be null.");
+        else if (countryCode !== undefined)
+            url_ += "countryCode=" + encodeURIComponent("" + countryCode) + "&";
+        if (onlyActive === null)
+            throw new globalThis.Error("The parameter 'onlyActive' cannot be null.");
+        else if (onlyActive !== undefined)
+            url_ += "onlyActive=" + encodeURIComponent("" + onlyActive) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCities(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCities(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CityDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CityDto[]>;
+        }));
+    }
+
+    protected processCities(response: HttpResponseBase): Observable<CityDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CityDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Obtiene el catálogo completo de países
+     * @param onlyActive (optional) Si es true, retorna solo países activos (default: true)
+     * @return Lista de países obtenida exitosamente
+     */
+    countriesAll(onlyActive: boolean | undefined): Observable<CountryDto[]> {
+        let url_ = this.baseUrl + "/api/v1/Catalog/countries?";
+        if (onlyActive === null)
+            throw new globalThis.Error("The parameter 'onlyActive' cannot be null.");
+        else if (onlyActive !== undefined)
+            url_ += "onlyActive=" + encodeURIComponent("" + onlyActive) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCountriesAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCountriesAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CountryDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CountryDto[]>;
+        }));
+    }
+
+    protected processCountriesAll(response: HttpResponseBase): Observable<CountryDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CountryDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Obtiene un país específico por su código
+     * @param code Código de país ISO 3166-1 alpha-3 (ej: ESP, USA, MEX)
+     * @return País encontrado
+     */
+    countries(code: string): Observable<CountryDto> {
+        let url_ = this.baseUrl + "/api/v1/Catalog/countries/{code}";
+        if (code === undefined || code === null)
+            throw new globalThis.Error("The parameter 'code' must be defined.");
+        url_ = url_.replace("{code}", encodeURIComponent("" + code));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCountries(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCountries(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CountryDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CountryDto>;
+        }));
+    }
+
+    protected processCountries(response: HttpResponseBase): Observable<CountryDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CountryDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Pa\u00eds no encontrado", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Obtiene el catálogo completo de tipos de destino
+     * @param onlyActive (optional) Si es true, retorna solo tipos activos (default: true)
+     * @return Lista de tipos de destino obtenida exitosamente
+     */
+    destinationTypesAll(onlyActive: boolean | undefined): Observable<DestinationTypeDto[]> {
+        let url_ = this.baseUrl + "/api/v1/Catalog/destination-types?";
+        if (onlyActive === null)
+            throw new globalThis.Error("The parameter 'onlyActive' cannot be null.");
+        else if (onlyActive !== undefined)
+            url_ += "onlyActive=" + encodeURIComponent("" + onlyActive) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDestinationTypesAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDestinationTypesAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DestinationTypeDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DestinationTypeDto[]>;
+        }));
+    }
+
+    protected processDestinationTypesAll(response: HttpResponseBase): Observable<DestinationTypeDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DestinationTypeDto.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Obtiene un tipo de destino específico por su ID
+     * @param id ID del tipo de destino
+     * @return Tipo de destino encontrado
+     */
+    destinationTypes(id: number): Observable<DestinationTypeDto> {
+        let url_ = this.baseUrl + "/api/v1/Catalog/destination-types/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDestinationTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDestinationTypes(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<DestinationTypeDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<DestinationTypeDto>;
+        }));
+    }
+
+    protected processDestinationTypes(response: HttpResponseBase): Observable<DestinationTypeDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DestinationTypeDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Tipo de destino no encontrado", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Obtiene todos los destinos con filtros opcionales y paginación
      * @param searchTerm (optional) Término de búsqueda que se aplica a nombre, descripción y código de país
      * @param countryCode (optional) Filtro por código de país específico
-     * @param type (optional) Filtro por tipo de destino específico
+     * @param destinationTypeId (optional) Filtro por ID de tipo de destino específico
      * @param page (optional) Número de página actual (comienza en 1)
      * @param pageSize (optional) Número de elementos por página (máximo 100 recomendado)
      * @return Lista de destinos obtenida exitosamente
      */
-    destinationsGET(searchTerm: string | undefined, countryCode: string | undefined, type: DestinationType | undefined, page: number | undefined, pageSize: number | undefined): Observable<DestinationDtoPagedResultDto> {
+    destinationsGET(searchTerm: string | undefined, countryCode: string | undefined, destinationTypeId: number | undefined, page: number | undefined, pageSize: number | undefined): Observable<DestinationDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/v1/Destinations?";
         if (searchTerm === null)
             throw new globalThis.Error("The parameter 'searchTerm' cannot be null.");
@@ -94,10 +448,10 @@ export class ApiClient implements IApiClient {
             throw new globalThis.Error("The parameter 'countryCode' cannot be null.");
         else if (countryCode !== undefined)
             url_ += "CountryCode=" + encodeURIComponent("" + countryCode) + "&";
-        if (type === null)
-            throw new globalThis.Error("The parameter 'type' cannot be null.");
-        else if (type !== undefined)
-            url_ += "Type=" + encodeURIComponent("" + type) + "&";
+        if (destinationTypeId === null)
+            throw new globalThis.Error("The parameter 'destinationTypeId' cannot be null.");
+        else if (destinationTypeId !== undefined)
+            url_ += "DestinationTypeId=" + encodeURIComponent("" + destinationTypeId) + "&";
         if (page === null)
             throw new globalThis.Error("The parameter 'page' cannot be null.");
         else if (page !== undefined)
@@ -157,7 +511,7 @@ export class ApiClient implements IApiClient {
     }
 
     /**
-     * Crea un nuevo destino
+     * Crea un nuevo destino turístico
      * @param body (optional) Datos del nuevo destino
      * @return Destino creado exitosamente
      */
@@ -437,7 +791,7 @@ export class ApiClient implements IApiClient {
      * Obtiene la lista de códigos de países disponibles
      * @return Lista de países obtenida exitosamente
      */
-    countries(): Observable<string[]> {
+    countriesAll2(): Observable<string[]> {
         let url_ = this.baseUrl + "/api/v1/Destinations/countries";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -450,11 +804,11 @@ export class ApiClient implements IApiClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCountries(response_);
+            return this.processCountriesAll2(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCountries(response_ as any);
+                    return this.processCountriesAll2(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<string[]>;
                 }
@@ -463,7 +817,7 @@ export class ApiClient implements IApiClient {
         }));
     }
 
-    protected processCountries(response: HttpResponseBase): Observable<string[]> {
+    protected processCountriesAll2(response: HttpResponseBase): Observable<string[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -497,10 +851,10 @@ export class ApiClient implements IApiClient {
     }
 
     /**
-     * Obtiene la lista de tipos de destino disponibles
+     * Obtiene la lista de tipos de destino disponibles desde el catálogo
      * @return Lista de tipos obtenida exitosamente
      */
-    types(): Observable<string[]> {
+    types(): Observable<DestinationTypeDto[]> {
         let url_ = this.baseUrl + "/api/v1/Destinations/types";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -519,14 +873,14 @@ export class ApiClient implements IApiClient {
                 try {
                     return this.processTypes(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<string[]>;
+                    return _observableThrow(e) as any as Observable<DestinationTypeDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<string[]>;
+                return _observableThrow(response_) as any as Observable<DestinationTypeDto[]>;
         }));
     }
 
-    protected processTypes(response: HttpResponseBase): Observable<string[]> {
+    protected processTypes(response: HttpResponseBase): Observable<DestinationTypeDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -540,7 +894,7 @@ export class ApiClient implements IApiClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(item);
+                    result200!.push(DestinationTypeDto.fromJS(item));
             }
             else {
                 result200 = null as any;
@@ -560,6 +914,122 @@ export class ApiClient implements IApiClient {
     }
 }
 
+/** DTO para catálogo de ciudades */
+export class CityDto implements ICityDto {
+    /** Identificador único */
+    id?: number;
+    /** Código de país */
+    countryCode!: string | undefined;
+    /** Nombre de la ciudad */
+    name!: string | undefined;
+    /** Indica si la ciudad está activa */
+    isActive?: boolean;
+
+    constructor(data?: ICityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.countryCode = _data["countryCode"];
+            this.name = _data["name"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): CityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["countryCode"] = this.countryCode;
+        data["name"] = this.name;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+/** DTO para catálogo de ciudades */
+export interface ICityDto {
+    /** Identificador único */
+    id?: number;
+    /** Código de país */
+    countryCode: string | undefined;
+    /** Nombre de la ciudad */
+    name: string | undefined;
+    /** Indica si la ciudad está activa */
+    isActive?: boolean;
+}
+
+/** DTO para catálogo de países */
+export class CountryDto implements ICountryDto {
+    /** Código de país ISO 3166-1 alpha-3 */
+    code!: string | undefined;
+    /** Nombre completo del país */
+    name!: string | undefined;
+    /** Región geográfica */
+    region?: string | undefined;
+    /** Indica si el país está activo */
+    isActive?: boolean;
+
+    constructor(data?: ICountryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+            this.name = _data["name"];
+            this.region = _data["region"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): CountryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CountryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["region"] = this.region;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+/** DTO para catálogo de países */
+export interface ICountryDto {
+    /** Código de país ISO 3166-1 alpha-3 */
+    code: string | undefined;
+    /** Nombre completo del país */
+    name: string | undefined;
+    /** Región geográfica */
+    region?: string | undefined;
+    /** Indica si el país está activo */
+    isActive?: boolean;
+}
+
 /** DTO para crear un nuevo destino No incluye ID ni LastModif ya que se generan automáticamente */
 export class CreateDestinationDto implements ICreateDestinationDto {
     /** Nombre del destino turístico */
@@ -572,7 +1042,8 @@ export class CreateDestinationDto implements ICreateDestinationDto {
     imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode!: string;
-    type!: DestinationType;
+    /** ID del tipo de destino turístico */
+    destinationTypeId!: number;
 
     constructor(data?: ICreateDestinationDto) {
         if (data) {
@@ -590,7 +1061,7 @@ export class CreateDestinationDto implements ICreateDestinationDto {
             this.longDescription = _data["longDescription"];
             this.imageUrl = _data["imageUrl"];
             this.countryCode = _data["countryCode"];
-            this.type = _data["type"];
+            this.destinationTypeId = _data["destinationTypeId"];
         }
     }
 
@@ -608,7 +1079,7 @@ export class CreateDestinationDto implements ICreateDestinationDto {
         data["longDescription"] = this.longDescription;
         data["imageUrl"] = this.imageUrl;
         data["countryCode"] = this.countryCode;
-        data["type"] = this.type;
+        data["destinationTypeId"] = this.destinationTypeId;
         return data;
     }
 }
@@ -625,7 +1096,8 @@ export interface ICreateDestinationDto {
     imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode: string;
-    type: DestinationType;
+    /** ID del tipo de destino turístico */
+    destinationTypeId: number;
 }
 
 /** DTO para transferir información completa de un destino Se usa para respuestas de la API */
@@ -640,7 +1112,10 @@ export class DestinationDto implements IDestinationDto {
     longDescription?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode!: string | undefined;
-    type!: DestinationType;
+    /** ID del tipo de destino turístico */
+    destinationTypeId!: number;
+    /** Nombre del tipo de destino (para mostrar en UI) */
+    typeName?: string | undefined;
     /** Fecha de última modificación */
     lastModif!: Date;
     /** URL de la imagen principal del destino */
@@ -674,7 +1149,8 @@ export class DestinationDto implements IDestinationDto {
             this.description = _data["description"];
             this.longDescription = _data["longDescription"];
             this.countryCode = _data["countryCode"];
-            this.type = _data["type"];
+            this.destinationTypeId = _data["destinationTypeId"];
+            this.typeName = _data["typeName"];
             this.lastModif = _data["lastModif"] ? new Date(_data["lastModif"].toString()) : undefined as any;
             this.imageUrl = _data["imageUrl"];
             this.totalBookings = _data["totalBookings"];
@@ -700,7 +1176,8 @@ export class DestinationDto implements IDestinationDto {
         data["description"] = this.description;
         data["longDescription"] = this.longDescription;
         data["countryCode"] = this.countryCode;
-        data["type"] = this.type;
+        data["destinationTypeId"] = this.destinationTypeId;
+        data["typeName"] = this.typeName;
         data["lastModif"] = this.lastModif ? this.lastModif.toISOString() : undefined as any;
         data["imageUrl"] = this.imageUrl;
         data["totalBookings"] = this.totalBookings;
@@ -725,7 +1202,10 @@ export interface IDestinationDto {
     longDescription?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode: string | undefined;
-    type: DestinationType;
+    /** ID del tipo de destino turístico */
+    destinationTypeId: number;
+    /** Nombre del tipo de destino (para mostrar en UI) */
+    typeName?: string | undefined;
     /** Fecha de última modificación */
     lastModif: Date;
     /** URL de la imagen principal del destino */
@@ -816,14 +1296,74 @@ export interface IDestinationDtoPagedResultDto {
     totalPages?: number;
 }
 
-/** Enum que define los tipos de destinos turísticos disponibles */
-export enum DestinationType {
-    _0 = 0,
-    _1 = 1,
-    _2 = 2,
-    _3 = 3,
-    _4 = 4,
-    _5 = 5,
+/** DTO para catálogo de tipos de destino */
+export class DestinationTypeDto implements IDestinationTypeDto {
+    /** Identificador único */
+    id?: number;
+    /** Código único */
+    code!: string | undefined;
+    /** Nombre para mostrar */
+    name!: string | undefined;
+    /** Identificador de icono o clase CSS */
+    icon?: string | undefined;
+    /** Orden de visualización */
+    displayOrder?: number;
+    /** Indica si el tipo está activo */
+    isActive?: boolean;
+
+    constructor(data?: IDestinationTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.code = _data["code"];
+            this.name = _data["name"];
+            this.icon = _data["icon"];
+            this.displayOrder = _data["displayOrder"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): DestinationTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DestinationTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["icon"] = this.icon;
+        data["displayOrder"] = this.displayOrder;
+        data["isActive"] = this.isActive;
+        return data;
+    }
+}
+
+/** DTO para catálogo de tipos de destino */
+export interface IDestinationTypeDto {
+    /** Identificador único */
+    id?: number;
+    /** Código único */
+    code: string | undefined;
+    /** Nombre para mostrar */
+    name: string | undefined;
+    /** Identificador de icono o clase CSS */
+    icon?: string | undefined;
+    /** Orden de visualización */
+    displayOrder?: number;
+    /** Indica si el tipo está activo */
+    isActive?: boolean;
 }
 
 export class ProblemDetails implements IProblemDetails {
@@ -902,7 +1442,8 @@ export class UpdateDestinationDto implements IUpdateDestinationDto {
     imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode!: string;
-    type!: DestinationType;
+    /** ID del tipo de destino turístico */
+    destinationTypeId!: number;
 
     constructor(data?: IUpdateDestinationDto) {
         if (data) {
@@ -920,7 +1461,7 @@ export class UpdateDestinationDto implements IUpdateDestinationDto {
             this.longDescription = _data["longDescription"];
             this.imageUrl = _data["imageUrl"];
             this.countryCode = _data["countryCode"];
-            this.type = _data["type"];
+            this.destinationTypeId = _data["destinationTypeId"];
         }
     }
 
@@ -938,7 +1479,7 @@ export class UpdateDestinationDto implements IUpdateDestinationDto {
         data["longDescription"] = this.longDescription;
         data["imageUrl"] = this.imageUrl;
         data["countryCode"] = this.countryCode;
-        data["type"] = this.type;
+        data["destinationTypeId"] = this.destinationTypeId;
         return data;
     }
 }
@@ -955,7 +1496,8 @@ export interface IUpdateDestinationDto {
     imageUrl?: string | undefined;
     /** Código ISO del país (3 caracteres) */
     countryCode: string;
-    type: DestinationType;
+    /** ID del tipo de destino turístico */
+    destinationTypeId: number;
 }
 
 export class ApiException extends Error {
