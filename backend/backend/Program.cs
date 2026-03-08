@@ -73,7 +73,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<backend.Domain.Interfaces.IDestinationAdapter, backend.Application.Adapters.DestinationAdapter>();
 
 // Configurar MediatR para CQRS
-builder.Services.AddMediatR(typeof(Program).Assembly);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 // Registrar repositorios
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
@@ -88,18 +88,8 @@ builder.Services.AddScoped<DataSeedService>();                          // Servi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "HotelBediaX API",
-        Version = "v1.0",
-        Description = "API para la gestión de destinos turísticos de HotelBediaX",
-        Contact = new Microsoft.OpenApi.Models.OpenApiContact
-        {
-            Name = "Lorelay Pricop",
-            Email = "lorelaypricop@gmail.com"
-        }
-    });
-    
+    c.SwaggerDoc("v1", new() { Title = "HotelBediaX API", Version = "v1.0" });
+
     // Incluir comentarios XML para documentación
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

@@ -1,0 +1,579 @@
+{
+  "settings": {
+    "components": {
+      "code": true,
+      "binaries": false
+    },
+    "targetId": "net10.0",
+    "targetDisplayName": ".NETCoreApp,Version=v10.0"
+  },
+  "analysisStartTime": "2026-03-08T11:21:18.1155774Z",
+  "analysisEndTime": "2026-03-08T11:21:21.0876691Z",
+  "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2270980",
+  "stats": {
+    "summary": {
+      "projects": 2,
+      "issues": 4,
+      "incidents": 17,
+      "effort": 17
+    },
+    "charts": {
+      "severity": {
+        "Mandatory": 2,
+        "Optional": 3,
+        "Potential": 12,
+        "Information": 0
+      },
+      "category": {
+        "NuGet": 5,
+        "Project": 2,
+        "Api": 10
+      }
+    }
+  },
+  "projects": [
+    {
+      "path": "backend\\backend.csproj",
+      "startingProject": true,
+      "issues": 2,
+      "storyPoints": 4,
+      "properties": {
+        "appName": "backend",
+        "projectKind": "AspNetCore",
+        "frameworks": [
+          "net9.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 40,
+        "numberOfCodeFiles": 38,
+        "linesTotal": 2051,
+        "linesOfCode": 1962,
+        "totalApiScanned": 2075,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "fe058cf1-9f6d-433d-9a0a-1ace368046ac",
+          "ruleId": "NuGet.0005",
+          "projectPath": "backend\\backend.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0\n\nRecomendaci\u00F3n:\n\nThis package is no longer maintained and its functionality is folded into the main MediatR package.\nRemove MediatR.Extensions.Microsoft.DependencyInjection, and replace with new package MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0",
+              "protected": "MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0\n\nRecomendaci\u00F3n:\n\nThis package is no longer maintained and its functionality is folded into the main MediatR package.\nRemove MediatR.Extensions.Microsoft.DependencyInjection, and replace with new package MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0"
+            },
+            "kind": "File",
+            "path": "backend\\backend.csproj",
+            "snippet": "MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0\n\nRecomendaci\u00F3n:\n\nThis package is no longer maintained and its functionality is folded into the main MediatR package.\nRemove MediatR.Extensions.Microsoft.DependencyInjection, and replace with new package MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0",
+            "protectedSnippet": "MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0\n\nRecomendaci\u00F3n:\n\nThis package is no longer maintained and its functionality is folded into the main MediatR package.\nRemove MediatR.Extensions.Microsoft.DependencyInjection, and replace with new package MediatR.Extensions.Microsoft.DependencyInjection, 11.1.0",
+            "label": "MediatR.Extensions.Microsoft.DependencyInjection 11.1.0",
+            "properties": {
+              "PackageId": "MediatR.Extensions.Microsoft.DependencyInjection",
+              "PackageVersion": "11.1.0",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "b96d27eb-bafe-4864-9ebb-7f1523f4d313",
+          "ruleId": "NuGet.0005",
+          "projectPath": "backend\\backend.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.AspNetCore.Mvc.Versioning, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning, and replace with new package Microsoft.AspNetCore.Mvc.Versioning, 5.1.0",
+              "protected": "Microsoft.AspNetCore.Mvc.Versioning, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning, and replace with new package Microsoft.AspNetCore.Mvc.Versioning, 5.1.0"
+            },
+            "kind": "File",
+            "path": "backend\\backend.csproj",
+            "snippet": "Microsoft.AspNetCore.Mvc.Versioning, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning, and replace with new package Microsoft.AspNetCore.Mvc.Versioning, 5.1.0",
+            "protectedSnippet": "Microsoft.AspNetCore.Mvc.Versioning, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning, and replace with new package Microsoft.AspNetCore.Mvc.Versioning, 5.1.0",
+            "label": "Microsoft.AspNetCore.Mvc.Versioning 5.1.0",
+            "properties": {
+              "PackageId": "Microsoft.AspNetCore.Mvc.Versioning",
+              "PackageVersion": "5.1.0",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "35d8553d-bfde-4088-9f6e-e53aa33267b1",
+          "ruleId": "NuGet.0005",
+          "projectPath": "backend\\backend.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, and replace with new package Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0",
+              "protected": "Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, and replace with new package Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0"
+            },
+            "kind": "File",
+            "path": "backend\\backend.csproj",
+            "snippet": "Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, and replace with new package Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0",
+            "protectedSnippet": "Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0\n\nRecomendaci\u00F3n:\n\nA newer package is available as of August 2022. While this package will continue to receive critical bug fixes, we strongly encourage you to upgrade. See the migration guide at https://github.com/dotnet/aspnet-api-versioning/wiki/Migration for more details.\nRemove Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, and replace with new package Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer, 5.1.0",
+            "label": "Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer 5.1.0",
+            "properties": {
+              "PackageId": "Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer",
+              "PackageVersion": "5.1.0",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "a601886e-9d66-441d-8af3-07bd5dca6a32",
+          "ruleId": "Project.0002",
+          "projectPath": "backend\\backend.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0",
+              "protected": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0"
+            },
+            "kind": "File",
+            "path": "backend\\backend.csproj",
+            "snippet": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0",
+            "protectedSnippet": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net9.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "backend.Tests\\backend.Tests.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 13,
+      "properties": {
+        "appName": "backend.Tests",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "net9.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 21,
+        "numberOfCodeFiles": 19,
+        "linesTotal": 3962,
+        "linesOfCode": 2187,
+        "totalApiScanned": 3562,
+        "minLinesOfCodeToChange": 10,
+        "maxLinesOfCodeToChange": 10
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "73cbf2c6-1181-4fee-bea1-e298d1f7dac5",
+          "ruleId": "NuGet.0002",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.EntityFrameworkCore.InMemory, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.EntityFrameworkCore.InMemory, and replace with new package Microsoft.EntityFrameworkCore.InMemory 10.0.3",
+              "protected": "Microsoft.EntityFrameworkCore.InMemory, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.EntityFrameworkCore.InMemory, and replace with new package Microsoft.EntityFrameworkCore.InMemory 10.0.3"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\backend.Tests.csproj",
+            "snippet": "Microsoft.EntityFrameworkCore.InMemory, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.EntityFrameworkCore.InMemory, and replace with new package Microsoft.EntityFrameworkCore.InMemory 10.0.3",
+            "protectedSnippet": "Microsoft.EntityFrameworkCore.InMemory, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.EntityFrameworkCore.InMemory, and replace with new package Microsoft.EntityFrameworkCore.InMemory 10.0.3",
+            "label": "Microsoft.EntityFrameworkCore.InMemory 9.0.8",
+            "properties": {
+              "PackageId": "Microsoft.EntityFrameworkCore.InMemory",
+              "PackageVersion": "9.0.8",
+              "PackageNewVersion": "10.0.3",
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "93ee62a8-5458-4f0a-a044-7e57eee36657",
+          "ruleId": "NuGet.0002",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.AspNetCore.Mvc.Testing, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.AspNetCore.Mvc.Testing, and replace with new package Microsoft.AspNetCore.Mvc.Testing 10.0.3",
+              "protected": "Microsoft.AspNetCore.Mvc.Testing, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.AspNetCore.Mvc.Testing, and replace with new package Microsoft.AspNetCore.Mvc.Testing 10.0.3"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\backend.Tests.csproj",
+            "snippet": "Microsoft.AspNetCore.Mvc.Testing, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.AspNetCore.Mvc.Testing, and replace with new package Microsoft.AspNetCore.Mvc.Testing 10.0.3",
+            "protectedSnippet": "Microsoft.AspNetCore.Mvc.Testing, 9.0.8\n\nRecomendaci\u00F3n:\n\nRemove Microsoft.AspNetCore.Mvc.Testing, and replace with new package Microsoft.AspNetCore.Mvc.Testing 10.0.3",
+            "label": "Microsoft.AspNetCore.Mvc.Testing 9.0.8",
+            "properties": {
+              "PackageId": "Microsoft.AspNetCore.Mvc.Testing",
+              "PackageVersion": "9.0.8",
+              "PackageNewVersion": "10.0.3",
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "66646f52-aeb3-4bae-adee-7dbdb7594e80",
+          "ruleId": "Project.0002",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0",
+              "protected": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\backend.Tests.csproj",
+            "snippet": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0",
+            "protectedSnippet": "Marco de destino actual: net9.0\nMarco de destino recomendado: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net9.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        },
+        {
+          "incidentId": "7bb7226b-60b8-433d-9165-2b8207611d7c",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 305,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "e66cb81d-7ffa-4f7d-9344-dd661e5af9c4",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 289,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "49914596-c119-4a2c-bb84-4a75a55a8260",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 273,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "a9dfcbae-f406-4937-b0b8-d6bf330a50fc",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var result = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 256,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "3199a74f-dc22-4b0b-87df-98092685878b",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var types = await response.Content.ReadFromJsonAsync\u003CList\u003Cstring\u003E\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var types = await response.Content.ReadFromJsonAsync\u003CList\u003Cstring\u003E\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 235,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "5de4da22-48fe-4ed5-96ba-c2805e17b728",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var countries = await response.Content.ReadFromJsonAsync\u003CList\u003Cstring\u003E\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var countries = await response.Content.ReadFromJsonAsync\u003CList\u003Cstring\u003E\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 220,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "b78f8363-6ffb-489c-b090-71c981a46ea6",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var result = await response.Content.ReadFromJsonAsync\u003CDestinationDto\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var result = await response.Content.ReadFromJsonAsync\u003CDestinationDto\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 155,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "67bc65fd-3d25-400b-9145-fb82bd761b56",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var result = await response.Content.ReadFromJsonAsync\u003CDestinationDto\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var result = await response.Content.ReadFromJsonAsync\u003CDestinationDto\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 109,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "3197b2c2-7e90-430c-8694-9770c75dee39",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var result = await response.Content.ReadFromJsonAsync\u003CDestinationDto\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var result = await response.Content.ReadFromJsonAsync\u003CDestinationDto\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 76,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "2bc0209b-aae5-48ab-a846-1c2bb8db3822",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "backend.Tests\\backend.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var destinations = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "backend.Tests\\Integration\\DestinationsControllerIntegrationTests.cs",
+            "snippet": "var destinations = await response.Content.ReadFromJsonAsync\u003CPagedResultDto\u003CDestinationDto\u003E\u003E();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "Documentaci\u00F3n de la API",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 60,
+            "column": 12
+          }
+        }
+      ],
+      "features": []
+    }
+  ],
+  "rules": {
+    "NuGet.0005": {
+      "id": "NuGet.0005",
+      "isFeature": false,
+      "description": "El paquete NuGet est\u00E1 en desuso.\n\nVaya a su documentaci\u00F3n y compruebe si hay una gu\u00EDa para reemplazar la funcionalidad proporcionada por este paquete.",
+      "label": "El paquete NuGet est\u00E1 en desuso",
+      "severity": "Optional",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262531",
+          "isCustom": false
+        }
+      ]
+    },
+    "Project.0002": {
+      "id": "Project.0002",
+      "isFeature": false,
+      "description": "El marco de destino del proyecto deben cambiarse al nuevo marco de destino que seleccion\u00F3 para esta actualizaci\u00F3n.\n\nDurante la actualizaci\u00F3n, el marco de destino se ajustar\u00E1 a la plataforma correspondiente cuando proceda. En algunos casos, el proyecto dar\u00EDa como resultado varios marcos de destino despu\u00E9s de la actualizaci\u00F3n si usara caracter\u00EDsticas que ahora tienen sus propias plataformas en marcos de .NET modernos (windows, iOS, Android, etc.).",
+      "label": "Es necesario cambiar el marco de destino del proyecto",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Informaci\u00F3n general sobre la portabilidad de .NET Framework a .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
+          "isCustom": false
+        },
+        {
+          "title": "SDK de proyecto .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0002": {
+      "id": "NuGet.0002",
+      "isFeature": false,
+      "description": "Se recomienda actualizar el paquete NuGet para la plataforma de destino seleccionada.\n\nSe recomienda que los paquetes .NET est\u00E1ndar tengan versiones que coincidan con la versi\u00F3n de .NET de destino del proyecto.\n\nTambi\u00E9n se sabe que otros paquetes funcionan mejor para las plataformas de destino seleccionadas.",
+      "label": "Se recomienda actualizar el paquete NuGet",
+      "severity": "Potential",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262530",
+          "isCustom": false
+        }
+      ]
+    },
+    "Api.0003": {
+      "id": "Api.0003",
+      "isFeature": false,
+      "description": "API has a behavioral change in selected .NET version: code and binaries may behave differently at runtime without needing recompilation, but the new behavior might be undesirable and require updates.",
+      "label": "Behavioral change in selected .NET version",
+      "severity": "Potential",
+      "effort": 1
+    }
+  }
+}
