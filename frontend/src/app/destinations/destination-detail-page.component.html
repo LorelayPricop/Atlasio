@@ -102,11 +102,11 @@
             <div class="metadata-list">
               <div class="metadata-item">
                 <span class="metadata-label">Country</span>
-                <span class="metadata-value">{{ dest.name }}, {{ getCountryName(dest.countryCode) }}</span>
+                <span class="metadata-value">{{ getCountryName(dest.countryCode) }}</span>
               </div>
               <div class="metadata-item">
                 <span class="metadata-label">Type</span>
-                <span class="metadata-value">{{ dest.typeName || 'Unknown' }}</span>
+                <span class="metadata-value">{{ dest.typeName || getTypeName(dest.destinationTypeId) }}</span>
               </div>
               @if (dest.createdBy) {
                 <div class="metadata-item">

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DestinationDto, ApiClient } from '../services/api-client';
+import { DestinationDto, ApiClient, CountryDto, DestinationTypeDto } from '../services/api-client';
 import { LoadingComponent } from '../shared/loading/loading.component';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { CatalogService } from '../services/catalog.service';
@@ -20,6 +20,8 @@ export class DestinationDetailPageComponent implements OnInit {
   private readonly router = inject(Router);
 
   destination = signal<DestinationDto | null>(null);
+  countries = signal<CountryDto[]>([]);
+  destinationTypes = signal<DestinationTypeDto[]>([]);
   loading = signal<boolean>(false);
   alert = signal<{ show: boolean; type: string; message: string }>({
     show: false,
@@ -28,12 +30,28 @@ export class DestinationDetailPageComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.loadCatalogs();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadDestination(parseInt(id, 10));
     } else {
       this.showAlert('error', 'Invalid destination ID');
     }
+  }
+
+  /**
+   * Carga catálogos de países y tipos de destino
+   */
+  loadCatalogs(): void {
+    this.catalogService.getCountries().subscribe({
+      next: (countries) => this.countries.set(countries),
+      error: (error) => console.error('Error loading countries:', error)
+    });
+
+    this.catalogService.getDestinationTypes().subscribe({
+      next: (types) => this.destinationTypes.set(types),
+      error: (error) => console.error('Error loading types:', error)
+    });
   }
 
   loadDestination(id: number): void {
@@ -53,13 +71,21 @@ export class DestinationDetailPageComponent implements OnInit {
   }
 
   /**
-   * Obtiene el nombre completo del país desde el catálogo o devuelve el código
+   * Obtiene el nombre completo del país desde el catálogo
    */
   getCountryName(countryCode?: string): string {
     if (!countryCode) return 'Not specified';
-    // El nombre se cargaría en tiempo real, por ahora devolver el código
-    // TODO: implementar caché de CountryDto en detalle si es necesario
-    return countryCode;
+    const country = this.countries().find(c => c.code === countryCode);
+    return country?.name || countryCode;
+  }
+
+  /**
+   * Obtiene el nombre del tipo de destino desde el catálogo
+   */
+  getTypeName(destinationTypeId?: number): string {
+    if (!destinationTypeId) return 'Unknown';
+    const type = this.destinationTypes().find(t => t.id === destinationTypeId);
+    return type?.name || 'Unknown';
   }
 
   getStatusClass(status?: string): string {
