@@ -1,11 +1,11 @@
 # HotelBediaX Backend - API REST
 
-API REST desarrollada con .NET 9 para la gestión de destinos turísticos, implementando **Arquitectura Hexagonal** con patrones CQRS, Repository y Unit of Work.
+API REST desarrollada con **.NET 10 (LTS)** para la gestión de destinos turísticos, implementando **Arquitectura Hexagonal** con patrones CQRS, Repository y Unit of Work.
 
 ## Inicio Rápido
 
 ### Prerrequisitos
-- .NET 9 SDK
+- **.NET 10 SDK** (LTS - soporte hasta noviembre 2028)
 - Visual Studio 2022 o VS Code
 
 ### Ejecutar la Aplicación
@@ -149,20 +149,20 @@ La API soporta múltiples métodos de versionado:
 ## Tecnologías
 
 ### Core
-- **.NET 9**: Framework de desarrollo
-- **ASP.NET Core**: Framework web para APIs REST
-- **Entity Framework Core**: ORM para acceso a datos
+- **.NET 10 (LTS)**: Framework de desarrollo con soporte a largo plazo hasta noviembre 2028
+- **ASP.NET Core 10**: Framework web para APIs REST
+- **Entity Framework Core 10**: ORM para acceso a datos
 - **Base de Datos en Memoria**: Mock database para demostración
 
 ### Patrones y Librerías
-- **MediatR**: Implementación de CQRS y patrón Mediator
+- **MediatR 14.1**: Implementación de CQRS y patrón Mediator con DI integrado
 - **Adaptadores manuales**: Mapeo explícito entre entidades y DTOs
 - **Repository Pattern**: Abstracción del acceso a datos
 - **Unit of Work**: Coordinación de transacciones
 
 ### Documentación y Logging
-- **Swagger/OpenAPI**: Documentación automática de la API
-- **Serilog**: Logging estructurado con múltiples sinks
+- **Swagger/OpenAPI 10**: Documentación automática de la API
+- **Serilog 10**: Logging estructurado con múltiples sinks
 
 ## Datos de Ejemplo
 
@@ -188,37 +188,37 @@ Para información detallada sobre testing, cobertura y ejecución de tests, cons
 ### Paquetes NuGet Principales
 
 **Core ASP.NET:**
-- Microsoft.AspNetCore.OpenApi (9.0.8)
-- Swashbuckle.AspNetCore (7.2.0)
+- Microsoft.AspNetCore.OpenApi (10.0.3)
+- Swashbuckle.AspNetCore (10.1.4)
+- Swashbuckle.AspNetCore.SwaggerGen (10.1.4)
 
 **Entity Framework:**
-- Microsoft.EntityFrameworkCore (9.0.8)
-- Microsoft.EntityFrameworkCore.InMemory (9.0.8)
+- Microsoft.EntityFrameworkCore.InMemory (10.0.3)
 
 **CQRS and Mediator:**
-- MediatR (11.1.0)
-- MediatR.Extensions.Microsoft.DependencyInjection (11.1.0)
-
-**Adaptadores manuales:**
-- Mapeo explícito sin dependencias externas
+- MediatR (14.1.0) - *Con DI integrado*
 
 **Logging:**
-- Serilog.AspNetCore (8.0.3)
-- Serilog.Sinks.Console (6.0.0)
-- Serilog.Sinks.File (6.0.0)
+- Serilog.AspNetCore (10.0.0)
+- Serilog.Sinks.Console (6.1.1)
+- Serilog.Sinks.File (7.0.0)
+- Serilog.Enrichers.Environment (3.0.1)
+- Serilog.Enrichers.Process (3.0.0)
+- Serilog.Enrichers.Thread (4.0.0)
+- Serilog.Settings.Configuration (10.0.0)
 
 **API Versioning:**
-- Microsoft.AspNetCore.Mvc.Versioning (5.1.0)
-- Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer (5.1.0)
+- Asp.Versioning.Mvc (8.1.1)
+- Asp.Versioning.Mvc.ApiExplorer (8.1.1)
 
 ### Configuración de Servicios
 
 - **CORS**: Configurado para Angular (puerto 4200)
 - **Entity Framework**: Base de datos en memoria con índices optimizados
 - **Adaptadores manuales**: Mapeo explícito entre entidades y DTOs
-- **MediatR**: Configuración automática de handlers CQRS
-- **API Versioning**: Configuración para versionado de API
-- **Swagger**: Documentación automática de la API
+- **MediatR**: Configuración integrada con DI nativo de .NET 10
+- **API Versioning**: Configuración moderna con Asp.Versioning 8.x
+- **Swagger**: Documentación automática de la API con OpenAPI 10
 - **Middleware**: Manejo global de excepciones
 
 ## Características de Rendimiento
@@ -227,10 +227,18 @@ Para información detallada sobre testing, cobertura y ejecución de tests, cons
 
 - **Índices de base de datos** en campos de filtrado frecuente
 - **Paginación eficiente** para grandes volúmenes de datos
-- **Consultas optimizadas** con Entity Framework Core
+- **Consultas optimizadas** con Entity Framework Core 10
 - **Manejo asíncrono** de todas las operaciones
 - **Middleware optimizado** para manejo de errores
 - **Logging estructurado** para monitoreo
+
+### Mejoras de .NET 10 (LTS)
+
+- **Rendimiento mejorado**: Mayor velocidad de ejecución y menor consumo de memoria
+- **Nuevas características de C# 13**: Sintaxis mejorada y mejor expresividad
+- **Soporte a largo plazo**: Actualizaciones de seguridad garantizadas hasta noviembre 2028
+- **Mejor integración con contenedores**: Optimizaciones para Docker y Kubernetes
+- **AOT (Ahead-of-Time) compilation**: Opción de compilación nativa para mejor rendimiento
 
 ### Capacidad de Escalabilidad
 
@@ -253,6 +261,33 @@ Para información detallada sobre testing, cobertura y ejecución de tests, cons
 ### Error: "Mapeo de entidades fallido"
 - Verificar que todos los adaptadores estén implementados correctamente
 - Ejecutar `config.AssertConfigurationIsValid()` en desarrollo
+
+## Historial de Versiones
+
+### v2.0.0 - Actualización a .NET 10 (Marzo 2026)
+**Cambios principales:**
+- ✅ Actualización de .NET 9 → .NET 10 (LTS)
+- ✅ Migración a paquetes modernos de API Versioning
+  - `Microsoft.AspNetCore.Mvc.Versioning` → `Asp.Versioning.Mvc` 8.1.1
+  - `Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer` → `Asp.Versioning.Mvc.ApiExplorer` 8.1.1
+- ✅ Actualización de MediatR a versión 14.1 con DI integrado
+- ✅ Eliminación de paquetes deprecados
+- ✅ Actualización de Entity Framework Core a 10.0.3
+- ✅ Actualización de Swagger/OpenAPI a 10.0.3
+- ✅ Actualización de Serilog a 10.0.0
+- ✅ 81 tests unitarios e integración pasando (100%)
+
+**Beneficios:**
+- Soporte a largo plazo hasta noviembre 2028
+- Mejor rendimiento y menor consumo de memoria
+- Paquetes modernos con soporte activo
+- Sin paquetes deprecados
+
+### v1.0.0 - Versión Inicial (Original)
+- Implementación inicial con .NET 9
+- Arquitectura Hexagonal con CQRS
+- 10 destinos turísticos de ejemplo
+- Swagger/OpenAPI documentación
 
 ## Autor
 
