@@ -6,7 +6,7 @@ using backend.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Asp.Versioning;
 using MediatR;
 
 // Configuración y construcción de la aplicación web
@@ -31,25 +31,23 @@ try
 // Agregar controladores MVC con versionado
 builder.Services.AddControllers();
 
-// Configurar API Versioning
-builder.Services.AddApiVersioning(opt =>
+// Configurar API Versioning (nueva sintaxis Asp.Versioning 8.x)
+builder.Services.AddApiVersioning(options =>
 {
-    opt.DefaultApiVersion = new ApiVersion(1, 0);
-    opt.AssumeDefaultVersionWhenUnspecified = true;
-    opt.ApiVersionReader = ApiVersionReader.Combine(
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
         new UrlSegmentApiVersionReader(),
         new HeaderApiVersionReader("api-version"),
         new QueryStringApiVersionReader("version")
     );
-    opt.ReportApiVersions = true;
-});
-
-// Configurar API Explorer para Swagger
-builder.Services.AddVersionedApiExplorer(setup =>
-{
-    setup.GroupNameFormat = "'v'VVV";
-    setup.SubstituteApiVersionInUrl = true;
-});
+}).AddMvc()
+  .AddApiExplorer(options =>
+  {
+      options.GroupNameFormat = "'v'VVV";
+      options.SubstituteApiVersionInUrl = true;
+  });
 
 // Configurar CORS para permitir comunicación con el frontend Angular
 builder.Services.AddCors(options =>

@@ -4,6 +4,7 @@ using backend.Application.Commands;
 using backend.Application.Queries;
 using MediatR;
 using Serilog;
+using Asp.Versioning;
 
 namespace backend.Presentation.Controllers
 {
