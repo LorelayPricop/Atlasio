@@ -10,6 +10,30 @@ namespace backend.Application.Adapters
     public static class DestinationMapper
     {
         /// <summary>
+        /// Optimiza URL de imagen agregando parámetros si es de Unsplash
+        /// </summary>
+        private static string? OptimizeImageUrl(string? imageUrl)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+                return imageUrl;
+
+            // Si es una URL de Unsplash sin parámetros, agregar optimizaciones
+            if (imageUrl.StartsWith("https://images.unsplash.com/photo-") && !imageUrl.Contains("?"))
+            {
+                return $"{imageUrl}?w=800&h=600&fit=crop&auto=format&q=80";
+            }
+
+            // Si ya tiene parámetros pero no todos, agregarlos
+            if (imageUrl.StartsWith("https://images.unsplash.com/photo-") && !imageUrl.Contains("auto=format"))
+            {
+                var separator = imageUrl.Contains("?") ? "&" : "?";
+                return $"{imageUrl}{separator}w=800&h=600&fit=crop&auto=format&q=80";
+            }
+
+            return imageUrl;
+        }
+
+        /// <summary>
         /// Convierte entidad Destination a DestinationDto
         /// </summary>
         public static DestinationDto ToDto(Destination entity)
@@ -24,7 +48,7 @@ namespace backend.Application.Adapters
                 DestinationTypeId = entity.DestinationTypeId,
                 TypeName = entity.Type?.Name,
                 LastModif = entity.LastModif,
-                ImageUrl = entity.ImageUrl,
+                ImageUrl = OptimizeImageUrl(entity.ImageUrl),
                 TotalBookings = entity.TotalBookings,
                 AverageRating = entity.AverageRating,
                 ReviewCount = entity.ReviewCount,
