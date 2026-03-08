@@ -1,10 +1,265 @@
-nav a {
-  text-decoration: none;
-  color: #1f2937;
+:host {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --sidebar: #f9fafc;
+  --line: #e3e7ef;
+  --text: #0f172a;
+  --muted: #64748b;
+  --brand: #1d4ed8;
+  --brand-soft: #dbeafe;
+
+  display: block;
+  height: 100dvh;
+  background: radial-gradient(circle at top right, #eaf0ff 0%, var(--bg) 48%);
+  color: var(--text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
 }
 
-nav a.active {
+.app-shell {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  height: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--sidebar) 0%, #f3f6fc 100%);
+  padding: 22px 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-title,
+.brand-subtitle {
+  margin: 0;
+}
+
+.brand-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.brand-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.account-card {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #d9b894;
+  border: 2px solid #f0e0cc;
+  flex-shrink: 0;
+}
+
+.account-copy {
+  min-width: 0;
+}
+
+.account-name,
+.account-role {
+  margin: 0;
+  line-height: 1.15;
+}
+
+.account-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-role {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.account-action {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: #8aa0be;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.account-action:hover {
+  background: #e8edf6;
+}
+
+.menu-item {
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: #1e293b;
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.menu-item.active {
+  background: var(--brand-soft);
+  color: var(--brand);
   font-weight: 600;
-  border-bottom: 2px solid #1f2937;
+}
+
+.menu-item.muted {
+  color: #8fa0b8;
+  cursor: not-allowed;
+}
+
+.workspace {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px;
+}
+
+.topbar {
+  height: 62px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search {
+  width: 230px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.primary {
+  border: 0;
+  border-radius: 10px;
+  height: 38px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--brand);
+  color: #fff;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  padding-top: 14px;
+  overflow: auto;
+}
+
+@media (max-width: 960px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  :host {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sidebar-footer {
+    margin-top: 12px;
+  }
+
+  .account-card {
+    border-top: 0;
+    border-left: 1px solid var(--line);
+    padding-top: 0;
+    padding-left: 12px;
+  }
+
+  .workspace {
+    min-height: unset;
+    display: block;
+    padding: 12px;
+  }
+
+  .topbar {
+    height: auto;
+    padding: 12px;
+    gap: 10px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .search {
+    width: min(62vw, 260px);
+  }
+
+  .content {
+    overflow: visible;
+  }
 }
 
