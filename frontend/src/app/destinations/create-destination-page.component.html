@@ -49,9 +49,9 @@
           <span>Destination Type <span class="required">*</span></span>
           <div class="select-wrap">
             <select name="type" [(ngModel)]="formModel.type" required>
-              <option [ngValue]="-1" disabled>Select type</option>
-              @for (destType of destinationTypes(); track destType; let i = $index) {
-                <option [ngValue]="i">{{ destType }}</option>
+              <option [ngValue]="null" disabled>Select type</option>
+              @for (option of destinationTypeOptions; track option.value) {
+                <option [ngValue]="option.value">{{ option.label }}</option>
               }
             </select>
             <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>

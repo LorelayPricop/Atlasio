@@ -256,20 +256,7 @@ export class DestinationsPageComponent implements OnInit, OnDestroy {
       this.showAlert('warning', 'Selecciona un destino para editar');
       return;
     }
-    this.isEditing.set(true);
-    const current = this.destinations().find(d => d.id === this.selectedId());
-    if (!current) {
-      this.showAlert('error', 'No se encontró el destino seleccionado');
-      return;
-    }
-    this.formModel = {
-      id: current.id!,
-      name: current.name || '',
-      description: current.description || '',
-      countryCode: current.countryCode || '',
-      type: this.getIndexFromDestinationType(current.type ?? DestinationType._0)
-    };
-    this.isModalOpen.set(true);
+    this.router.navigate(['/destinations', this.selectedId(), 'edit']);
   }
 
   onModalClose(): void {

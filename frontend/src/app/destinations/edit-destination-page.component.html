@@ -1,0 +1,124 @@
+<section class="edit-page">
+  <div class="crumbs">
+    <a routerLink="/destinations">Destinations</a>
+    <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+    <span>Edit Destination</span>
+  </div>
+
+  <app-alert
+    [show]="alert().show"
+    [type]="alert().type"
+    [message]="alert().message"
+    (dismissed)="onAlertDismissed()">
+  </app-alert>
+
+  <app-loading [isLoading]="loading()"></app-loading>
+
+  <div class="edit-shell">
+    <header class="page-head">
+      <h1>Edit Destination</h1>
+      <p>Update information and media for {{ formModel.name || 'selected destination' }}.</p>
+    </header>
+
+    <form class="destination-form" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <label class="field">
+          <span>Destination Name <span class="required">*</span></span>
+          <input type="text" name="name" [(ngModel)]="formModel.name" required />
+        </label>
+
+        <label class="field">
+          <span>Country <span class="required">*</span></span>
+          <div class="select-wrap">
+            <select name="countryCode" [(ngModel)]="formModel.countryCode" required>
+              <option value="" disabled>Select a country</option>
+              @for (country of countries(); track country) {
+                <option [value]="country">{{ getCountryDisplayName(country) }}</option>
+              }
+            </select>
+            <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </div>
+        </label>
+
+        <label class="field field-full">
+          <span>Destination Type <span class="required">*</span></span>
+          <div class="select-wrap">
+            <select name="type" [(ngModel)]="formModel.type" required>
+              <option [ngValue]="null" disabled>Select type</option>
+              @for (option of destinationTypeOptions; track option.value) {
+                <option [ngValue]="option.value">{{ option.label }}</option>
+              }
+            </select>
+            <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </div>
+        </label>
+
+        <label class="field field-full">
+          <span>Description <span class="required">*</span></span>
+          <textarea name="description" [(ngModel)]="formModel.description" rows="4" required></textarea>
+        </label>
+
+        <label class="field field-full">
+          <span>Long Description</span>
+          <textarea name="longDescription" [(ngModel)]="formModel.longDescription" rows="6"></textarea>
+        </label>
+      </div>
+
+      <div class="upload-block">
+        <span class="upload-label">Featured Image</span>
+
+        <div class="upload-grid">
+          <div class="current-image">
+            @if (selectedImageDataUrl()) {
+              <img [src]="selectedImageDataUrl()" alt="Destination image" />
+              <button type="button" class="remove-image" (click)="onRemoveImage()">
+                <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                Remove
+              </button>
+            } @else {
+              <div class="empty-image">No image selected</div>
+            }
+          </div>
+
+          <label class="upload-zone">
+            <input type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml" (change)="onImageSelected($event)" />
+            <span class="material-symbols-outlined" aria-hidden="true">cloud_upload</span>
+            @if (selectedImageName()) {
+              <p>{{ selectedImageName() }}</p>
+            } @else {
+              <p>Click to upload or drag and drop</p>
+            }
+            <small>SVG, PNG, JPG or GIF (max. 10MB)</small>
+          </label>
+        </div>
+      </div>
+
+      <footer class="form-actions">
+        <button type="button" class="btn ghost" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn primary" [disabled]="loading()">Save Changes</button>
+      </footer>
+    </form>
+  </div>
+
+  <section class="secondary-grid">
+    <article class="side-card">
+      <div class="card-head">
+        <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+        <h3>Map Location</h3>
+      </div>
+      <div class="map-placeholder">Map preview</div>
+      <button type="button">Adjust Coordinates</button>
+    </article>
+
+    <article class="side-card">
+      <div class="card-head">
+        <span class="material-symbols-outlined" aria-hidden="true">history</span>
+        <h3>Last Activity</h3>
+      </div>
+      <ul class="activity-list">
+        <li><span class="dot green"></span><div><strong>Record loaded</strong><small>Ready for updates</small></div></li>
+        <li><span class="dot blue"></span><div><strong>Image changes tracked</strong><small>Will be saved on submit</small></div></li>
+      </ul>
+    </article>
+  </section>
+</section>
